@@ -3,9 +3,16 @@
 
 **Objetivo:** Você consegue rodar MeshSim e coletar dados em 2 semanas
 
+> **Status (05/04/2026):**
+> - ✅ NS-3 dev branch compilado e linkado
+> - ✅ MeshSim compilado (todos os erros de API C++20 resolvidos)
+> - ✅ Configs piloto criadas — cadeia linear 9 nós, AODV vs OLSR
+> - ✅ `mesh-helper.cc` patchado (canais 2.4 GHz válidos: 1/6/11 em vez de 100)
+> - ⏳ **Próximo:** rebuild NS-3 + MeshSim → rodar `run_pilot.sh`
+
 ---
 
-## 📦 PARTE 1: INSTALAÇÃO (2-3 horas)
+## 📦 PARTE 1: INSTALAÇÃO
 
 ### Pré-requisitos
 
@@ -30,42 +37,35 @@ pip3 install matplotlib numpy scipy pandas
 
 ### ⚠️ Pré-requisito CRÍTICO: Instalar NS-3
 
-**MeshSim depende de NS-3**. Você precisa compilar NS-3 PRIMEIRO:
+**MeshSim depende de NS-3 dev branch** (branch `master` do repositório oficial). NS-3 usa CMake — **NÃO usa mais WAF**:
 
 ```bash
-# Clonar NS-3 (versão compatível com MeshSim)
-# OPÇÃO 1: URL padrão (tente primeiro)
-# git clone https://github.com/nsnam/ns-3-dev ns-3-dev
-# cd ns-3-dev
-
-# Se falhar com "Repository not found", tente OPÇÃO 2:
-git clone git://github.com/nsnam/ns-3-dev.git ns-3-dev
+# Clonar branch de desenvolvimento
+git clone https://gitlab.com/nsnam/ns-3-dev.git ns-3-dev
 cd ns-3-dev
 
-# Se ainda falhar, use OPÇÃO 3 (release específica - RECOMENDADA):
-# wget https://www.nsnam.org/releases/ns-3.47.tar.bz2
-# tar xjf ns-3.47.tar.bz2
-# cd ns-3.47
-
-# NS-3 3.47 usa CMake (não WAF). Compile com:
-mkdir -p build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DNS3_DIR=$(pwd)
-make -j8
-
-# Voltar ao diretório ns-3.47 para verificar
+# Compilar com CMake (Release para performance)
+mkdir -p build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)
 cd ..
 
-# Verificar: deve ter lib/ com headers ns3/
-ls build/lib/ | head -5
-# Deve listar: libns3-core... arquivos
-ls build/include/ns3/ | head -5  # Deve listar: log.h, address.h, etc.
+# Verificar: bibliotecas em build/lib/, headers em build/include/ns3/
+ls build/lib/ | grep 'libns3-dev-mesh'
+# Deve listar: libns3-dev-mesh.so (ou libns3-dev-mesh-default.so)
 
-# Exportar para PATH (importante!)
+# Exportar variáveis (colocar no ~/.bashrc para persistir)
 export NS3_DIR=$(pwd)/build
 export PKG_CONFIG_PATH=$NS3_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 export LD_LIBRARY_PATH=$NS3_DIR/lib:$LD_LIBRARY_PATH
 ```
+
+> **Atenção — breaking changes da API (já aplicados no MeshSim deste repo):**
+> - `WifiPhyStandard` → `WifiStandard` (enum renomeado)
+> - `YansWifiPhyHelper::Default()` removido → usar `YansWifiPhyHelper()` direto
+> - `SetRemoteStationManager` agora aceita só tipo (sem objetos extras)
+> - `ChannelSettings` string obrigatória em todas as standards: `"{0, 0, BAND_2_4GHZ, 0}"`
+> - `mesh-helper.cc`: canal 100 (5 GHz) não existe em 2.4 GHz — patch aplicado (usa ch 1/6/11)
 
 ### Download & Compilação de MeshSim
 
@@ -118,8 +118,9 @@ mkdir -p out
 
 Checklist:
 - [x] Compilou sem erros
-- [x] Executável ./sim/mesh_sim existe
-- [ ] Resultado em out_test/ (PCAP files)
+- [x] Executável `./sim/mesh_sim` existe
+- [x] `./mesh_sim --help` mostra parâmetros disponíveis
+- [x] Resultado em `out/` (arquivos `trace-app-rx-*.txt`, `flowdata.xml`)
 
 ---
 
@@ -128,167 +129,98 @@ Checklist:
 ### Objetivo piloto
 Validar: MeshSim roda, coleta dados, métricas fazem sentido
 
-### Configuração Simples
+### Configuração — Formato Real dos Arquivos MeshSim
 
-Crie pasta: `experiments/pilot_100nodes/`
+O piloto está em `experiments/pilot_100_aodv_olsr/` com topologia de **cadeia linear de 9 nós** (1 STA por nó AP, backhaul no nó 0).
 
-**Arquivo 1: apps.txt** (aplicações)
-```
-# UDP sender on node 0 → node 99
-# Start: 10s, Duration: 590s (deixe 30s warm-up)
-0/1000@0:9 1000 10.0 590.0
+Cada experimento fica numa subpasta com 6 arquivos de config:
 
-# Significado:
-# 0 = node source
-# /1000 = UDP port 1000
-# @0:9 = send to node 9
-# 1000 = packets/sec
-# 10.0 = start time (segundos)
-# 590.0 = duration
-```
+**apps.txt** — fluxos UDP echo + TCP file transfer
 
-**Arquivo 2: mesh_wifi.txt** (WiFi entre APs/mesh)
-```
-standard = 802.11g
-station_manager type = ns3::ArfWifiManager
+**mesh_wifi.txt** — backbone mesh 802.11g
 
-# Channel
-default_channel = true
-delay_model = ns3::ConstantSpeedPropagationDelayModel
-loss_model = @ns3::LogDistancePropagationLossModel
+**apsta_wifi.txt** — link AP ↔ STA
 
-# Attributes
-phy_attribs = TxPowerStart=20dBm
-phy_attribs = TxPowerEnd=20dBm
-phy_attribs = TxPowerLevels=1
-phy_attribs = RxGain=0dBm
-```
+**mesh_mobility.txt** — posições dos nós mesh
 
-**Arquivo 3: mesh_mobility.txt** (Posicionamento)
-```
-# Random topologia (Poisson point process)
-# 100 nodes in 1000m x 1000m area
+**sta_mobility.txt** — posições das STAs
 
-mobility_type = UniformDiscPositionAllocator
-min_x = 0.0
-max_x = 1000.0
-min_y = 0.0
-max_y = 1000.0
-num_nodes = 100
-seed = 42  # Reprodutível!
-```
+**routing.txt** — protocolo de roteamento
 
-**Arquivo 4: routing.txt** (Protocolo)
-```
-protocol = AODV
-# Alternativa: OLSR
-
-# AODV params
-aodv_hello_interval = 1.0
-aodv_active_route_timeout = 180
-aodv_rreq_retries = 3
-```
-
-### Rodar
+### Rodar o Piloto
 
 ```bash
-cd experiments/pilot_100nodes/
+# Sintaxe real: argumentos POSICIONAIS (config_dir, out_dir)
+# NÃO usa --config ou --out
 
-# Executar MeshSim
-../../sim/mesh_sim \
-  --config . \
-  --duration 600 \
-  --out results_aodv_100nodes
+export LD_LIBRARY_PATH=/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/ns-3-dev/build/lib:$LD_LIBRARY_PATH
 
-# Esperado:
-# [INFO] Loading config...
-# [INFO] Creating simulation (100 nodes)...
-# [INFO] Running simulation...
-# Progress: 0% ... 25% ... 50% ... 75% ... 100%
-# [INFO] Simulation complete. Time: 45.2s (CPU)
-# [INFO] Output: results_aodv_100nodes/
+BASE=/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH
+MESHSIM=$BASE/MeshSim/build/sim/mesh_sim
+PILOT=$BASE/experiments/pilot_100_aodv_olsr
+
+mkdir -p $PILOT/out_AODV $PILOT/out_OLSR
+
+# AODV
+$MESHSIM --meshSize=9 --staSize=9 --simDuration=60 \
+    $PILOT/config_AODV_seed42 $PILOT/out_AODV
+
+# OLSR
+$MESHSIM --meshSize=9 --staSize=9 --simDuration=60 \
+    $PILOT/config_OLSR_seed43 $PILOT/out_OLSR
+
+# Ou use o script pronto:
+cd $PILOT && ./run_pilot.sh
 ```
 
 ### Validar Resultados
 
 ```bash
-ls results_aodv_100nodes/
-# Deve ter:
-# - mesh.pcap (captura MESH APs)
-# - sta-wifi.pcap (captura STAs)
-# - trace.txt (eventos simulação)
+ls experiments/pilot_100_aodv_olsr/out_AODV/
+# Deve conter:
+# - trace-app-rx-echo*.txt  (bytes cumulativos por fluxo, 1 arquivo por cliente)
+# - flowdata.xml            (FlowMonitor: PDR, latência por fluxo)
+# - *.pcap (se --enablePcap=true)
 
-# Contar pacotes:
-tcpdump -r results_aodv_100nodes/mesh.pcap | wc -l
-# Deve ter 100s+ packets (590s × 1000 pps ≈ 590k packets)
+# Verificar saída rápida:
+tail -1 out_AODV/trace-app-rx-echo1-cl.txt
+# Formato: <timestamp_us> <bytes_cumulativos>
+# ex:  59847291 48320
+```
+
+### Analisar
+
+```bash
+# Script dedicado — lê trace-app-rx + flowdata.xml e imprime tabela
+python3 experiments/pilot_100_aodv_olsr/analyze_pilot.py
+
+# Saída esperada (colunas: Fluxo, Bytes Rx, Throughput, PDR%, Delay ms):
+# PROTOCOLO: AODV
+# echo1-cl    48320    6.5 kbps
+# ...
+# PDR medio: 98.5%   Latencia media: 4.2 ms
+#
+# PROTOCOLO: OLSR
+# ...
 ```
 
 ---
 
-## 📊 PARTE 3: ANÁLISE BÁSICA (2 horas)
+## 📊 PARTE 3: ANÁLISE BÁSICA
 
 ### Script Python: Extract Metrics
 
 **Arquivo: `analyze_pilot.py`**
 
-```python
-#!/usr/bin/env python3
-import subprocess
-import pandas as pd
-import matplotlib.pyplot as plt
-from pathlib import Path
-
-pcap_file = "results_aodv_100nodes/mesh.pcap"
-
-# Parse PCAP com tshark
-result = subprocess.run(
-    f"tshark -r {pcap_file} -T fields -e frame.time_epoch -e ip.src -e ip.dst -e udp.srcport",
-    capture_output=True,
-    text=True,
-    shell=True
-)
-
-# Parse output
-packets = []
-for line in result.stdout.strip().split('\n'):
-    if not line:
-        continue
-    parts = line.split()
-    if len(parts) >= 4:
-        try:
-            ts = float(parts[0])
-            src = parts[1]
-            dst = parts[2]
-            port = parts[3]
-            packets.append({'ts': ts, 'src': src, 'dst': dst, 'port': port})
-        except:
-            pass
-
-df = pd.DataFrame(packets)
-
-if len(df) > 0:
-    # Métricas básicas
-    print(f"Total packets: {len(df)}")
-    print(f"Start time: {df['ts'].min():.2f}")
-    print(f"End time: {df['ts'].max():.2f}")
-    print(f"Duration: {df['ts'].max() - df['ts'].min():.2f}s")
-    
-    throughput = len(df) / (df['ts'].max() - df['ts'].min())
-    print(f"Throughput: {throughput:.1f} pps")
-    
-    # Plot
-    plt.figure(figsize=(10, 4))
-    plt.hist(df['ts'], bins=100)
-    plt.xlabel('Time (s)')
-    plt.ylabel('Packets')
-    plt.title('Packet Distribution - AODV 100 nodes')
-    plt.savefig('packet_distribution.png')
-    print("Saved: packet_distribution.png")
-```
-
-### Rodar análise
+### Rodar Simulação e Análise
 
 ```bash
+cd /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/experiments/pilot_100_aodv_olsr
+
+source /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/meshsim_environment.sh
+
+./run_pilot.sh
+
 python3 analyze_pilot.py
 
 # Output esperado:
@@ -301,18 +233,30 @@ python3 analyze_pilot.py
 
 ---
 
-## 🔄 PARTE 4: ESTENDER PARA AODV vs OLSR (1 semana)
+## 🔄 PARTE 4: ESTENDER PARA TOPOLOGIAS MAIORES
 
-### Estrutura de Pasta
+### Estado Atual
 
 ```
 experiments/
-├─ pilot_100_aodv/      (✅ já fez)
-├─ pilot_100_olsr/      (próximo)
-├─ scale_300_aodv/
-├─ scale_300_olsr/
-├─ scale_500_aodv/
-├─ scale_500_olsr/
+└─ pilot_100_aodv_olsr/          ✅ configs criadas, scripts prontos
+   ├─ config_AODV_seed42/        ✅ 9 nós, cadeia linear, AODV
+   ├─ config_OLSR_seed43/        ✅ 9 nós, cadeia linear, OLSR
+   ├─ run_pilot.sh               ✅ script de execução
+   ├─ analyze_pilot.py           ✅ PDR + throughput + latência
+   ├─ out_AODV/                  ⏳ aguarda rebuild + execução
+   └─ out_OLSR/                  ⏳ aguarda rebuild + execução
+```
+
+### Estrutura Alvo (após validar piloto)
+
+```
+experiments/
+├─ pilot_9nodes_chain/           ✅ cadeia linear, sanity check
+├─ grid_25nodes_aodv/            próximo
+├─ grid_25nodes_olsr/
+├─ random_50nodes_aodv/
+├─ random_50nodes_olsr/
 └─ analysis/
    ├─ compare_aodv_olsr.py
    └─ results.csv
@@ -369,7 +313,7 @@ chmod +x run_experiments.sh
 
 ---
 
-## 📈 PARTE 5: COLETA DE MÉTRICAS (3 horas)
+## 📈 PARTE 5: COLETA DE MÉTRICAS
 
 ### Script: PDR, Latência, Overhead
 
@@ -469,7 +413,7 @@ python3 extract_all_metrics.py
 
 ---
 
-## 📊 PARTE 6: GRÁFICOS (1 hora)
+## 📊 PARTE 6: GRÁFICOS
 
 ### Script: Plot Resultados
 
@@ -539,14 +483,24 @@ python3 plot_results.py
 
 ## ✅ CHECKLIST: SEMANA 1-2
 
-Fim de semana 2, você terá:
+**Concluído:**
 
-- [ ] MeshSim compilado e testado
-- [ ] Piloto 100 nós (AODV): dados coletados
-- [ ] Piloto 100 nós (OLSR): dados coletados
-- [ ] Extensão: 300 e 500 nós (ambos protocolos)
-- [ ] Gráficos: PDR, overhead, latência
-- [ ] Validação: "Dados fazem sentido?"
+- [x] NS-3 dev branch compilado (CMake, sem WAF)
+- [x] MeshSim compilado — todos os erros de API C++20 resolvidos
+- [x] `Findns3.cmake` corrigido (nomes `libns3-dev-mesh.so` sem sufixo)
+- [x] `configureWifiPhy` define `ChannelSettings` para todas as standards (2.4/5 GHz)
+- [x] `mesh-helper.cc` patchado — canais 2.4 GHz válidos (1/6/11 em vez de 100)
+- [x] Configs piloto criadas: `config_AODV_seed42/` e `config_OLSR_seed43/`
+- [x] `run_pilot.sh` e `analyze_pilot.py` prontos
+
+**Próximas etapas imediatas:**
+
+- [x] Rebuild NS-3: `cd ns-3-dev/build && make -j$(nproc)` (só recompila mesh-helper.cc)
+- [x] Rebuild MeshSim: `cd MeshSim/build && make -j$(nproc)`
+- [x] Rodar piloto: `cd experiments/pilot_100_aodv_olsr && ./run_pilot.sh`
+- [ ] Validar métricas: `python3 analyze_pilot.py` — checar PDR >90%, latência <50 ms
+- [ ] Ampliar para topologia grid 5×5 (25 nós) — sanity check escalabilidade
+- [ ] Gráficos: PDR, throughput e latência por número de hops
 
 ---
 
@@ -554,26 +508,49 @@ Fim de semana 2, você terá:
 
 | Problema | Solução |
 |:---|:---|
-| **fatal error: ns3/log.h: No such file** | ❌ NS-3 não está instalado. Execute seção "Instalar NS-3" acima ANTES de MeshSim. Ou: `export NS3_DIR=/path/to/ns-3-dev/build` antes de cmake |
-| **cmake error: ns3 not found** | 1. `cmake .. -DNS3_DIR=/path/to/ns-3-dev/build` ou 2. `export PKG_CONFIG_PATH=$NS3_DIR/lib/pkgconfig:$PKG_CONFIG_PATH` |
-| **MeshSim não compila (outros erros)** | Checklist: ns3 compilado com `./waf build`? Boost 1.70+? CMake 3.10+? |
-| **Simulação sehr lento** | WiFi loss model complexo? Reduzir nós piloto |
-| **PCAP vazio** | Aplicações configuradas? routing.txt correto? |
-| **Python script error** | tshark instalado? (`sudo apt install tshark`) |
-| **Métricas não fazem sentido** | Verificar: tempo warm-up (30s), duration (600s) |
+| **fatal error: ns3/log.h: No such file** | `export NS3_DIR=/path/to/ns-3-dev/build` antes do cmake do MeshSim |
+| **cmake error: ns3 not found** | `cmake .. -DNS3_USE_BUILD_TREE=ON -DNS3_BUILD_TREE=$NS3_DIR ..` |
+| **linker: -lns3 not found** | `Findns3.cmake` busca `libns3-dev-*.so` — versão corrigida já inclusa |
+| **MeshSim não compila (API NS-3)** | NS-3 usa CMake, não WAF. Boost 1.70+, CMake 3.16+, gcc 9+ |
+| **`WifiPhyOperatingChannel: No unique channel found`** | ✅ Já corrigido: `mesh-helper.cc` patchado para 2.4 GHz (canais 1/6/11). Rebuild NS-3 necessário. |
+| **`unordered_map::at` (runtime)** | `apps.txt` referencia IPs de 9 STAs mas rodou com `--staSize=2`. Use `--staSize=9`. |
+| **`Cannot change standard` (abort)** | `ConfigureStandard()` chamado duas vezes com standards diferentes. Verificar `mesh_wifi.txt` vs `apsta_wifi.txt`. |
+| **trace-app-rx vazio** | Aplicações não iniciaram? Verificar `StartTime` em `apps.txt` < `simDuration`. |
+| **flowdata.xml ausente** | FlowMonitor habilitado por padrão — checar se saída está no diretório correto. |
+| **Simulação muito lenta** | LogDistance é leve. Verifique debug build: recompilar com `-DCMAKE_BUILD_TYPE=Release`. |
+| **Python script error** | `pip3 install numpy scipy pandas matplotlib` + módulo padrão `xml.etree.ElementTree` (built-in). |
 
 ---
 
-## 🚀 PRÓXIMO: Semana 3-10
+## 🚀 PRÓXIMO: Roteiro de Experimentos
 
-Uma vez que este piloto (100-500 nós AODV vs OLSR) funciona e produz dados razoáveis:
+### Fase 1 — Validação (esta semana)
 
-1. **Escale:** Rodar 750, 1000, 1500 nós
-2. **Replicas:** 10 rodadas cada config (diferentes seeds)
-3. **Análise:** ANOVA, confidence intervals, plots publication-ready
-4. **Paper draft:** Começar escrita com resultados
+1. **Rebuild + Piloto 9 nós:** rebuild NS-3 → rebuild MeshSim → `./run_pilot.sh` → `analyze_pilot.py`
+2. **Sanidade da cadeia linear:** PDR deve cair com distância (STA 9 < STA 1), latência deve crescer com hops
+3. **Comparação AODV vs OLSR:** OLSR deve ter menor latência (rotas pré-computadas), AODV menor overhead em rede estática pequena
+
+### Fase 2 — Topologias Controladas (semanas 2-3)
+
+4. **Grid 5×5 (25 nós):** topologia conhecida, permite validar roteamento multi-hop
+5. **Grid 5×5 com falhas de link:** remover links aleatoriamente; AODV deve se recuperar, OLSR também mas com delay de reconvergência
+6. **Replicas:** 5 seeds por configuração → confidence intervals 95%
+
+### Fase 3 — Escala (semanas 4-6)
+
+7. **Random 50 nós** em área 500×500 m (densidade realista)
+8. **Random 100 nós** — primeiro experimento de escala
+9. **Coleta:** PDR, throughput, latência, overhead de controle por protocolo
+10. **Análise:** ANOVA two-way (protocolo × escala), Mann-Whitney U para PDR
+
+### Fase 4 — Paper (semanas 7-10)
+
+11. **Plots publication-ready** (matplotlib, 300 DPI, barras de erro = IC 95%)
+12. **Tabela comparativa** AODV vs OLSR por métrica e escala
+13. **Seções:** Introdução → Trabalhos Relacionados → Metodologia → Resultados → Conclusão
+14. **Submissão:** SBRC 2026 (deadline ~Maio 2026) ou WCNC 2027
 
 ---
 
-**LINHA 4 + MeshSim Quick Start | Pronto para executar**  
-**Estimate: 2 weeks até primeiro resultado concreto | Abril 2026**
+**LINHA 4 + MeshSim Quick Start | Atualizado em 05/04/2026**  
+**Status: infra pronta, aguardando rebuild para primeira rodada de dados**

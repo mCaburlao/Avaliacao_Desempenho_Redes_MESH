@@ -64,13 +64,19 @@ MeshHelper::Install(const WifiPhyHelper& phyHelper, NodeContainer c) const
         for (uint32_t i = 0; i < m_nInterfaces; ++i)
         {
             uint32_t channel = 0;
+            // Channel 100 is a valid 5GHz channel but does NOT exist in 2.4GHz (1-14).
+            // Use valid 2.4GHz channels for b/g standards.
+            const bool is2_4GHz = (m_standard == WIFI_STANDARD_80211b ||
+                                   m_standard == WIFI_STANDARD_80211g);
             if (m_spreadChannelPolicy == ZERO_CHANNEL)
             {
-                channel = 100;
+                channel = is2_4GHz ? 1 : 100;
             }
             if (m_spreadChannelPolicy == SPREAD_CHANNELS)
             {
-                channel = 100 + i * 5;
+                // 2.4GHz non-overlapping channels: 1, 6, 11
+                static const uint32_t ch2_4[] = {1, 6, 11};
+                channel = is2_4GHz ? ch2_4[i % 3] : (100 + i * 5);
             }
             Ptr<WifiNetDevice> iface = CreateInterface(phyHelper, node, channel);
             mp->AddInterface(iface);

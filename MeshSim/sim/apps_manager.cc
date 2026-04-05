@@ -72,8 +72,11 @@ bool AppsManager::createApp(const AppConfig& cfg,
 	switch (cfg.type) {
 	case AppConfig::APP_UDP_ECHO_CLIENT:
 		R.app = CreateObject<UdpEchoClient>();
-		R.TxNames.address = "RemoteAddress";
-		R.TxNames.port = "RemotePort";
+		// NS-3 >= 3.44: RemoteAddress + RemotePort replaced by single
+		// "Remote" attribute (InetSocketAddress). Leave port empty so
+		// createConn1 uses the InetSocketAddress code path.
+		R.TxNames.address = "Remote";
+		R.TxNames.port = "";
 		break;
 	case AppConfig::APP_UDP_ECHO_SERVER:
 		R.app = CreateObject<UdpEchoServer>();

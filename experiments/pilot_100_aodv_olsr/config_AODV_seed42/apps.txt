@@ -1,3 +1,42 @@
-# UDP traffic: node 0 → node 99
-# Start: 10s, Duration: 590s
-0/1000@0:99 1000 10.0 590.0
+# Pilot: 9-node linear chain - AODV vs OLSR comparison
+# wiredSTA IPs: 10.1.4.1-9 (1-hop a 9-hop do backhaul)
+# Backhaul: 10.1.1.1
+
+# UDP echo de todos os wiredSTAs para o backhaul
+defaults StartTime=10s
+echo1-cl    10.1.4.1    echo_client
+echo2-cl    10.1.4.2    echo_client
+echo3-cl    10.1.4.3    echo_client
+echo4-cl    10.1.4.4    echo_client
+echo5-cl    10.1.4.5    echo_client
+echo6-cl    10.1.4.6    echo_client
+echo7-cl    10.1.4.7    echo_client
+echo8-cl    10.1.4.8    echo_client
+echo9-cl    10.1.4.9    echo_client
+
+echo1-srv   10.1.1.1    echo_server
+echo2-srv   10.1.1.1    echo_server
+echo3-srv   10.1.1.1    echo_server
+echo4-srv   10.1.1.1    echo_server
+echo5-srv   10.1.1.1    echo_server
+echo6-srv   10.1.1.1    echo_server
+echo7-srv   10.1.1.1    echo_server
+echo8-srv   10.1.1.1    echo_server
+echo9-srv   10.1.1.1    echo_server
+
+# TCP file transfer: backhaul -> STA mais distante (max hops)
+defaults StartTime=15s
+file9-srv   10.1.1.1    file_server
+file9-cl    10.1.4.9    client
+
+# Conexoes
+connect echo1-cl    echo1-srv
+connect echo2-cl    echo2-srv
+connect echo3-cl    echo3-srv
+connect echo4-cl    echo4-srv
+connect echo5-cl    echo5-srv
+connect echo6-cl    echo6-srv
+connect echo7-cl    echo7-srv
+connect echo8-cl    echo8-srv
+connect echo9-cl    echo9-srv
+connect file9-srv   file9-cl

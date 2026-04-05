@@ -98,23 +98,22 @@ bool configureWifiChannel(YansWifiChannelHelper* helper,
 bool configureWifiPhy(ns3::YansWifiPhyHelper* phy,
 		      const wifiConfig& cfg)
 {
-	// In modern NS-3, dual-band standards (802.11n, 802.11ax) require
-	// explicit band specification via ChannelSettings on the PHY.
-	// Single-band standards (a=5GHz, b/g=2.4GHz, ac=5GHz) are unambiguous.
+	// Modern NS-3 requires explicit ChannelSettings for all standards.
+	// Map each standard string to its band.
 	const std::string& std = cfg.wifi_standard;
-	if (std == "n2.4" || std == "802.11n2.4") {
+	if (std == "b" || std == "802.11b"
+	    || std == "g" || std == "802.11g"
+	    || std == "n2.4" || std == "802.11n2.4"
+	    || std == "ax2.4" || std == "802.11ax2.4") {
 		phy->Set("ChannelSettings", ns3::StringValue("{0, 0, BAND_2_4GHZ, 0}"));
-	} else if (std == "n5" || std == "802.11n5"
-	           || std == "n" || std == "802.11n") {
-		phy->Set("ChannelSettings", ns3::StringValue("{0, 0, BAND_5GHZ, 0}"));
-	} else if (std == "ax2.4" || std == "802.11ax2.4") {
-		phy->Set("ChannelSettings", ns3::StringValue("{0, 0, BAND_2_4GHZ, 0}"));
-	} else if (std == "ax5" || std == "802.11ax5"
+	} else if (std == "a" || std == "802.11a"
+	           || std == "ac" || std == "802.11ac"
+	           || std == "n5" || std == "802.11n5"
+	           || std == "n" || std == "802.11n"
+	           || std == "ax5" || std == "802.11ax5"
 	           || std == "ax" || std == "802.11ax") {
 		phy->Set("ChannelSettings", ns3::StringValue("{0, 0, BAND_5GHZ, 0}"));
 	}
-	// Note: 80211a=5GHz only, 80211b/g=2.4GHz only, 80211ac=5GHz only
-	// — those are unambiguous and NS-3 picks the correct band automatically.
 
 	for (const auto& a : cfg.phy_attribs) {
 		if (!SetFactoryAttributeByAssignmentSpec(phy, a)) {

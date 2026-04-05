@@ -1,13 +1,3 @@
-standard = 802.11g
-station_manager type = ns3::ArfWifiManager
-
-# Channel
-default_channel = true
-delay_model = ns3::ConstantSpeedPropagationDelayModel
-loss_model = @ns3::LogDistancePropagationLossModel
-
-# Attributes
-phy_attribs = TxPowerStart=20dBm
-phy_attribs = TxPowerEnd=20dBm
-phy_attribs = TxPowerLevels=1
-phy_attribs = RxGain=0dBm
+# Configuracao WiFi do backbone mesh (802.11g)
+standard g
+ratecontrol ns3::ArfWifiManager
