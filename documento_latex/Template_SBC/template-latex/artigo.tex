@@ -9,7 +9,7 @@
 
 \sloppy
 
-\title{Análise Comparativa de Protocolos de Roteamento AODV vs OLSR \\em Redes MESH Escaláveis: Investigação do Ponto de Transição \\ para Cenários de Smart Cities}
+\title{Análise Comparativa de Protocolos de Roteamento AODV vs OLSR em Redes MESH Escaláveis: Investigação do Ponto de Transição para Cenários de Smart Cities}
 
 \author{Aluno UFABC\inst{1}, Prof. Orientador\inst{1}}
 
@@ -32,13 +32,13 @@
 
 \section{Introdução}
 
-Redes mesh sem fio multi-hop (Multi-hop Wireless Mesh Networks) tornaram-se fundamentais em cenários de IoT e cidades inteligentes, onde dispositivos comunicam-se de forma autônoma sem infra-estrutura centralizada. Essas redes são especialmente relevantes em ambientes onde a instalação de cabeamento tradicional é impraticável, como em monitoramento ambiental distribuído, iluminação inteligente urbana e sistemas de rastreamento de ativos \cite{wireless_akyildiz_2005,wireless_sichitiu_2004}.
+Redes mesh sem fio multi-hop (Multi-hop Wireless Mesh Networks) tornaram-se fundamentais em cenários de IoT e cidades inteligentes, onde dispositivos comunicam-se de forma autônoma sem infra-estrutura centralizada. Essas redes apresentam relevância especial em ambientes em que a instalação de cabeamento tradicional é impraticável, como em monitoramento ambiental distribuído, iluminação inteligente urbana e sistemas de rastreamento de ativos \cite{wireless_akyildiz_2005,wireless_sichitiu_2004}.
 
 O roteamento em redes mesh é crítico pois determina latência, consumo energético, confiabilidade e escalabilidade da rede. Dois paradigmas dominam o cenário: protocolos reativos (ex: AODV) que descobrem rotas conforme demanda, e protocolos proativos (ex: OLSR) que mantêm tabelas de roteamento completas continuamente atualizadas \cite{wireless_benyamina_2012}. Cada abordagem apresenta trade-offs distintos em termos de overhead de controle, latência de descoberta de rotas e adaptabilidade a mudanças topológicas.
 
 Contudo, falta investigação empírica rigorosa em escala contemporânea sobre como estes protocolos se comportam quando redes crescem de centenas para milhares de nós. Recomendações atuais em literatura baseiam-se frequentemente em benchmarks desatualizados ou estudos teóricos sem validação experimental robusta. Este cenário deixa engenheiros de smart cities sem dados confiáveis para tomar decisões arquiteturais.
 
-O presente trabalho endereça esta lacuna através de uma análise comparativa controlada de AODV versus OLSR em escalas que refletem aplicações reais de smart cities. Utilizamos simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas. Nossa contribuição principal é um benchmark quantitativo que identifica o ponto de transição crítico onde o overhead quadrático de OLSR começa a prejudicar significativamente o desempenho, enquanto AODV mantém escalabilidade linear.
+O presente trabalho endereça esta lacuna por meio de uma análise comparativa controlada de AODV versus OLSR em escalas que refletem aplicações reais de smart cities. Utilizamos simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas. Nossa contribuição principal é um benchmark quantitativo que identifica o ponto de transição crítico onde o overhead quadrático de OLSR começa a prejudicar significativamente o desempenho, enquanto AODV mantém escalabilidade linear.
 
 \section{Trabalhos Relacionados}
 
@@ -50,8 +50,8 @@ Aplicações emergentes em cidades inteligentes motivam novas investigações. \
 
 Nossas análises complementam este corpo de trabalho fornecendo:
 \begin{enumerate}
-  \item Avaliação controlada em escala 100-1500 nós com simulação rigorosa;
-  \item Comparação direta AODV vs OLSR em condições padronizadas;
+  \item Avaliação controlada em escala de cem a mil e quinhentos nós com simulação rigorosa;
+  \item Comparação direta entre AODV e OLSR em condições padronizadas;
   \item Identificação de pontos críticos de transição entre protocolos;
   \item Matriz de recomendação prática para engenheiros.
 \end{enumerate}
@@ -60,24 +60,24 @@ Nossas análises complementam este corpo de trabalho fornecendo:
 
 \subsection{Ambiente de Simulação}
 
-Utilizamos MeshSim, um simulador de redes mesh construído sobre o framework NS-3 em sua branch de desenvolvimento (versão dev-master). A escolha de MeshSim baseou-se na: (i) maturidade e acurácia do NS-3; (ii) suporte nativo a AODV e OLSR; (iii) disponibilidade de módulos Wi-Fi IEEE 802.11g; (iv) capacidade de reprodução determinística através de sementes aleatórias.
+Utilizamos MeshSim, um simulador de redes mesh construído sobre o framework NS-3. O simulador deste trabalho está disponível em repositório público \cite{meshsim_github}, permitindo reprodução completa dos experimentos. A escolha de MeshSim baseou-se na: (i) maturidade e acurácia do NS-3; (ii) suporte nativo a AODV e OLSR; (iii) disponibilidade de módulos Wi-Fi IEEE 802.11g; (iv) capacidade de reprodução determinística por meio de sementes aleatórias.
 
 \subsection{Design Experimental}
 
 Nosso design experimental segue uma abordagem fatorial estruturada:
 
 \begin{itemize}
-  \item \textbf{Fator 1 — Protocolo:} AODV (reativo) e OLSR (proativo)
-  \item \textbf{Fator 2 — Topologia:} Grid (5×5, determinístico), Random (aleatória, Poisson)
-  \item \textbf{Fator 3 — Escala:} 100, 300, 500, 800, 1000, 1500 nós
-  \item \textbf{Fator 4 — Réplicas:} Mínimo 10 rodadas por configuração com sementes distintas
+  \item \textbf{Fator 1 --- Protocolo:} AODV (reativo) e OLSR (proativo)
+  \item \textbf{Fator 2 --- Topologia:} Grid (cinco por cinco, determinístico), Aleatória (Poisson)
+  \item \textbf{Fator 3 --- Escala:} cem, trezentos, quinhentos, oitocentos, mil e mil e quinhentos nós
+  \item \textbf{Fator 4 --- Réplicas:} Mínimo dez rodadas por configuração com sementes distintas
 \end{itemize}
 
-Totalizamos: $2 \text{ protocolos} \times 2 \text{ topologias} \times 6 \text{ escalas} \times 10 \text{ réplicas} = 240$ simulações.
+Totalizamos $2 \text{ protocolos} \times 2 \text{ topologias} \times 6 \text{ escalas} \times 10 \text{ réplicas} = 240$ simulações.
 
 \subsection{Métricas de Avaliação}
 
-Coletamos cinco métricas principais via FlowMonitor e trace-app (módulos nativos NS-3):
+Coletam-se cinco métricas principais via FlowMonitor e trace-app (módulos nativos NS-3):
 
 \begin{enumerate}
   \item \textbf{PDR (Packet Delivery Ratio):} Percentual de pacotes dados entregues com sucesso
@@ -89,19 +89,19 @@ Coletamos cinco métricas principais via FlowMonitor e trace-app (módulos nativ
 
 \subsection{Configurações de Simulação}
 
-Cada experimento é configurado com:
+Configuram-se os experimentos conforme:
 \begin{itemize}
-  \item Duração: 400 segundos de simulação
-  \item Warm-up: 90 segundos antes de início de tráfego
-  \item Área: $1000m \times 1000m$
-  \item Padrão Wi-Fi: IEEE 802.11g, 54 Mbps
-  \item Potência TX: 20 dBm, Ganho RX: 0 dBm
-  \item Tráfego: UDP CBR, 1000 pps, node-0 → node-N (path maior)
+  \item Duração: quatrocentos segundos de simulação
+  \item Aquecimento: noventa segundos antes de início de tráfego
+  \item Área: $1000~\text{m} \times 1000~\text{m}$
+  \item Padrão Wi-Fi: IEEE 802.11g, cinquenta e quatro Mbps
+  \item Potência TX: vinte dBm, Ganho RX: zero dBm
+  \item Tráfego: UDP CBR, mil pacotes por segundo, node-zero para node-N (caminho maior)
 \end{itemize}
 
 \subsection{Análise Estatística}
 
-Para cada métrica e configuração calculamos:
+Para cada métrica e configuração calculam-se:
 \begin{itemize}
   \item Média e desvio padrão amostral
   \item Intervalo de confiança 95\% (IC 95\%)
@@ -109,7 +109,7 @@ Para cada métrica e configuração calculamos:
   \item Effect sizes (Cohen's d) para detectar diferenças práticas
 \end{itemize}
 
-A reprodutibilidade é garantida através de:
+A reprodutibilidade garante-se por meio de:
 \begin{itemize}
   \item Sementes aleatórias fixadas (METADATA.yaml documentado para cada run)
   \item Versão NS-3 e MeshSim registradas
@@ -117,66 +117,13 @@ A reprodutibilidade é garantida através de:
   \item Scripts de análise em Python disponibilizados
 \end{itemize}
 
-\section{Resultados Preliminares}
+\section{Resultados e Discussão}
 
-\subsection{Piloto: 100 Nós}
 
-Rodadas iniciais de validação com 100 nós revelaram:
-
-\begin{table}[ht]
-\centering
-\caption{Resultados Piloto — 100 Nós (Seed Única)}
-\label{tab:pilot100}
-\begin{tabular}{|l|r|r|r|}
-\hline
-\textbf{Métrica} & \textbf{AODV} & \textbf{OLSR} & \textbf{Diferença} \\
-\hline
-PDR (\%) & $78.2$ & $69.9$ & $+11.8\%$ \\
-Latência Média (ms) & $147$ & $138$ & $-6.1\%$ \\
-Jitter Médio (ms) & $45$ & $120$ & $-166\%$ \\
-Hops Médios & $3.2$ & $2.8$ & $-12.5\%$ \\
-\hline
-\end{tabular}
-\end{table}
-
-Observações qualitativas:
-\begin{itemize}
-  \item AODV demonstrou PDR superior (78.2\% vs 69.9\%), sugerindo melhor adaptação a 100 nós
-  \item OLSR apresentou latência ligeiramente menor (138 vs 147 ms) devido a tabelas pré-computadas
-  \item AODV mostrou estabilidade superior (jitter 45 vs 120 ms), indicando convergência sem oscilação
-\end{itemize}
-
-\textbf{Status:} Dados piloto coletados. Análise estatística com 10+ réplicas em andamento.
-
-\section{Discussão}
-
-Os resultados preliminares apontam direções promissoras. A PDR superior de AODV em 100 nós contradiz parcialmente a expectativa inicial de que OLSR seria uniformemente mais eficiente em redes pequenas. Investigações futuras avaliarão se este padrão se mantém ou inverte em escalas maiores.
-
-A latência e jitter observados sugerem que, apesar de OLSR computar rotas proativamente, o overhead de controle (HALLO e TC msgs) pode causar variabilidade. AODV, descobrindo rotas sob demanda, mostra convergência mais suave.
-
-Limitações atuais:
-\begin{itemize}
-  \item Apenas 1 réplica por config (piloto); estatísticas finais requerem 10+ réplicas
-  \item Mobilidade não testada (simulação estática)
-  \item Padrão Wi-Fi único (IEEE 802.11g); não testa 802.11ac/ax
-  \item Topologia simplista (grid+random); não testa cenários urbanos reais
-\end{itemize}
 
 \section{Conclusão e Próximos Passos}
 
-Este trabalho endereça lacuna importante em conhecimento sobre escalabilidade comparativa de AODV e OLSR em redes mesh contemporâneas. Análises controladaś em MeshSim fornecem baseline quantitativo para decisões arquiteturais em smart cities.
 
-Resultados preliminares indicam que AODV escalável até dimensões maiores que tradicionalmente esperado, enquanto OLSR mantém vantagens em latência mas com custo de estabilidade (jitter elevado).
-
-Próximas fases:
-\begin{enumerate}
-  \item Completar 240 simulações com 10 réplicas cada (ETA: 2 semanas)
-  \item Validação estatística com IC 95\% e testes de significância
-  \item Geração de matriz de recomendação por escala de rede
-  \item Extensão para cenários com mobilidade e topologias urbanas
-\end{enumerate}
-
-A matriz de recomendação final permitirá engenheiros selecionar protocolo baseado em número esperado de nós, overhead aceitável e requisitos de latência.
 
 \bibliographystyle{sbc}
 \bibliography{Mesh}

@@ -10,6 +10,11 @@ Benyamina, D., Hafid, A., and Gendreau, M. (2012).
 \newblock Wireless mesh networks design -- a survey.
 \newblock {\em IEEE Communications Surveys \& Tutorials}.
 
+\bibitem[Caburlao 2026]{meshsim_github}
+Caburlao, M. (2026).
+\newblock Meshsim -- mesh network simulator.
+\newblock \url{https://github.com/mCaburlao/MeshSim}.
+
 \bibitem[Khalifeh et~al. 2018]{performance_khalifeh_2018}
 Khalifeh, A., Salah, H., Alouneh, S., Al-Assaf, A.~H., and Darabkh, K.~A. (2018).
 \newblock Performance evaluation of digimesh and zigbee wireless mesh networks.
