@@ -1,0 +1,49 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: artigo.aux
+The style file: sbc.bst
+Database file #1: Mesh.bib
+Warning--empty journal in mesh_passos_2005
+Warning--empty journal in wireless_sichitiu_2004
+You've used 7 entries,
+            1935 wiz_defined-function locations,
+            502 strings with 5215 characters,
+and the built_in function-call counts, 2663 in all, are:
+= -- 232
+> -- 175
+< -- 1
++ -- 62
+- -- 62
+* -- 229
+:= -- 511
+add.period$ -- 19
+call.type$ -- 7
+change.case$ -- 66
+chr.to.int$ -- 7
+cite$ -- 9
+duplicate$ -- 91
+empty$ -- 141
+format.name$ -- 69
+if$ -- 480
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 7
+newline$ -- 36
+num.names$ -- 21
+pop$ -- 69
+preamble$ -- 1
+purify$ -- 66
+quote$ -- 0
+skip$ -- 72
+stack$ -- 0
+substring$ -- 84
+swap$ -- 5
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 42
+warning$ -- 2
+while$ -- 14
+width$ -- 0
+write$ -- 82
+(There were 2 warnings)

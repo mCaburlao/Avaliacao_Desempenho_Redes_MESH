@@ -1,0 +1,2 @@
+# Roteamento proativo: mantem rotas via atualizacoes periodicas
+proto olsr

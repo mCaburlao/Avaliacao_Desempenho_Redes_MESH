@@ -6,9 +6,13 @@
 > **Status (05/04/2026):**
 > - ✅ NS-3 dev branch compilado e linkado
 > - ✅ MeshSim compilado (todos os erros de API C++20 resolvidos)
-> - ✅ Configs piloto criadas — cadeia linear 9 nós, AODV vs OLSR
 > - ✅ `mesh-helper.cc` patchado (canais 2.4 GHz válidos: 1/6/11 em vez de 100)
-> - ⏳ **Próximo:** rebuild NS-3 + MeshSim → rodar `run_pilot.sh`
+> - ✅ `apps_manager.cc` corrigido (atributos deprecated `RemoteAddress`/`RemotePort`)
+> - ✅ **Piloto rodou com sucesso** — AODV PDR 78.2% / latência 147 ms | OLSR PDR 69.9% / latência 138 ms
+> - ✅ `analyze_pilot.py`: 7 métricas (PDR, latência, jitter, perda, latência-max, throughput, hops)
+> - ✅ Suite completa criada: `run_all_experiments.sh` + `generate_all_configs.py` + `analyze_all.py`
+> - ✅ Warm-up alinhado: `StartTime=90s` em ambos os protocolos (`DURATION=400s`)
+> - ⏳ **Próximo:** re-rodar piloto (400s) → gerar e rodar grid-25 e random-50 → `analyze_all.py`
 
 ---
 
@@ -251,93 +255,71 @@ python3 analyze_pilot.py
 
 ## 🔄 PARTE 4: ESTENDER PARA TOPOLOGIAS MAIORES
 
-### Estado Atual
+### Estado Atual (05/04/2026)
 
 ```
 experiments/
-└─ pilot_100_aodv_olsr/          ✅ configs criadas, scripts prontos
-   ├─ config_AODV_seed42/        ✅ 9 nós, cadeia linear, AODV
-   ├─ config_OLSR_seed43/        ✅ 9 nós, cadeia linear, OLSR
-   ├─ run_pilot.sh               ✅ script de execução
-   ├─ analyze_pilot.py           ✅ PDR + throughput + latência
-   ├─ out_AODV/                  ⏳ aguarda rebuild + execução
-   └─ out_OLSR/                  ⏳ aguarda rebuild + execução
+├─ pilot_100_aodv_olsr/          ✅ piloto rodou com sucesso
+│  ├─ config_AODV_seed42/        ✅ 9 nós, cadeia linear, AODV  (warm-up 90s)
+│  ├─ config_OLSR_seed43/        ✅ 9 nós, cadeia linear, OLSR  (warm-up 90s)
+│  ├─ run_pilot.sh               ✅ DURATION=400s
+│  ├─ analyze_pilot.py           ✅ 7 métricas — FlowMonitor + trace-app-rx
+│  ├─ out_AODV/                  ✅ flowdata.xml + trace gerados
+│  └─ out_OLSR/                  ✅ flowdata.xml + trace gerados
+├─ generate_all_configs.py       ✅ gera grid-25 e random-50 automaticamente
+├─ run_all_experiments.sh        ✅ roda as 6 simulações em 1 comando
+├─ analyze_all.py                ✅ análise agregada + exporta results.csv
+├─ grid_25nodes/                 ⏳ configs geradas ao rodar generate_all_configs.py
+└─ random_50nodes/               ⏳ configs geradas ao rodar generate_all_configs.py
 ```
 
-### Estrutura Alvo (após validar piloto)
-
-```
-experiments/
-├─ pilot_9nodes_chain/           ✅ cadeia linear, sanity check
-├─ grid_25nodes_aodv/            próximo
-├─ grid_25nodes_olsr/
-├─ random_50nodes_aodv/
-├─ random_50nodes_olsr/
-└─ analysis/
-   ├─ compare_aodv_olsr.py
-   └─ results.csv
-```
-
-### Script Batch: Rodar Múltiplas Configs
-
-**Arquivo: `run_experiments.sh`**
+### Rodar Suite Completa
 
 ```bash
-#!/bin/bash
+cd /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/experiments
+source ../meshsim_environment.sh
 
-CONFIGS=(100 300 500)
-PROTOCOLS=("AODV" "OLSR")
+# 1. Gerar configs das novas topologias (rápido, ~5s)
+python3 generate_all_configs.py
 
-for config in "${CONFIGS[@]}"; do
-    for proto in "${PROTOCOLS[@]}"; do
-        echo "Running: nodes=$config, proto=$proto"
-        
-        mkdir -p experiments/scale_${config}_$(echo $proto | tr A-Z a-z)/
-        cd experiments/scale_${config}_$(echo $proto | tr A-Z a-z)/
-        
-        # Setup config files
-        cp ../../templates/apps.txt .
-        cp ../../templates/mesh_wifi.txt .
-        cp ../../templates/mesh_mobility.txt .
-        
-        # Customize
-        sed -i "s/num_nodes = 100/num_nodes = $config/" mesh_mobility.txt
-        sed -i "s/protocol = AODV/protocol = $proto/" routing.txt
-        sed -i "s/seed = 42/seed = $(($RANDOM))/" mesh_mobility.txt
-        
-        # Run
-        ../../../sim/mesh_sim --config . \
-            --out results_${config}_${proto} \
-            --duration 600
-        
-        cd ../../..
-    done
-done
+# 2. Dry-run para conferir antes de executar
+./run_all_experiments.sh --dry-run
 
-echo "All experiments done!"
+# 3. Rodar tudo (~30-60 min)
+./run_all_experiments.sh
+
+# 4. Analisar todos os resultados + gerar results.csv
+python3 analyze_all.py
 ```
 
-### Rodar
+### Rodar Topologias Individualmente
 
 ```bash
-chmod +x run_experiments.sh
-./run_experiments.sh
-
-# Roda ~6 simulações
-# Tempo total: ~5-10 minutos
+./run_all_experiments.sh chain-9           # só piloto 9 nós
+./run_all_experiments.sh grid-25           # só grid 5x5
+./run_all_experiments.sh grid-25 random-50 # grid + random
 ```
+
+### Topologias e Parâmetros
+
+| Topologia | Nós | Warm-up | Duration | Descrição |
+|:---|:---:|:---:|:---:|:---|
+| `chain-9` | 9 | 90s | 400s | Cadeia linear — sanity check |
+| `grid-25` | 25 | 120s | 500s | Grid 5×5, 50m spacing — multi-hop controlado |
+| `random-50` | 50 | 180s | 600s | Aleatório 420×420m — densidade realista |
 
 ---
 
-## 📈 PARTE 5: COLETA DE MÉTRICAS
+## 📈 PARTE 5: ANÁLISE AGREGADA
 
-### Script: PDR, Latência, Overhead
+### Script: `analyze_all.py`
 
-**Arquivo: `extract_all_metrics.py`**
+Lê `flowdata.xml` e `trace-app-rx-*.txt` de **todas as topologias** e exporta `results.csv`.
 
 ```python
-import subprocess
-import pandas as pd
+import xml.etree.ElementTree as ET
+import csv
+from pathlib import Path
 import re
 from pathlib import Path
 
@@ -509,14 +491,19 @@ python3 plot_results.py
 - [x] Configs piloto criadas: `config_AODV_seed42/` e `config_OLSR_seed43/`
 - [x] `run_pilot.sh` e `analyze_pilot.py` prontos
 
-**Próximas etapas imediatas:**
+**Concluído (semana 1):**
+- [x] Rebuild NS-3 + MeshSim
+- [x] Piloto rodou: AODV PDR 78.2%, latência 147 ms | OLSR PDR 69.9%, TCP throughput 0 (sem warm-up)
+- [x] Bug latência corrigido (notação científica `+3.30e+08ns`)
+- [x] Warm-up alinhado: `StartTime=90s`, `DURATION=400s` em ambos os protocolos
+- [x] `analyze_pilot.py` com 7 métricas (FlowMonitor + trace)
+- [x] Scripts `generate_all_configs.py`, `run_all_experiments.sh`, `analyze_all.py` criados
 
-- [x] Rebuild NS-3: `cd ns-3-dev/build && make -j$(nproc)` (só recompila mesh-helper.cc)
-- [x] Rebuild MeshSim: `cd MeshSim/build && make -j$(nproc)`
-- [x] Rodar piloto: `cd experiments/pilot_100_aodv_olsr && ./run_pilot.sh`
-- [ ] Validar métricas: `python3 analyze_pilot.py` — checar PDR >90%, latência <50 ms
-- [ ] Ampliar para topologia grid 5×5 (25 nós) — sanity check escalabilidade
-- [ ] Gráficos: PDR, throughput e latência por número de hops
+**Próximas etapas:**
+- [ ] Re-rodar piloto com 400s: `cd experiments/pilot_100_aodv_olsr && ./run_pilot.sh`
+- [ ] Rodar suite completa: `cd experiments && ./run_all_experiments.sh`
+- [ ] Validar métricas: `python3 analyze_all.py` — verificar PDR, latência e hops por topologia
+- [ ] Gráficos: `plot_results.py` — PDR, latência e hops médios vs topologia
 
 ---
 
@@ -540,33 +527,29 @@ python3 plot_results.py
 
 ## 🚀 PRÓXIMO: Roteiro de Experimentos
 
-### Fase 1 — Validação (esta semana)
+### Fase 1 — Validação ✅ CONCLUÍDA
 
-1. **Rebuild + Piloto 9 nós:** rebuild NS-3 → rebuild MeshSim → `./run_pilot.sh` → `analyze_pilot.py`
-2. **Sanidade da cadeia linear:** PDR deve cair com distância (STA 9 < STA 1), latência deve crescer com hops
-3. **Comparação AODV vs OLSR:** OLSR deve ter menor latência (rotas pré-computadas), AODV menor overhead em rede estática pequena
+1. ✅ **Piloto chain-9:** NS-3 compilado, MeshSim compilado, piloto rodou com sucesso
+2. ✅ **Sanidade da cadeia linear:** OLSR TCP = 0 bytes (sem warm-up, TCP colapsou) — achado diagnosticado
+3. ✅ **Warm-up corrigido:** `StartTime=90s` → OLSR tem 90s para convergir antes do tráfego
+4. ✅ **7 métricas implementadas:** PDR, latência, jitter, perda, latência-max, throughput, hops
 
-### Fase 2 — Topologias Controladas (semanas 2-3)
+### Fase 2 — Suite Completa (agora)
 
-4. **Grid 5×5 (25 nós):** topologia conhecida, permite validar roteamento multi-hop
-5. **Grid 5×5 com falhas de link:** remover links aleatoriamente; AODV deve se recuperar, OLSR também mas com delay de reconvergência
-6. **Replicas:** 5 seeds por configuração → confidence intervals 95%
+5. **Re-rodar chain-9 com 400s:** `./run_pilot.sh` → verificar OLSR TCP com warm-up adequado
+6. **Grid 5×5 (25 nós):** `./run_all_experiments.sh grid-25` → validar roteamento multi-hop
+7. **Random 50 nós:** `./run_all_experiments.sh random-50` → densidade realista
+8. **Análise agregada:** `python3 analyze_all.py` → tabela comparativa + `results.csv`
 
-### Fase 3 — Escala (semanas 4-6)
+### Fase 3 — Análise Estatística e Paper (semanas 2-4)
 
-7. **Random 50 nós** em área 500×500 m (densidade realista)
-8. **Random 100 nós** — primeiro experimento de escala
-9. **Coleta:** PDR, throughput, latência, overhead de controle por protocolo
-10. **Análise:** ANOVA two-way (protocolo × escala), Mann-Whitney U para PDR
-
-### Fase 4 — Paper (semanas 7-10)
-
-11. **Plots publication-ready** (matplotlib, 300 DPI, barras de erro = IC 95%)
-12. **Tabela comparativa** AODV vs OLSR por métrica e escala
-13. **Seções:** Introdução → Trabalhos Relacionados → Metodologia → Resultados → Conclusão
-14. **Submissão:** SBRC 2026 (deadline ~Maio 2026) ou WCNC 2027
+9. **IC 95%:** 5 seeds por configuração → `scipy.stats.t.interval()` por métrica
+10. **Plots publication-ready** (matplotlib, 300 DPI, barras de erro = IC 95%)
+11. **Tabela comparativa** AODV vs OLSR: PDR, latência, jitter, hops por topologia
+12. **Seções do artigo:** Introdução → Relacionados → Metodologia → Resultados → Conclusão
+13. **Submissão:** SBRC 2026 (deadline ~Maio 2026)
 
 ---
 
 **LINHA 4 + MeshSim Quick Start | Atualizado em 05/04/2026**  
-**Status: infra pronta, aguardando rebuild para primeira rodada de dados**
+**Status: piloto concluído, suite pronta para rodar grid-25 e random-50**

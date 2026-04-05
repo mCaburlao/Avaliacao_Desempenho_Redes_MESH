@@ -1,0 +1,3 @@
+# Grid 5x5: 25 nos mesh, 50m de espacamento
+# No 0 = backhaul (canto inferior esquerdo)
+ns3::GridPositionAllocator MinX=0 MinY=0 DeltaX=50 DeltaY=50 GridWidth=5

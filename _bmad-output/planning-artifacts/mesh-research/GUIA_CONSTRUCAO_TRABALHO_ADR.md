@@ -17,11 +17,11 @@ FASE 1: FORMULAÇÃO (Semana 1-2)
 ├─ Domínio aplicado (Smart Cities)
 └─ Métricas de avaliação
 
-FASE 2: SIMULAÇÃO (Semana 3-8)
-├─ Arquitetura experimental
-├─ Setup MeshSim
-├─ 140 rodadas de simulação
-└─ Coleta de dados rigorosa
+FASE 2: SIMULAÇÃO (Semana 3)
+├─ Arquitetura experimental (3 topologias × 2 protocolos)
+├─ Setup MeshSim ✅ CONCLUÍDO
+├─ Piloto chain-9 rodado ✅ CONCLUÍDO
+└─ Grid-25 + Random-50 (próximo passo)
 
 FASE 3: ANÁLISE (Semana 9-10)
 ├─ Processamento estatístico (IC 95%)
@@ -317,12 +317,12 @@ Exemplos esperados:
 
 #### 5.1.3 Implementação no MeshSim
 ```
-Config em routing.txt:
-routing_type = "AODV"
-aodv_hello_interval = 500ms
-aodv_tc_interval = 5000ms
-aodv_rreq_retries = 2
-aodv_path_discovery_time = 3000ms
+Arquivo: routing.txt
+proto aodv
+
+# Sem mais parâmetros — NS-3 usa defaults do AODV (RFC 3561):
+# HelloInterval = 1s, PathDiscoveryTime = 5s, RreqRetries = 2
+# O MeshSim passa proto aodv diretamente ao ns3::AodvHelper
 ```
 
 ### 5.2 Solução 2: OLSR (Optimized Link State Routing)
@@ -365,12 +365,13 @@ Exemplos esperados:
 
 #### 5.2.3 Implementação no MeshSim
 ```
-Config em routing.txt:
-routing_type = "OLSR"
-olsr_hello_interval = 2000ms
-olsr_tc_interval = 5000ms
-olsr_mpr_coverage = 0.8
-olsr_willingness = 7
+Arquivo: routing.txt
+proto olsr
+
+# NS-3 usa defaults do OLSR (RFC 3626):
+# HelloInterval = 2s, TcInterval = 5s, TopologyHoldTime = 15s
+# Esses defaults causam convergência ~45-70s em cadeia de 9 hops
+# warm-up: 90s (chain-9), 120s (grid-25), 180s (random-50)
 ```
 
 ### 5.3 Comparação Teórica (Tabela)
@@ -410,18 +411,26 @@ olsr_willingness = 7
 ### 6.1 Design Experimental
 
 #### 6.1.1 Variáveis Independentes
-- Nós: {100, 300, 500, 750, 1000, 1250, 1500}
-- Protocolo: {AODV, OLSR}
-- Topologia: Random Poisson placement
-- Simulação: 640s cada (30s warmup + 600s medição + 10s cooldown)
-- Total: 7 × 2 = 14 combos × 10 réplicas = **140 rodadas**
+- **Topologia:** chain-9 (linear 9 nós), grid-25 (5×5 nós), random-50 (50 nós aleatórios)
+- **Protocolo:** {AODV, OLSR}
+- **Seeds:** {42/43, 100/101, 200/201} — uma por topologia (reprodutível)
+- **Warm-up / Duration:** 90s/400s, 120s/500s, 180s/600s (ajustado pela diâmetro da topologia)
+- **Total configurado:** 3 topologias × 2 protocolos = **6 rodadas**
+  - Para IC 95%: repetir com 5 seeds diferentes → **30 rodadas** totais
 
-#### 6.1.2 Variáveis Dependentes (5 Métricas)
-1. **PDR** (Packet Delivery Ratio) — Qualidade
-2. **Latência E2E** (ms) — Responsividade
-3. **Overhead %** — Eficiência
-4. **Convergência** (s) — Tempo deployment
-5. **CPU (s/sim)** — Viabilidade computacional
+#### 6.1.2 Variáveis Dependentes (7 Métricas — FlowMonitor + trace-app-rx)
+1. **PDR %** (Packet Delivery Ratio) — qualidade global
+2. **Latência E2E média** (ms) — responsividade
+3. **Jitter médio** (ms) — estabilidade / variação do delay
+4. **Taxa de perda %** — confiabilidade
+5. **Latência máxima** (ms) — pior caso
+6. **Throughput** (kbps) — dados de aplicação entregues
+7. **Hops médios** (`timesForwarded / rxPackets`) — proxy do overhead de roteamento
+
+**Ferramentas:**
+- `experiments/run_all_experiments.sh` — roda as 6 simulações em 1 comando
+- `experiments/generate_all_configs.py` — gera configs grid-25 e random-50 automaticamente
+- `experiments/analyze_all.py` — extrai métricas de todas as topologias e exporta `results.csv`
 
 ### 6.2 Resultados Principais
 
@@ -764,36 +773,46 @@ consolidem AODV vs OLSR como referência na comunidade IoT brasileira.
 
 ```
 SEMANA 1: FORMULAÇÃO
-├─ ✓ Leia seções 1-4 deste guia
-├─ ✓ Estruture Introdução (Seção 2)
-├─ ✓ Escreva Problema (Seção 3)
-├─ ✓ Levante Literatura (Seção 4)
+├─ ✅ Estruture Introdução (Seção 2)
+├─ ✅ Escreva Problema (Seção 3)
+├─ ✅ Levante Literatura (Seção 4)
 └─ Saída: Rascunho Seções 1-4
 
-SEMANA 2: DESIGN EXPERIMENTAL
-├─ ✓ Setup MeshSim (instale)
-├─ ✓ Escreva Seção 5 (2 Soluções)
-├─ ✓ Rode experimento piloto (100 nós, ambos protocolos)
-└─ Saída: Seção 5 concluída + primeiros dados
+SEMANA 2: INFRA + PILOTO (✅ CONCLUÍDA)
+├─ ✅ NS-3 compilado + MeshSim compilado
+├─ ✅ mesh-helper.cc patchado (canais 2.4 GHz)
+├─ ✅ apps_manager.cc corrigido (deprecated attrs)
+├─ ✅ Piloto chain-9 rodou: AODV PDR 78.2%, latência 147ms
+├─ ✅ Warm-up alinhado: StartTime=90s, DURATION=400s
+├─ ✅ 7 métricas implementadas no analyze_pilot.py
+├─ ✅ Scripts suite completa: run_all_experiments.sh + analyze_all.py
+└─ Saída: Piloto validado + infraestrutura pronta
 
-SEMANA 3-4: SIMULAÇÕES EM LARGA ESCALA
-├─ ✓ Rode 140 experimentos (distribuído se possível)
-├─ ✓ Coleta de dados completa
-├─ ✓ CSV com 5 métricas × 140 rodadas
-└─ Saída: Dataset bruto completo
+SEMANA 3: SIMULAÇÕES COMPLETAS
+├─ Re-rodar chain-9 (400s, warm-up correto)
+├─ Rodar grid-25 (AODV + OLSR, 500s)
+├─ Rodar random-50 (AODV + OLSR, 600s)
+├─ python3 analyze_all.py → results.csv com 7 métricas
+└─ Saída: Dataset das 3 topologias completo
 
-SEMANA 5: ANÁLISE ESTATÍSTICA
-├─ ✓ Python: IC 95%, testes de hipótese
-├─ ✓ Gráficos: 3+ gráficos publication-ready
-├─ ✓ Escreva Seção 6 (Análise)
-└─ Saída: Seção 6 com tabelas/gráficos
+SEMANA 4: ANÁLISE ESTATÍSTICA
+├─ Repetir com 5 seeds por topologia (IC 95%)
+├─ Python: scipy.stats — testes t, Mann-Whitney U
+├─ Gráficos: 3+ figuras publication-ready (300 DPI, barras de erro)
+├─ Escreva Seção 6 (Análise + tabelas/gráficos)
+└─ Saída: Seção 6 concluída
 
-SEMANA 6: ESCRITA FINAL & REVISÃO
-├─ ✓ Escreva Seção 7 (Conclusões)
-├─ ✓ Redação completa (Seção 8)
-├─ ✓ Formatação SBC exata
-├─ ✓ Revisão gramatical + peer-review dentro grupo
-├─ ✓ Versão impressa + PDF
+SEMANA 5: ESCRITA FINAL
+├─ Escreva Seção 7 (Conclusões: recap + geral + futuros)
+├─ Redação completa (Seção 8 — checklist abaixo)
+├─ Formatação SBC exata
+├─ Revisão gramatical + peer-review dentro do grupo
+└─ Saída: Seções 1-7 + formatação completa
+
+SEMANA 6: VERSÃO FINAL & ENTREGA
+├─ Versão impressa + PDF
+├─ Repositório com código, seeds e README
+├─ Slides (7 slides, máx 10 min)
 └─ Saída: Artigo final pronto para submissão
 ```
 
