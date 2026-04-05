@@ -151,14 +151,14 @@ bool MeshSim::Run()
 bool MeshSim::CreateChannels()
 {
 	// Setup meshPhy helper
-	meshPhy = YansWifiPhyHelper::Default();
+	meshPhy = ns3::YansWifiPhyHelper();
 	YansWifiChannelHelper meshChannelHelper;
 	if (!configureWifiChannel(&meshChannelHelper, meshWifiConfig))
 		return false;
 	meshPhy.SetChannel(meshChannelHelper.Create());
 
 	// Setup staPhy helper
-	staPhy = YansWifiPhyHelper::Default();
+	staPhy = ns3::YansWifiPhyHelper();
 	YansWifiChannelHelper staChannelHelper;
 	if (!configureWifiChannel(&staChannelHelper, apStaWifiConfig))
 		return false;

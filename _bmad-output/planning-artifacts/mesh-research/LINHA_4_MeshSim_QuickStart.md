@@ -75,21 +75,22 @@ cd ../MeshSim  # Ou seja local onde tem MeshSim
 
 # IMPORTANTE: Manter NS3_DIR em PATH
 # Se fechou terminal, execute novamente:
-# export NS3_DIR=/caminho/para/ns-3-dev/build
-# export PKG_CONFIG_PATH=$NS3_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
+export NS3_DIR=/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/ns-3-dev/build
+export LD_LIBRARY_PATH=$NS3_DIR/lib:$LD_LIBRARY_PATH
 
 # Compilar
 mkdir build && cd build
-# cmake -DNS3_USE_BUILD_TREE=ON \
-#   -DNS3_DIR=$NS3_DIR \
-#   -DCMAKE_PREFIX_PATH=$NS3_DIR \
-#   -DPKG_CONFIG_PATH=$NS3_DIR/lib/pkgconfig \
-#   -DNS3_BUILD_TREE=$NS3_DIR/build \
-#   ..
+
+# Caso precise recompilar o projeto:
+# cd build
+# rm -rf *
+
 cmake \
   -DNS3_USE_BUILD_TREE=ON \
   -DNS3_BUILD_TREE=$NS3_DIR \
+  -DCMAKE_BUILD_TYPE=Release \
   ..
+
 make -j8  # 8 threads pois tenho 8 cores (pode testar com "nproc" no terminal)
 
 # Resultado: ./sim/mesh_sim (executável)
@@ -98,17 +99,27 @@ make -j8  # 8 threads pois tenho 8 cores (pode testar com "nproc" no terminal)
 ### Teste Básico
 
 ```bash
-# Voltar ao diretório principal
-cd ..
+# 1. Ir para onde o executável foi compilado
+cd /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim/build/sim
 
-# Rodar simulação example (deve existir)
-./scripts/stagesim examples/conf/ out_test/
+# 2. Configurar LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/ns-3-dev/build/lib:$LD_LIBRARY_PATH
 
-# Checklist:
-# [ ] Compilou sem erros
-# [ ] Executável ./sim/mesh_sim existe
-# [ ] Resultado em out_test/ (PCAP files)
+# 3. Copiar as configs de exemplo e criar pasta de saída
+cp -r ../../examples/conf .
+mkdir -p out
+
+# 4. Verificar o help
+./mesh_sim --help
+
+# 5. Rodar a simulação usando defaults: 9 mesh nodes, 9 STAs, 60s
+./mesh_sim conf out
 ```
+
+Checklist:
+- [x] Compilou sem erros
+- [x] Executável ./sim/mesh_sim existe
+- [ ] Resultado em out_test/ (PCAP files)
 
 ---
 

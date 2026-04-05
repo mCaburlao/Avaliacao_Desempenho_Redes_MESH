@@ -79,24 +79,27 @@ set(ns3_libs
 if(NOT NS3_USE_BUILD_TREE)
   ns3_cartesian_product(ns3_include_suffixes "ns" "${ns3_version_names}")
   find_path(ns3_include_dir
-    NAME ns3/core-module.h
+    NAME ns3/address.h
     PATH_SUFFIXES ${ns3_include_suffixes}
   )
 else()
   find_path(ns3_include_dir
-    NAME ns3/core-module.h
-    PATHS ${NS3_BUILD_TREE}
+    NAME ns3/address.h
+    PATHS ${NS3_BUILD_TREE}/include
     NO_DEFAULT_PATH
   )
 endif()
-message(-- " ns3 include directory: ${ns3_include_dir}")
+message("-- ns3 include directory: ${ns3_include_dir}")
 
 # Find all the NS3 libraries
 foreach(ns3_lib ${ns3_libs})
   ns3_cartesian_product(libnames "ns" "${ns3_version_names}")
   ns3_cartesian_product(libnames "${libnames}" "-")
   ns3_cartesian_product(libnames "${libnames}" ${ns3_lib})
-  ns3_cartesian_product(libnames "${libnames}" "-debug;-optimized")
+  # Keep base names (no suffix) and add suffixed variants
+  set(libnames_base ${libnames})
+  ns3_cartesian_product(libnames "${libnames}" "-debug;-optimized;-default")
+  list(APPEND libnames ${libnames_base})
   if(NOT NS3_USE_BUILD_TREE)
     find_library(NS3_LOCATION_${ns3_lib}
       NAMES ${libnames}

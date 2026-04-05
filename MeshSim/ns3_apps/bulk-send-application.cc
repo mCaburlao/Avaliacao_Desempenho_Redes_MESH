@@ -162,7 +162,7 @@ void MeshSimBulkSendApplication::StopApplication (void) // Called at time specif
 {
   NS_LOG_FUNCTION (this);
 
-  if (m_socket != 0)
+  if (m_socket != nullptr)
     {
       m_socket->Close ();
       m_connected = false;

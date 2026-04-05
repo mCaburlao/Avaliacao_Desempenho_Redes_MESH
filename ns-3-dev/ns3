@@ -1960,17 +1960,17 @@ def sudo_step(args, target_to_run, configure_post_build: set):
 def refuse_run_as_root():
     # Check if the user is root and refuse to run
     username = os.getenv("USER", "")
-    if username == "root":
-        raise Exception(
-            "Refusing to run as root. --enable-sudo will request your password when needed"
-        )
+    # if username == "root":
+        # raise Exception(
+        #     "Refusing to run as root. --enable-sudo will request your password when needed"
+        # )
 
 
 def main():
     global out_dir, run_verbose
 
     # Refuse to run with sudo
-    refuse_run_as_root()
+    # refuse_run_as_root()  # Disabled for WSL usage
 
     # Enable colorized output for CMake and GCC/Clang
     if os.getenv("CLICOLOR") is None:

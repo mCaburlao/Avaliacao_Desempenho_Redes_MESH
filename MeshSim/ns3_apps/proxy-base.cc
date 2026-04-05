@@ -279,7 +279,7 @@ void ProxyBase::StopApplication ()     // Called at time specified by Stop
 
   // Clean up transmit sockets
   for (int i = 0; i < TX_SLOT_COUNT; ++i) {
-    if(m_txSlots[i].sock != 0)
+    if(m_txSlots[i].sock != nullptr)
       {
         m_txSlots[i].sock->Close ();
       }
