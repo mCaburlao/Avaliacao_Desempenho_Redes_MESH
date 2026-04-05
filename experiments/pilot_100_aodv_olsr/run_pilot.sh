@@ -13,7 +13,7 @@ PILOT_DIR=$BASE/experiments/pilot_100_aodv_olsr
 
 MESH_SIZE=9
 STA_SIZE=9
-DURATION=60   # segundos (piloto rapido; use 300 para experimento completo)
+DURATION=400   # 90s warm-up + 300s de medição
 
 # --- Validacoes ---
 if [ ! -f "$MESHSIM" ]; then

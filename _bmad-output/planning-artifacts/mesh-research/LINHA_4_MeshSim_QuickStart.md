@@ -173,6 +173,22 @@ $MESHSIM --meshSize=9 --staSize=9 --simDuration=60 \
 cd $PILOT && ./run_pilot.sh
 ```
 
+Para rodar a simulação novamente:
+```bash
+# Apagar resultados anteriores para não misturar com a nova rodada
+rm -rf experiments/pilot_100_aodv_olsr/out_AODV experiments/pilot_100_aodv_olsr/out_OLSR
+
+# Carregar variáveis de ambiente
+source /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/meshsim_environment.sh
+
+# Rodar o piloto (vai demorar mais — ~5–15 min dependendo da máquina)
+cd /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/experiments/pilot_100_aodv_olsr
+./run_pilot.sh
+
+# Após concluir, analisar
+python3 analyze_pilot.py
+```
+
 ### Validar Resultados
 
 ```bash

@@ -19,7 +19,7 @@ from pathlib import Path
 
 BASE = Path("/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH")
 PILOT = BASE / "experiments/pilot_100_aodv_olsr"
-DURATION = 60  # segundos simulados
+DURATION = 400  # segundos simulados
 
 
 def _ns3_time_to_ns(attr_str):

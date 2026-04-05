@@ -3,7 +3,7 @@
 # Backhaul: 10.1.1.1
 
 # UDP echo de todos os wiredSTAs para o backhaul
-defaults StartTime=10s
+defaults StartTime=90s
 echo1-cl    10.1.4.1    echo_client
 echo2-cl    10.1.4.2    echo_client
 echo3-cl    10.1.4.3    echo_client
@@ -25,7 +25,7 @@ echo8-srv   10.1.1.1    echo_server
 echo9-srv   10.1.1.1    echo_server
 
 # TCP file transfer: backhaul -> STA mais distante (max hops)
-defaults StartTime=15s
+defaults StartTime=95s
 file9-srv   10.1.1.1    file_server
 file9-cl    10.1.4.9    client
 
