@@ -1,0 +1,8 @@
+# Random topology: 100 nodes in 1000x1000m area
+mobility_type = UniformDiscPositionAllocator
+min_x = 0.0
+max_x = 1000.0
+min_y = 0.0
+max_y = 1000.0
+num_nodes = 100
+seed = 42

@@ -1,0 +1,9 @@
+protocol = AODV
+
+# Protocol-specific parameters
+aodv_hello_interval = 1.0
+aodv_active_route_timeout = 180
+aodv_rreq_retries = 3
+
+olsr_hello_interval = 2.0
+olsr_tc_interval = 5.0

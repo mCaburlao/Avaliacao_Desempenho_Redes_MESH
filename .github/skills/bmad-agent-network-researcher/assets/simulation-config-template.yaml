@@ -1,0 +1,169 @@
+# Simulator Configuration Template
+
+# This YAML file parametrizes your simulation.
+# Modify values here WITHOUT touching the simulator code.
+# Each scenario gets its own config file for reproducibility.
+
+---
+
+# METADATA
+metadata:
+  scenario_name: "Static Network Baseline — AODV vs RPL"
+  description: "50 nodes, no mobility, UDP CBR traffic"
+  experiment_batch: batch_001
+  created_date: 2026-04-02
+  author: "[Your Name]"
+  notes: "Baseline scenario to measure protocol overhead in ideal conditions"
+
+# RANDOM SEED (Critical for Reproducibility!)
+random_seed: 42
+notes_seed: "Same seed must produce same results. Change per run if you want multiple replicates."
+
+# NETWORK TOPOLOGY
+network:
+  simulator: "ns-3"  # [options: ns-3, omnet++, simpy, custom]
+  
+  topology:
+    type: "grid"  # [options: grid, random, mesh, custom]
+    dimensions: "10x5"  # [for grid] or "custom topology file"
+    area_x_meters: 1000
+    area_y_meters: 1000
+  
+  nodes:
+    count: 50
+    transmission_range_meters: 250
+    interference_model: "two_ray_ground"  # [options: friis, two_ray_ground, shadowing]
+    antenna_height_meters: 1.5
+
+# MOBILITY
+mobility:
+  model: "static"  # [options: static, random_waypoint, gauss-markov, disaster_sim]
+  
+  # For random_waypoint:
+  random_waypoint:
+    speed_min_ms: 1.0
+    speed_max_ms: 5.0
+    pause_time_seconds: 5
+    min_boundary_meters: 50
+
+  # For gauss_markov:
+  gauss_markov:
+    mean_angle_degrees: 45
+    mean_speed_ms: 3.0
+
+  # For disaster_sim (custom):
+  disaster_sim:
+    churn_rate: 0.05  # 5% nodes appear/disappear per second
+    nodes_come_online: 5  # New nodes per minute
+    nodes_go_offline: 3   # Nodes crash per minute
+
+# ROUTING PROTOCOLS
+routing:
+  protocol_left: "AODV"    # Protocol to run
+  protocol_right: "RPL"    # Protocol to compare against
+  
+  aodv:
+    active_route_timeout_ms: 3000
+    hello_interval_ms: 1000
+    rreq_retries: 2
+    net_traversal_time_ms: 40
+  
+  rpl:
+    trickle_imin_ms: 8
+    trickle_imax_ms: 256
+    dio_redundancy_constant: 10
+    rank_increase: 256
+
+# TRAFFIC PATTERNS
+traffic:
+  type: "cbr"  # [options: cbr, poisson, bursty, real_trace]
+  
+  cbr:  # Constant Bit Rate
+    source_nodes: [0, 1, 2, 3, 4]  # Which nodes send?
+    destination_nodes: [45, 46, 47, 48, 49]  # Where to?
+    packet_size_bytes: 512
+    interval_between_packets_ms: 100  # 10 pps per source
+    start_time_seconds: 1
+    stop_time_seconds: 60
+    protocol: "UDP"
+
+# SIMULATION CONTROL
+simulation:
+  duration_seconds: 60
+  time_step_ms: 0.1  # Simulation tick
+  warm_up_seconds: 5  # Discard first N seconds (protocol initialization)
+  num_runs: 1  # Number of independent replicas (vary seed for each)
+
+# OUTPUT / LOGGING
+output:
+  output_directory: "./results/scenario_001/"
+  
+  logs:
+    enabled: true
+    packet_trace: true  # Detailed packet-level events
+    routing_events: true  # Route discoveries, repairs
+    topology_changes: true  # Link up/down
+    log_filename: "simulation.log"
+  
+  results:
+    protocol_a_file: "protocol_aodv_results.csv"
+    protocol_b_file: "protocol_rpl_results.csv"
+    packet_delivery_file: "pdr_results.csv"
+    latency_file: "latency_results.csv"
+    overhead_file: "overhead_results.csv"
+  
+  format: "csv"  # [options: csv, json, sqlite]
+  
+  csv_columns:
+    - timestamp
+    - source_node
+    - destination_node
+    - packet_size
+    - latency_ms
+    - delivered  # true/false
+    - routing_hops
+    - is_control_packet  # true if routing overhead
+
+# VALIDATION & SANITY CHECKS
+validation:
+  check_topology_connected: true  # Warn if not all nodes reachable
+  check_simulation_completed: true  # Ensure full duration ran
+  max_latency_warning_ms: 10000  # Flag suspicious outliers
+  min_pdr_warning_percent: 50  # Flag if delivery ratio too low
+
+# REPRODUCIBILITY METADATA
+reproducibility:
+  git_commit: "[Will be filled by analysis script]"
+  simulator_version: "ns-3.39"
+  platform: "[e.g., Linux 5.15, Windows 10]"
+  python_version: "3.10"
+  timestamp_started: "[Will be filled at runtime]"
+  timestamp_completed: "[Will be filled at runtime]"
+  total_runtime_seconds: "[Will be filled at runtime]"
+
+---
+
+# INSTRUCTIONS FOR USE
+
+# 1. Copy this file:
+#    cp simulation-config-template.yaml config_scenario_001.yaml
+
+# 2. Modify values (don't change structure):
+#    - Change seed if replicating
+#    - Adjust nodes, mobility, traffic
+#    - Point to correct output directory
+
+# 3. Run simulator:
+#    python main.py --config config_scenario_001.yaml --output ./results/scenario_001/
+
+# 4. Check output:
+#    ls ./results/scenario_001/
+#    # Should contain: protocol_aodv_results.csv, protocol_rpl_results.csv, simulation.log
+
+# 5. Version control:
+#    git add config_scenario_001.yaml
+#    git commit -m "Scenario 1: Static network baseline"
+
+# 6. For reproducibility:
+#    - Same config file + same random_seed = same results
+#    - Different seed in config = different replica (same scenario, different randomness)

@@ -1,0 +1,21 @@
+Invalid command-line argument: --config
+ [Program Options] [General Arguments]
+
+Program Options:
+    --simDuration:      Duration of the simulation (in sec) [60]
+    --meshSize:         Number of mesh nodes [9]
+    --staSize:          Number of STA nodes [9]
+    --enablePcap:       Generate PCAP output files [false]
+    --promiscuousMode:  Promiscuous mode for PCAPs [false]
+    --useRadioTap:      Enable RadioTap headers in PCAP files [false]
+    --cwmin:            Contention window minimum [9999]
+
+General Arguments:
+    --PrintGlobals:              Print the list of globals.
+    --PrintGroups:               Print the list of groups.
+    --PrintGroup=[group]:        Print all TypeIds of group.
+    --PrintTypeIds:              Print all TypeIds.
+    --PrintAttributes=[typeid]:  Print all attributes of typeid.
+    --PrintVersion:              Print the ns-3 version.
+    --PrintHelp:                 Print this help message.
+

@@ -1,0 +1,3 @@
+# UDP traffic: node 0 → node 99
+# Start: 10s, Duration: 590s
+0/1000@0:99 1000 10.0 590.0

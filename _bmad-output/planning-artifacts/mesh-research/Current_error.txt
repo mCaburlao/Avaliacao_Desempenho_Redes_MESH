@@ -1,0 +1,43 @@
+root@LAPTOP-CGI3BNQL:/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/build# cd /mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/build
+make clean
+make -j8 2>&1 | tee build_log.txt
+[ 13%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/onoff-application.cc.o
+[ 13%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/bulk-send-application.cc.o
+[ 13%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/proxy-base.cc.o
+[ 26%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/rq-decoder.cc.o
+[ 26%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/packet-sink.cc.o
+[ 26%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/rq-header.cc.o
+[ 34%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/rq-encoder.cc.o
+[ 34%] Building CXX object ns3_apps/CMakeFiles/ns3_apps.dir/timed-proxy.cc.o
+[ 39%] Linking CXX static library libns3_apps.a
+[ 39%] Built target ns3_apps
+[ 47%] Building CXX object sim/CMakeFiles/mesh_sim.dir/apps_config.cc.o
+[ 47%] Building CXX object sim/CMakeFiles/mesh_sim.dir/apps_manager.cc.o
+[ 56%] Building CXX object sim/CMakeFiles/mesh_sim.dir/main.cc.o
+[ 56%] Building CXX object sim/CMakeFiles/mesh_sim.dir/app_rx_cb.cc.o
+[ 60%] Building CXX object sim/CMakeFiles/mesh_sim.dir/app_rq_dec_cb.cc.o
+[ 65%] Building CXX object sim/CMakeFiles/mesh_sim.dir/io_utils.cc.o
+[ 69%] Building CXX object sim/CMakeFiles/mesh_sim.dir/mesh_sim.cc.o
+[ 73%] Building CXX object sim/CMakeFiles/mesh_sim.dir/mobility_config.cc.o
+[ 78%] Building CXX object sim/CMakeFiles/mesh_sim.dir/ns3_utils.cc.o
+[ 82%] Building CXX object sim/CMakeFiles/mesh_sim.dir/ns3object_config.cc.o
+[ 86%] Building CXX object sim/CMakeFiles/mesh_sim.dir/progress_report.cc.o
+[ 91%] Building CXX object sim/CMakeFiles/mesh_sim.dir/routing_config.cc.o
+[ 95%] Building CXX object sim/CMakeFiles/mesh_sim.dir/wifi_config.cc.o
+/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/sim/ns3_utils.cc: In function ‘ns3::WifiStandard GetWifiStandardFromString(std::string)’:
+/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/sim/ns3_utils.cc:20:38: error: ‘WIFI_STANDARD_80211n_2_4GHZ’ is not a member of ‘ns3::WifiStandard’
+   20 |                 return WifiStandard::WIFI_STANDARD_80211n_2_4GHZ;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/sim/ns3_utils.cc:22:38: error: ‘WIFI_STANDARD_80211n_5GHZ’ is not a member of ‘ns3::WifiStandard’
+   22 |                 return WifiStandard::WIFI_STANDARD_80211n_5GHZ;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/sim/ns3_utils.cc:26:38: error: ‘WIFI_STANDARD_80211ax_2_4GHZ’ is not a member of ‘ns3::WifiStandard’
+   26 |                 return WifiStandard::WIFI_STANDARD_80211ax_2_4GHZ;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/MeshSim-master/sim/ns3_utils.cc:28:38: error: ‘WIFI_STANDARD_80211ax_5GHZ’ is not a member of ‘ns3::WifiStandard’
+   28 |                 return WifiStandard::WIFI_STANDARD_80211ax_5GHZ;
+      |                                      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+make[2]: *** [sim/CMakeFiles/mesh_sim.dir/build.make:188: sim/CMakeFiles/mesh_sim.dir/ns3_utils.cc.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [CMakeFiles/Makefile2:116: sim/CMakeFiles/mesh_sim.dir/all] Error 2
+make: *** [Makefile:91: all] Error 2
