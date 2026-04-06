@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  6 APR 2026 14:27
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  6 APR 2026 14:42
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -316,39 +316,69 @@ Underfull \hbox (badness 1454) in paragraph at lines 37--38
 [1
 
 {c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}] [2]
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 98.
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 87.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [3]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 153.
- (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-Underfull \hbox (badness 5667) in paragraph at lines 153--158
-\OT1/ptm/m/n/12 co-bre ro-tas sob de-manda via \OT1/ptm/m/it/12 Route Re-quest \OT1/ptm/m/n/12 (RREQ) e \OT1/ptm/m/it/12 Route Re-ply
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
+[]\OT1/ptm/m/n/12 O mo-delo de propaga[][]ao do back-bone mesh adota espa[]o li-
  []
 
-[4]
-Underfull \hbox (badness 1502) in paragraph at lines 199--201
-[]\OT1/ptm/b/n/12 Hops m[]edios\OT1/ptm/m/n/12 : proxy de overhead de ro-te-a-mento, cal-cu-lado como $[] \OT1/cmr/m/n/12 =
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
+\OT1/ptm/m/n/12 vre (\OT1/pcr/m/n/12 ns3::ConstantSpeedPropagationDelayModel\OT1/ptm/m/n/12 ) na ca-mada
  []
 
-(./artigo.bbl [5]) [6] (./artigo.aux)
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--120
+\OT1/ptm/m/n/12 de atraso, sem mo-de-los de perda adi-ci-o-nais nessa in-ter-face. Contrasta-
+ []
+
+
+Underfull \hbox (badness 4582) in paragraph at lines 119--120
+\OT1/ptm/m/n/12 se com o ca-nal AP--STA, que in-cor-pora atenua[][]ao por dist[]ancia atrav[]es de
+ []
+
+
+Underfull \hbox (badness 2027) in paragraph at lines 123--124
+\OT1/ptm/m/n/12 Ambos os pro-to-co-los encontram-se ins-ta-la-dos com par[]ametros padr[]ao do NS-3.
+ []
+
+
+Underfull \hbox (badness 2865) in paragraph at lines 123--124
+\OT1/ptm/m/n/12 O AODV (\OT1/ptm/m/it/12 Ad hoc On-Demand Dis-tance Vec-tor\OT1/ptm/m/n/12 ) fun-ci-ona como pro-to-colo re-
+ []
+
+
+Underfull \hbox (badness 2409) in paragraph at lines 123--124
+\OT1/ptm/m/n/12 a-tivo, des-co-brindo ro-tas sob de-manda atrav[]es de men-sa-gens de \OT1/ptm/m/it/12 Route Re-quest
+ []
+
+
+Underfull \hbox (badness 1199) in paragraph at lines 123--124
+\OT1/ptm/m/n/12 (RREQ) e \OT1/ptm/m/it/12 Route Re-ply \OT1/ptm/m/n/12 (RREP). Sua configura[][]ao uti-liza \OT1/pcr/m/n/12 HelloInterval=1s\OT1/ptm/m/n/12 ,
+ []
+
+[4] (./artigo.bbl [5]) [6] (./artigo.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 6625 strings out of 467525
- 110054 string characters out of 5423209
- 538773 words of memory out of 5000000
- 35437 multiletter control sequences out of 15000+600000
- 647631 words of font info for 78 fonts, out of 8000000 for 9000
+ 6594 strings out of 467525
+ 109542 string characters out of 5423209
+ 539773 words of memory out of 5000000
+ 35410 multiletter control sequences out of 15000+600000
+ 647317 words of font info for 77 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  72i,12n,79p,1075b,432s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on artigo.pdf (6 pages, 187513 bytes).
+Output written on artigo.pdf (6 pages, 187697 bytes).
 PDF statistics:
  99 PDF objects out of 1000 (max. 8388607)
  60 compressed objects within 1 object stream

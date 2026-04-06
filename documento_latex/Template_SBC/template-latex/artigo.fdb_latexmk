@@ -1,16 +1,16 @@
 # Fdb version 4
-["bibtex artigo"] 1775496463.46516 "artigo.aux" "artigo.bbl" "artigo" 1775496468.31269 0
+["bibtex artigo"] 1775497324.95639 "artigo.aux" "artigo.bbl" "artigo" 1775497329.64467 0
   "./Mesh.bib" 1775431847 2863 26f6d747066b4a36ef89d126d4871e3e ""
   "./sbc.bst" 1775015588 21864 a668496cca21cfdd211f7fb5f0d57565 ""
-  "artigo.aux" 1775496466 2786 7894b6441bc499bf9cc7592e3c0bb9db "pdflatex"
+  "artigo.aux" 1775497327 2676 02cf31627b46a5d0348dd63d0a8a0f27 "pdflatex"
   (generated)
   "artigo.bbl"
   "artigo.blg"
   (rewritten before read)
-["pdflatex"] 1775496464.56324 "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" "artigo.pdf" "artigo" 1775496468.31444 0
-  "artigo.aux" 1775496466 2786 7894b6441bc499bf9cc7592e3c0bb9db "pdflatex"
-  "artigo.bbl" 1775496464 2005 bf4eabfa7d28f88fa4c2fed53dd9914d "bibtex artigo"
-  "artigo.tex" 1775496457 14281 a337993a61dbdaab61a7a96a59e268a2 ""
+["pdflatex"] 1775497325.82177 "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" "artigo.pdf" "artigo" 1775497329.64608 0
+  "artigo.aux" 1775497327 2676 02cf31627b46a5d0348dd63d0a8a0f27 "pdflatex"
+  "artigo.bbl" 1775497325 2005 bf4eabfa7d28f88fa4c2fed53dd9914d "bibtex artigo"
+  "artigo.tex" 1775497322 15767 7c08b44367c912950bf85b9e07f45341 ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc" 1774015689 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "c:/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1774016423 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1774015201 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -23,7 +23,6 @@
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmbi7t.tfm" 1774022954 2228 e564491c42a4540b5ebb710a75ff306c ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmbi8r.tfm" 1774022954 4480 10409ed8bab5aea9ec9a78028b763919 ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmr7t.tfm" 1774022954 2124 2601a75482e9426d33db523edf23570a ""
-  "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmr8c.tfm" 1774022954 1352 fa28a7e6d323c65ce7d13d5342ff6be2 ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm" 1774022954 4408 25b74d011a4c66b7f212c0cc3c90061b ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmri7t.tfm" 1774022954 2288 f478fc8fed18759effb59f3dad7f3084 ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/times/ptmri8r.tfm" 1774022954 4640 532ca3305aad10cc01d769f3f91f1029 ""
@@ -59,7 +58,6 @@
   "c:/texlive/2026/texmf-dist/fonts/vf/adobe/times/ptmb7t.vf" 1774022954 1372 788387fea833ef5963f4c5bffe33eb89 ""
   "c:/texlive/2026/texmf-dist/fonts/vf/adobe/times/ptmbi7t.vf" 1774022954 1384 6ac0f8b839230f5d9389287365b243c0 ""
   "c:/texlive/2026/texmf-dist/fonts/vf/adobe/times/ptmr7t.vf" 1774022954 1380 0ea3a3370054be6da6acd929ec569f06 ""
-  "c:/texlive/2026/texmf-dist/fonts/vf/adobe/times/ptmr8c.vf" 1774022954 3556 8a9a6dcbcd146ef985683f677f4758a6 ""
   "c:/texlive/2026/texmf-dist/fonts/vf/adobe/times/ptmri7t.vf" 1774022954 1384 a9d8adaf491ce34e5fba99dc7bbe5f39 ""
   "c:/texlive/2026/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1774019204 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "c:/texlive/2026/texmf-dist/tex/generic/babel-portuges/brazilian.ldf" 1773980859 6096 b2165a3d4d5e10b4990e15cb0c21a9b0 ""
@@ -102,14 +100,13 @@
   "c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1phv.fd" 1774020728 1679 51f99a09d5536398d3a0ad1d44df9625 ""
   "c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1ptm.fd" 1774020728 961 15056f4a61917ceed3a44e4ac11fcc52 ""
   "c:/texlive/2026/texmf-dist/tex/latex/psnfss/times.sty" 1774020728 856 8e0e5c8cca7b18e0400f97f5a2b90a99 ""
-  "c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd" 1774020728 619 96f56dc5d1ef1fe1121f1cfeec70ee0c ""
   "c:/texlive/2026/texmf-dist/tex/latex/titlesec/titlesec.sty" 1774022981 48766 87a17a4ef312a39cd43896e34a679a56 ""
   "c:/texlive/2026/texmf-dist/tex/latex/url/url.sty" 1774023481 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "c:/texlive/2026/texmf-dist/web2c/texmf.cnf" 1773980320 43630 e9fa012910491fe5ae08a72c3c2997a7 ""
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1774024134 5619402 045890036aad9b52b154ef5568e59d3a ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1774024338 3636418 2ddb51fa59210d5b1a69fdf548e8d852 ""
   "c:/texlive/2026/texmf.cnf" 1774024091 713 e69b156964470283e0530f5060668171 ""
-  "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" 1775496457 14281 a337993a61dbdaab61a7a96a59e268a2 ""
+  "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" 1775497322 15767 7c08b44367c912950bf85b9e07f45341 ""
   "sbc-template.sty" 1775015588 6074 ecc54df5124d8db4ac67c42cc728f3a5 ""
   (generated)
   "artigo.aux"

@@ -38,7 +38,7 @@ O roteamento em redes mesh é crítico pois determina latência, consumo energé
 
 Contudo, falta investigação empírica rigorosa em escala contemporânea sobre como estes protocolos se comportam quando redes crescem de centenas para milhares de nós. Recomendações atuais em literatura baseiam-se frequentemente em benchmarks desatualizados ou estudos teóricos sem validação experimental robusta. Este cenário deixa engenheiros de smart cities sem dados confiáveis para tomar decisões arquiteturais.
 
-O presente trabalho endereça esta lacuna por meio de uma análise comparativa controlada de AODV versus OLSR em escalas que refletem aplicações reais de smart cities. Utilizamos simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas. Nossa contribuição principal é um benchmark quantitativo que identifica o ponto de transição crítico onde o overhead quadrático de OLSR começa a prejudicar significativamente o desempenho, enquanto AODV mantém escalabilidade linear.
+O presente trabalho endereça esta lacuna por meio de uma análise comparativa controlada de AODV versus OLSR em escalas que refletem aplicações reais de smart cities. Utiliza-se simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas. A contribuição principal contempla um benchmark quantitativo que identifica o ponto de transição crítico onde o overhead quadrático de OLSR começa a prejudicar significativamente o desempenho, enquanto AODV mantém escalabilidade linear.
 
 \section{Trabalhos Relacionados}
 
@@ -48,13 +48,7 @@ No contexto de avaliação de desempenho específica, \cite{mesh_passos_2005} co
 
 Aplicações emergentes em cidades inteligentes motivam novas investigações. \cite{optimizing_ruete_2024} exploraram otimizações de redes mesh baseadas em ZigBee e DigiMesh para rotas de evacuação iluminadas em cenários de simulação de desastres, demonstrando a relevância contemporânea de redes mesh.
 
-Nossas análises complementam este corpo de trabalho fornecendo:
-\begin{enumerate}
-  \item Avaliação controlada em escala de cem a mil e quinhentos nós com simulação rigorosa;
-  \item Comparação direta entre AODV e OLSR em condições padronizadas;
-  \item Identificação de pontos críticos de transição entre protocolos;
-  \item Matriz de recomendação prática para engenheiros.
-\end{enumerate}
+Nossas análises complementam este corpo de trabalho por meio de quatro contribuições principais. Primeiro, realiza-se uma avaliação controlada em escala de cem a mil e quinhentos nós com rigor estatístico garantido por simulação determinística. Segundo, apresenta-se comparação direta entre AODV e OLSR sob condições padronizadas, evitando os confundidores típicos de estudos anteriores. Terceiro, identificam-se pontos críticos de transição entre protocolos, permitindo que engenheiros tomem decisões informadas sobre qual protocolo adotar em cada regime de escala. Finalmente, oferece-se matriz de recomendação prática para engenheiros que implantam redes mesh em cenários reais de cidades inteligentes.
 
 \section{Metodologia}
 
@@ -66,16 +60,11 @@ Utilizamos MeshSim, um simulador de redes mesh construído sobre o framework NS-
 O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas em modo
 \textit{Release} (CMake), garantindo desempenho determinístico e reprodutível.
 
-A escolha de MeshSim sobre alternativas como OPNET ou OMNeT++ justifica-se por:
-(i)~maturidade e validação empírica extensiva do núcleo NS-3;
-(ii)~suporte nativo e independente a AODV e OLSR sem modificações de código;
-(iii)~modelos de canal Wi-Fi com atenuação por distância calibráveis (Yans + LogDistance);
-(iv)~reprodução determinística garantida por sementes aleatórias explícitas;
-(v)~integração nativa com FlowMonitor para coleta de métricas por fluxo.
+A escolha de MeshSim sobre alternativas como OPNET ou OMNeT++ justifica-se por cinco fatores interrelacionados. O framework NS-3, que constitui o núcleo do MeshSim, oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa. O suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação. Os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância (Yans e LogDistance), permitindo modelagem realista do ambiente de propagação. A reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados. Finalmente, a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
 
 \subsection{Topologia e Escalonamento de Rede}
 
-Adotamos topologia aleatória com distribuição uniforme de nós, exceto pela
+Adota-se topologia aleatória com distribuição uniforme de nós, exceto pela
 topologia base de 25 nós que segue grade regular $5 \times 5$ com espaçamento
 de 50\,m entre nós adjacentes.
 Para todas as topologias aleatórias, a densidade de nós é mantida constante em
@@ -86,7 +75,7 @@ A área de cada topologia é calculada como:
   A = \sqrt{\frac{N}{\rho}} \times \sqrt{\frac{N}{\rho}} \quad \text{(metros)}
 \end{equation}
 
-Investigamos dez pontos de escala cobrindo a faixa de 25 a 1000 nós,
+Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós,
 conforme Tabela~\ref{tab:topologias}.
 A densidade constante garante que variações de desempenho reflitam o efeito
 da escala (diâmetro da rede, número de saltos) e não variações de cobertura.
@@ -117,50 +106,23 @@ random-1000  & 1000 & $1880 \times 1880$ & 420 & 900 \\
 
 \subsection{Arquitetura do Simulador}
 
-A arquitetura do MeshSim modela cinco camadas de nós distintas:
+A arquitetura do MeshSim organiza-se em cinco camadas funcionais de nós, cada uma desempenhando papéis específicos na simulação. A primeira camada compreende os nós mesh, que formam o \textit{backbone} sem fio sob padrão IEEE 802.11g, utilizando canal Yans, controle de taxa ARF e protocolo Dot11s. Estes nós encontram-se endereçados no espaço $10.2.0.0/16$, permitindo até 65534 nós mesh simultâneos.
 
-\begin{enumerate}
-  \item \textbf{Nós Mesh:} formam o \textit{backbone} sem fio com padrão IEEE 802.11g
-        (canal Yans, controle de taxa ARF, protocolo Dot11s).
-        Endereçados em $10.2.0.0/16$ (até 65534 nós).
-  \item \textbf{Access Points (AP):} cada nó mesh atua simultaneamente como AP
-        para STAs associadas (SSID \texttt{ns-3-ssid}).
-        Endereçados em $10.3.0.1, 10.3.0.2, \ldots$
-  \item \textbf{STAs sem fio:} cinco dispositivos cliente por experimento,
-        associados ao AP do nó mesh mais próximo.
-        Endereçados em $10.3.128.1, \ldots$ (mesmo /16 que APs para reachability L3 direta).
-  \item \textbf{STAs cabeadas (wiredSta):} nós de aplicação conectados às STAs sem fio
-        via enlace Ethernet 10\,Gbps, $0$\,ms de atraso.
-        São os pontos de injeção e destino do tráfego de dados.
-        Endereçados em $10.4.128.1, \ldots$
-  \item \textbf{Backhaul:} nó servidor conectado ao nó mesh de origem via
-        enlace ponto-a-ponto 1\,Gbps, $1$\,ms.
-        Endereço fixo $10.1.1.1$ (destino de todos os fluxos de echo).
-\end{enumerate}
+Cada nó mesh funciona simultaneamente como access point (AP) para dispositivos cliente (STAs) associadas com SSID padrão \texttt{ns-3-ssid}. Os APs recebem endereços na série $10.3.0.1, 10.3.0.2, \ldots$, criando uma camada intermediária de acesso.
 
-O modelo de canal do backbone mesh utiliza propagação de espaço livre
-(\texttt{ns3::ConstantSpeedPropagationDelayModel}) na camada de atraso,
-sem modelo de perda adicional.
-O canal AP--STA adiciona atenuação por distância via
-\texttt{ns3::LogDistancePropagationLossModel} com expoente padrão $n=3{,}0$,
-resultando em alcance efetivo de aproximadamente 115\,m a 54\,Mbps.
+A terceira camada consiste em cinco dispositivos cliente sem fio (STAs) por experimento, cada um associado ao AP do nó mesh fisicamente mais próximo. Recebem endereços na faixa $10.3.128.1, \ldots$, mantendo compatibilidade L3 direta com os APs através do mesmo bloco /16.
+
+A quarta camada introduz nós de aplicação (STAs cabeadas ou wiredSta), conectados aos respectivos clientes sem fio por enlace Ethernet de 10\,Gbps com latência nula. Estes nós constituem os pontos efetivos de injeção e destino do tráfego de dados, endereçados em $10.4.128.1, \ldots$
+
+Finalmente, a quinta camada abriga o nó servidor de backhaul, conectado ao nó mesh de origem por enlace ponto-a-ponto de 1\,Gbps e latência de 1\,ms. Recebe endereço fixo $10.1.1.1$ e funciona como destino universal para todos os fluxos de echo.
+
+O modelo de propagação do backbone mesh adota espaço livre (\texttt{ns3::ConstantSpeedPropagationDelayModel}) na camada de atraso, sem modelos de perda adicionais nessa interface. Contrasta-se com o canal AP--STA, que incorpora atenuação por distância através de \texttt{ns3::LogDistancePropagationLossModel} com expoente padrão $n=3{,}0$, produzindo alcance efetivo de aproximadamente 115\,m a taxa de 54\,Mbps.
 
 \subsection{Configuração dos Protocolos de Roteamento}
 
-Ambos os protocolos são instalados com parâmetros padrão do NS-3:
+Ambos os protocolos encontram-se instalados com parâmetros padrão do NS-3. O AODV (\textit{Ad hoc On-Demand Distance Vector}) funciona como protocolo reativo, descobrindo rotas sob demanda através de mensagens de \textit{Route Request} (RREQ) e \textit{Route Reply} (RREP). Sua configuração utiliza \texttt{HelloInterval=1s}, \texttt{ActiveRouteTimeout=3s}, \texttt{PathDiscoveryTime=3.5s} e \texttt{RreqRetries=2}.
 
-\begin{itemize}
-  \item \textbf{AODV} (\textit{Ad hoc On-Demand Distance Vector}):
-        protocolo reativo que descobre rotas sob demanda via \textit{Route
-        Request} (RREQ) e \textit{Route Reply} (RREP).
-        Parâmetros: \texttt{HelloInterval=1s}, \texttt{ActiveRouteTimeout=3s},
-        \texttt{PathDiscoveryTime=3.5s}, \texttt{RreqRetries=2}.
-  \item \textbf{OLSR} (\textit{Optimized Link State Routing}):
-        protocolo proativo que distribui estado de enlace por toda a rede
-        periodicamente.
-        Parâmetros: \texttt{HelloInterval=2s}, \texttt{TcInterval=5s},
-        \texttt{MidInterval=5s}.
-\end{itemize}
+O OLSR (\textit{Optimized Link State Routing}), por sua vez, implementa paradigma proativo, distribuindo periodicamente informações de estado de enlace por toda a rede. Configura-se com \texttt{HelloInterval=2s}, \texttt{TcInterval=5s} e \texttt{MidInterval=5s}.
 
 O tempo de aquecimento (\textit{warm-up}) de cada topologia é dimensionado para
 garantir convergência completa antes do início das medições.
@@ -186,30 +148,13 @@ FlowMonitor captura métricas nos dois sentidos (upload e echo de retorno).
 
 \subsection{Métricas Coletadas}
 
-As métricas são extraídas via FlowMonitor (arquivo \texttt{flowdata.xml})
-e arquivos de trace de aplicação (\texttt{trace-app-rx-*.txt}):
+As métricas são extraídas por meio de FlowMonitor (arquivo \texttt{flowdata.xml}) e arquivos de trace de aplicação (\texttt{trace-app-rx-*.txt}), capturando comportamento em granularidade de fluxo.
 
-\begin{itemize}
-  \item \textbf{PDR} (\%): $\text{PDR} = 100 \times \frac{\sum rx_i}{\sum tx_i}$,
-        ponderado por todos os fluxos;
-  \item \textbf{Latência E2E} (ms): média ponderada de
-        $\overline{d}_i = \text{delaySum}_i / rx_i$;
-  \item \textbf{Jitter} (ms): variação média do atraso entre pacotes consecutivos;
-  \item \textbf{Taxa de Perda} (\%): complementar ao PDR;
-  \item \textbf{Hops médios}: proxy de overhead de roteamento,
-        calculado como $\overline{h} = \text{timesForwarded} / rx$.
-\end{itemize}
+A taxa de entrega de pacotes (PDR), expressa em percentual, calcula-se como $\text{PDR} = 100 \times \frac{\sum rx_i}{\sum tx_i}$, ponderada por todos os fluxos da simulação. A latência fim-a-fim (E2E) representa a média ponderada dos atrasos individuais, calculada como $\overline{d}_i = \text{delaySum}_i / rx_i$, expressa em milissegundos. O jitter mede a variação média do atraso entre pacotes consecutivos, quantificando a variabilidade temporal. A taxa de perda (é complementar ao PDR, oferecendo perspectiva alternativa sobre confiabilidade de entrega. Finalmente, o número médio de hops funciona como proxy para quantificar o overhead de roteamento, calculado como $\overline{h} = \text{timesForwarded} / rx$.
 
-\subsection{Reprodutibilidade}
+Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e documentadas, seguindo esquema determinístico: para o ponto de escala $k$, a semente AODV é fixada em $100k$ e a semente OLSR em $100k+1$. Por exemplo, no ponto aleatório de 50 nós, emprega-se AODV-seed200 e OLSR-seed201. Este esquema garante que as posições dos nós nas topologias aleatórias sejam geradas deterministicamente a partir dessas sementes, assegurando que a topologia física seja idêntica entre protocolos para um mesmo ponto de escala.
 
-Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e
-documentadas: para o ponto de escala $k$, a semente AODV é $100k$ e OLSR é
-$100k+1$ (ex: AODV-seed200, OLSR-seed201 para random-50).
-As posições dos nós nas topologias aleatórias são geradas deterministicamente
-a partir dessas sementes, garantindo que a topologia física seja idêntica entre
-protocolos para o mesmo ponto de escala.
-Todos os scripts de geração de configuração e análise estão disponíveis no
-repositório \cite{meshsim_github}.
+Todos os scripts de geração de configuração, execução de simulação e análise de resultados encontram-se disponíveis no repositório de código aberto \cite{meshsim_github}, permitindo que qualquer pesquisador reproduza exatamente os experimentos aqui reportados.
 
 \section{Resultados e Discussão}
 
