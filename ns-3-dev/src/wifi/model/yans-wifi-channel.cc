@@ -46,7 +46,14 @@ YansWifiChannel::GetTypeId()
                           "A pointer to the propagation delay model attached to this channel.",
                           PointerValue(),
                           MakePointerAccessor(&YansWifiChannel::m_delay),
-                          MakePointerChecker<PropagationDelayModel>());
+                          MakePointerChecker<PropagationDelayModel>())
+            .AddAttribute("MaxRange",
+                          "Pre-filter: skip scheduling events for receivers beyond this distance "
+                          "in meters. 0 (default) disables the filter. Set to ~2x TX range for "
+                          "large-scale simulations to avoid O(N) event scheduling per packet.",
+                          DoubleValue(0.0),
+                          MakeDoubleAccessor(&YansWifiChannel::m_maxRange),
+                          MakeDoubleChecker<double>(0.0));
     return tid;
 }
 
@@ -92,6 +99,13 @@ YansWifiChannel::Send(Ptr<YansWifiPhy> sender, Ptr<const WifiPpdu> ppdu, dBm_u t
             }
 
             auto receiverMobility = (*i)->GetMobility()->GetObject<MobilityModel>();
+            // MaxRange pre-filter: skip costly delay/loss computation and event scheduling
+            // for nodes provably out of range. Avoids O(N) ScheduleWithContext calls per packet.
+            if (m_maxRange > 0.0 &&
+                senderMobility->GetDistanceFrom(receiverMobility) > m_maxRange)
+            {
+                continue;
+            }
             const auto delay = m_delay->GetDelay(senderMobility, receiverMobility);
             const dBm_u rxPower{m_loss->CalcRxPower(txPower, senderMobility, receiverMobility)};
             NS_LOG_DEBUG("propagation: txPower="

@@ -131,10 +131,15 @@ bool MeshSim::CreateSim()
 
 bool MeshSim::Run()
 {
-	// Flow monitor
+	// Flow monitor: instalar apenas nos endpoints de medicao (wiredSta + backhaul)
+	// Evitar flowHelper.InstallAll() que instala probes em todos os N mesh nodes
+	// e dispara eventos para cada pacote de roteamento — gargalo critico em +500 nos.
 	Ptr<FlowMonitor> flowMonitor;
 	FlowMonitorHelper flowHelper;
-	flowMonitor = flowHelper.InstallAll();
+	NodeContainer monitorNodes;
+	monitorNodes.Add(wiredStaNodes);
+	monitorNodes.Add(backhaulNodes);
+	flowMonitor = flowHelper.Install(monitorNodes);
 
 	Simulator::Stop(Seconds(simDuration));
 	Simulator::Run();
@@ -150,19 +155,28 @@ bool MeshSim::Run()
 
 bool MeshSim::CreateChannels()
 {
+	// MaxRange pre-filter: TX_RANGE=115m, use 2.5x margin (288m) so edge-case
+	// links near the boundary are never silently dropped by the filter.
+	// This eliminates ~97% of ScheduleWithContext calls at 500+ nodes.
+	const double CHANNEL_MAX_RANGE = 288.0;
+
 	// Setup meshPhy helper
 	meshPhy = ns3::YansWifiPhyHelper();
 	YansWifiChannelHelper meshChannelHelper;
 	if (!configureWifiChannel(&meshChannelHelper, meshWifiConfig))
 		return false;
-	meshPhy.SetChannel(meshChannelHelper.Create());
+	Ptr<YansWifiChannel> meshCh = meshChannelHelper.Create();
+	meshCh->SetAttribute("MaxRange", DoubleValue(CHANNEL_MAX_RANGE));
+	meshPhy.SetChannel(meshCh);
 
 	// Setup staPhy helper
 	staPhy = ns3::YansWifiPhyHelper();
 	YansWifiChannelHelper staChannelHelper;
 	if (!configureWifiChannel(&staChannelHelper, apStaWifiConfig))
 		return false;
-	staPhy.SetChannel(staChannelHelper.Create());
+	Ptr<YansWifiChannel> staCh = staChannelHelper.Create();
+	staCh->SetAttribute("MaxRange", DoubleValue(CHANNEL_MAX_RANGE));
+	staPhy.SetChannel(staCh);
 
 	// Configure AP<->STA wifi
 	if (!configureWifiStdAndRateControl(&apStaWifi, apStaWifiConfig))
@@ -197,10 +211,15 @@ bool MeshSim::CreateMesh()
 		return false;
 	meshHelper.SetStackInstaller("ns3::Dot11sStack"); // XXX
 
+	// BeaconInterval=2s (default=0.5s): 4x menos eventos de beacon.
+	// Com 1000 nos a 0.5s: 2000 beacons/s * 540s = 1.08M eventos so de beacon.
 	if (cwmin == 9999)
-	    meshHelper.SetMacType("RandomStart", TimeValue(Seconds(0.1)));
+	    meshHelper.SetMacType("RandomStart", TimeValue(Seconds(0.1)),
+	                          "BeaconInterval", TimeValue(Seconds(2.0)));
 	else
-	    meshHelper.SetMacType("RandomStart", TimeValue(Seconds(0.1)), "CwMin", UintegerValue(cwmin)); // XXX
+	    meshHelper.SetMacType("RandomStart", TimeValue(Seconds(0.1)),
+	                          "BeaconInterval", TimeValue(Seconds(2.0)),
+	                          "CwMin", UintegerValue(cwmin)); // XXX
 
 	meshHelper.SetSpreadInterfaceChannels(MeshHelper::SPREAD_CHANNELS); // XXX
 	//meshHelper.SetNumberOfInterfaces(1); // XXX

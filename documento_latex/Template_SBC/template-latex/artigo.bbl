@@ -10,10 +10,10 @@ Benyamina, D., Hafid, A., and Gendreau, M. (2012).
 \newblock Wireless mesh networks design -- a survey.
 \newblock {\em IEEE Communications Surveys \& Tutorials}.
 
-\bibitem[Caburlao 2026]{meshsim_github}
-Caburlao, M. (2026).
-\newblock Meshsim -- mesh network simulator.
-\newblock \url{https://github.com/mCaburlao/MeshSim}.
+\bibitem[Caburlão 2026]{caburlao_github}
+Caburlão, M.~C. (2026).
+\newblock Arquivo readme para o simulador e dados de entrada.
+\newblock \url{https://github.com/mCaburlao/Avaliacao_Desempenho_Redes_MESH}.
 
 \bibitem[Khalifeh et~al. 2018]{performance_khalifeh_2018}
 Khalifeh, A., Salah, H., Alouneh, S., Al-Assaf, A.~H., and Darabkh, K.~A. (2018).
@@ -24,6 +24,11 @@ Khalifeh, A., Salah, H., Alouneh, S., Al-Assaf, A.~H., and Darabkh, K.~A. (2018)
 Lee, S.-H., Byun, S.-B., Jung, Y.-A., Han, D., Kim, D.-E., and Cho, S.-H. (2024).
 \newblock Research on the design and implementation of a mesh network communication system for fire and hazardous gas detection and response.
 \newblock {\em International Conference on Ubiquitous and Future Networks}.
+
+\bibitem[Lorinder 2026]{lorinder_github}
+Lorinder (2026).
+\newblock Meshsim -- mesh network simulator.
+\newblock \url{https://github.com/lorinder/MeshSim}.
 
 \bibitem[Passos et~al. 2005]{mesh_passos_2005}
 Passos, D., Teixeira, D., Muchaluat-Saade, D., Magalhães, L., and Albuquerque, C. (2005).
@@ -37,5 +42,10 @@ Ruete, D., Navarro, A.~C., Flores‐Bahamonde, F., Rogget, M.~R., Henríquez, M.
 \bibitem[Sichitiu 2004]{wireless_sichitiu_2004}
 Sichitiu, M.~L. (2004).
 \newblock Wireless mesh networks : Opportunities and challenges.
+
+\bibitem[Turlykozhayeva et~al. 2024]{turlykozhayeva2024evaluating}
+Turlykozhayeva, D., Akhtanov, S., Baigaliyeva, A., Temesheva, S., Zhexebay, D., Zaidyn, M., Ussipov, N., and Skabylov, A. (2024).
+\newblock Evaluating routing algorithms across different wireless mesh network topologies using ns-3 simulator.
+\newblock {\em Eurasian Physical Technical Journal}, 21(2 (48)):70--82.
 
 \end{thebibliography}

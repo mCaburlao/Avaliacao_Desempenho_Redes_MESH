@@ -46,23 +46,50 @@ def routing_txt(proto):
     return "# Roteamento proativo: mantem rotas via atualizacoes periodicas\nproto olsr\n"
 
 
-def apps_txt(n_stas, warmup_s, stagger_s=10):
+def apps_txt(n_stas, warmup_s, stagger_s=5):
     """Gera apps.txt: n_stas fluxos UDP echo + 1 TCP para STA mais distante.
 
     Start times escalonados por stagger_s segundos entre cada STA para evitar
     inundacao simultanea de RREQ no AODV (caso patologico com N simultaneos).
     TCP inicia apos todas as STAs echo terem comecado.
+
+    Probe flows (t < warmup_s): forcam route discovery do AODV antes das
+    medicoes. Excluidos da analise pelo filtro min_start_ns em analyze_all.py.
+
+    Medicoes usam Interval=0.5s (2 pps): janela de 50s para 100 pacotes,
+    reduzindo simDuration ~50% sem alterar o numero de amostras nem os ICs.
     """
+    probe_start = warmup_s - 30
+    probe_stop  = warmup_s - 1
+
     lines = [
         f"# {n_stas} STAs — UDP echo + 1 TCP file transfer",
         f"# wiredSTA IPs: 10.4.128.1-{n_stas}  |  Backhaul: 10.1.1.1",
-        f"# STAs escalonadas {stagger_s}s entre si (evita flood simultaneo de RREQ no AODV)",
+        f"# STAs escalonadas {stagger_s}s entre si | Interval=0.5s | 100 pacotes = 50s/STA",
         "",
+        "# --- Probes: forcam route discovery do AODV (excluidos da analise) ---",
+        f"defaults StartTime={probe_start}s StopTime={probe_stop}s",
+    ]
+    for i in range(1, n_stas + 1):
+        lines.append(f"probe{i}-cl    10.4.128.{i}    echo_client")
+        lines.append(f"probe{i}-srv   10.1.1.1    echo_server")
+        lines.append("")
+
+    lines += ["# Conexoes probe"]
+    for i in range(1, n_stas + 1):
+        lines.append(f"connect probe{i}-cl    probe{i}-srv")
+
+    lines += [
+        "",
+        "# --- Fluxos de medicao (t >= warmup_s) ---",
+        "# Interval=0.5s e MaxPackets=100 definidos inline no echo_client",
+        "# (UdpEchoServer nao tem esses atributos — nao usar defaults)",
+        "defaults StopTime=",
     ]
     for i in range(1, n_stas + 1):
         t = warmup_s + (i - 1) * stagger_s
         lines.append(f"defaults StartTime={t}s")
-        lines.append(f"echo{i}-cl    10.4.128.{i}    echo_client")
+        lines.append(f"echo{i}-cl    10.4.128.{i}    echo_client    Interval=0.5s MaxPackets=100")
         lines.append(f"echo{i}-srv   10.1.1.1    echo_server")
         lines.append("")
 
@@ -74,7 +101,7 @@ def apps_txt(n_stas, warmup_s, stagger_s=10):
         f"file{n_stas}-srv   10.1.1.1    file_server",
         f"file{n_stas}-cl    10.4.128.{n_stas}    client",
         "",
-        "# Conexoes",
+        "# Conexoes medicao",
     ]
     for i in range(1, n_stas + 1):
         lines.append(f"connect echo{i}-cl    echo{i}-srv")

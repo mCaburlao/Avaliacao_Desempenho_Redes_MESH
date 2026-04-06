@@ -107,6 +107,7 @@ class YansWifiChannel : public Channel
     PhyList m_phyList;                  //!< List of YansWifiPhys connected to this YansWifiChannel
     Ptr<PropagationLossModel> m_loss;   //!< Propagation loss model
     Ptr<PropagationDelayModel> m_delay; //!< Propagation delay model
+    double m_maxRange{0.0};             //!< Max range pre-filter in meters (0 = disabled)
 };
 
 } // namespace ns3
