@@ -154,6 +154,8 @@ INPUT c:/texlive/2026/texmf-dist/fonts/vf/adobe/courier/pcrr7t.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm
 INPUT ./artigo.bbl
 INPUT ./artigo.bbl
 INPUT artigo.bbl

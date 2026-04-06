@@ -90,16 +90,16 @@ da escala (diâmetro da rede, número de saltos) e não variações de cobertura
 \hline
 \textbf{Topologia} & \textbf{Nós} & \textbf{Área (m)} & \textbf{Aquecimento (s)} & \textbf{Duração (s)} \\
 \hline
-grid-25      &   25 & $200 \times 200$   & 120 & 500 \\
-random-50    &   50 & $420 \times 420$   & 180 & 600 \\
-random-75    &   75 & $514 \times 514$   & 210 & 600 \\
-random-100   &  100 & $600 \times 600$   & 240 & 650 \\
-random-150   &  150 & $727 \times 727$   & 270 & 700 \\
-random-200   &  200 & $840 \times 840$   & 300 & 750 \\
-random-300   &  300 & $1028 \times 1028$ & 330 & 750 \\
-random-500   &  500 & $1330 \times 1330$ & 360 & 800 \\
-random-750   &  750 & $1626 \times 1626$ & 390 & 850 \\
-random-1000  & 1000 & $1880 \times 1880$ & 420 & 900 \\
+grid-25      &   25 & $200 \times 200$   & 120 & 240 \\
+random-50    &   50 & $420 \times 420$   & 180 & 300 \\
+random-75    &   75 & $514 \times 514$   & 210 & 330 \\
+random-100   &  100 & $600 \times 600$   & 240 & 360 \\
+random-150   &  150 & $727 \times 727$   & 270 & 390 \\
+random-200   &  200 & $840 \times 840$   & 300 & 420 \\
+random-300   &  300 & $1028 \times 1028$ & 330 & 450 \\
+random-500   &  500 & $1330 \times 1330$ & 360 & 480 \\
+random-750   &  750 & $1626 \times 1626$ & 390 & 510 \\
+random-1000  & 1000 & $1880 \times 1880$ & 420 & 540 \\
 \hline
 \end{tabular}
 \end{table}
@@ -125,24 +125,51 @@ Ambos os protocolos encontram-se instalados com parâmetros padrão do NS-3. O A
 O OLSR (\textit{Optimized Link State Routing}), por sua vez, implementa paradigma proativo, distribuindo periodicamente informações de estado de enlace por toda a rede. Configura-se com \texttt{HelloInterval=2s}, \texttt{TcInterval=5s} e \texttt{MidInterval=5s}.
 
 O tempo de aquecimento (\textit{warm-up}) de cada topologia é dimensionado para
-garantir convergência completa antes do início das medições.
-Para OLSR, o critério é $T_{warmup} \geq D_{hops} \times T_{TC}$, onde
-$D_{hops}$ é o diâmetro estimado da rede e $T_{TC} = 5$\,s.
+garantir convergência completa antes do início das medições, segundo critérios
+distintos para cada protocolo.
+
+Para o OLSR, aplica-se o critério $T_{warmup} \geq D_{hops} \times T_{TC}$,
+onde $D_{hops}$ é o diâmetro estimado da rede e $T_{TC} = 5$\,s o intervalo
+de \textit{Topology Control}.
 Para redes de 1000 nós ($D_{hops} \approx 12$ saltos), o aquecimento de 420\,s
-garante pelo menos 84 rodadas de \textit{Topology Control} pelo diâmetro completo.
+garante pelo menos 84 rodadas de TC propagadas pelo diâmetro completo,
+assegurando que todas as tabelas de roteamento estarão convergidas.
+
+Para o AODV, o período de aquecimento é utilizado em conjunto com os
+\textit{probe flows} descritos na Seção~\ref{subsec:traffic}: fluxos de eco
+curtos enviados nos 30\,s anteriores ao início das medições forçam a
+descoberta de rota para todos os destinos.
+Como o \texttt{ActiveRouteTimeout} é de 3\,s e os probes terminam 1\,s antes
+das medições, as rotas permanecem válidas no cache AODV quando os fluxos de
+medição iniciam, garantindo que as métricas reflitam comportamento em regime
+permanente e não latência de primeira descoberta.
 
 \subsection{Padrão de Tráfego}
+\label{subsec:traffic}
 
-Cada experimento instância cinco fluxos UDP de eco independentes, um por wiredSta.
-Os fluxos são iniciados de forma escalonada, com intervalo de 10\,s entre cada
-início ($T_{start,i} = T_{warmup} + (i-1) \times 10$\,s), evitando o caso
-patológico de $N$ descobertas de rota simultâneas no AODV.
+Antes do início das medições, cada experimento executa uma fase de
+\textit{probe} com duração de 30\,s ($T_{warmup} - 30$\,s a $T_{warmup} - 1$\,s).
+Nessa fase, cinco fluxos UDP de eco de baixa taxa são enviados de cada
+wiredSta ao servidor backhaul, forçando o AODV a completar a descoberta de
+rotas para todos os destinos antes que os fluxos de medição comecem.
+Os fluxos de probe são excluídos da análise por filtro de instante de início
+($\texttt{timeFirstTxPacket} < T_{warmup}$), de modo que as métricas
+reportadas refletem o comportamento em regime permanente (	extit{steady-state})
+de ambos os protocolos.
+
+Cada experimento instância cinco fluxos UDP de eco independentes de medição,
+um por wiredSta.
+Os fluxos são iniciados de forma escalonada, com intervalo de 5\,s entre cada
+início ($T_{start,i} = T_{warmup} + (i-1) \times 5$\,s), evitando o caso
+patológico de $N$ descobertas de rota simultâneas.
 Adicionalmente, um fluxo TCP de transferência de arquivo é iniciado após o
 último fluxo echo, do servidor backhaul ($10.1.1.1$) para a wiredSta mais distante.
 
-Cada cliente UDP envia pacotes de 128 bytes a 1\,pacote/s durante toda a janela
-de medição, totalizando cerca de $T_{meas} = T_{duration} - T_{start,5}$
-pacotes por fluxo.
+Cada cliente UDP envia 100 pacotes de 128 bytes a 2\,pacotes/s
+(\texttt{Interval=0.5s}), cobrindo uma janela de medição de 50\,s por fluxo.
+A duração total de cada simulação é fixada em $T_{warmup} + 105$\,s,
+contemplando 25\,s de escalonamento, 50\,s de medição e 30\,s de buffer para
+conclusão do fluxo TCP.
 O servidor de eco responde ao remetente com o mesmo payload, de forma que o
 FlowMonitor captura métricas nos dois sentidos (upload e echo de retorno).
 

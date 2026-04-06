@@ -1,16 +1,16 @@
 # Fdb version 4
-["bibtex artigo"] 1775497324.95639 "artigo.aux" "artigo.bbl" "artigo" 1775497329.64467 0
-  "./Mesh.bib" 1775431847 2863 26f6d747066b4a36ef89d126d4871e3e ""
+["bibtex artigo"] 1775513580.54755 "artigo.aux" "artigo.bbl" "artigo" 1775513581.84549 0
+  "./Mesh.bib" 1775513578 3282 c374b847d6cecfabc6a89a202398b87e ""
   "./sbc.bst" 1775015588 21864 a668496cca21cfdd211f7fb5f0d57565 ""
-  "artigo.aux" 1775497327 2676 02cf31627b46a5d0348dd63d0a8a0f27 "pdflatex"
+  "artigo.aux" 1775508770 2751 29e2d4afddb2e55f4449abe785073be5 "pdflatex"
   (generated)
   "artigo.bbl"
   "artigo.blg"
   (rewritten before read)
-["pdflatex"] 1775497325.82177 "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" "artigo.pdf" "artigo" 1775497329.64608 0
-  "artigo.aux" 1775497327 2676 02cf31627b46a5d0348dd63d0a8a0f27 "pdflatex"
-  "artigo.bbl" 1775497325 2005 bf4eabfa7d28f88fa4c2fed53dd9914d "bibtex artigo"
-  "artigo.tex" 1775497322 15767 7c08b44367c912950bf85b9e07f45341 ""
+["pdflatex"] 1775508768.67401 "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" "artigo.pdf" "artigo" 1775513581.8471 0
+  "artigo.aux" 1775508770 2751 29e2d4afddb2e55f4449abe785073be5 "pdflatex"
+  "artigo.bbl" 1775513581 2005 bf4eabfa7d28f88fa4c2fed53dd9914d "bibtex artigo"
+  "artigo.tex" 1775509443 17308 a69a47782911701e830706442062be8f ""
   "c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc" 1774015689 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "c:/texlive/2026/texmf-dist/fonts/map/fontname/texfonts.map" 1774016423 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "c:/texlive/2026/texmf-dist/fonts/tfm/adobe/courier/pcrr7t.tfm" 1774015201 960 379cc0019370a9e0208a0a3f949f847a ""
@@ -106,7 +106,7 @@
   "c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1774024134 5619402 045890036aad9b52b154ef5568e59d3a ""
   "c:/texlive/2026/texmf-var/web2c/pdftex/pdflatex.fmt" 1774024338 3636418 2ddb51fa59210d5b1a69fdf548e8d852 ""
   "c:/texlive/2026/texmf.cnf" 1774024091 713 e69b156964470283e0530f5060668171 ""
-  "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" 1775497322 15767 7c08b44367c912950bf85b9e07f45341 ""
+  "d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex" 1775509443 17308 a69a47782911701e830706442062be8f ""
   "sbc-template.sty" 1775015588 6074 ecc54df5124d8db4ac67c42cc728f3a5 ""
   (generated)
   "artigo.aux"
