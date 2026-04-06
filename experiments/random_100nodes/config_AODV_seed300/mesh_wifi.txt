@@ -1,0 +1,3 @@
+# Configuracao WiFi do backbone mesh (802.11g)
+standard g
+ratecontrol ns3::ArfWifiManager

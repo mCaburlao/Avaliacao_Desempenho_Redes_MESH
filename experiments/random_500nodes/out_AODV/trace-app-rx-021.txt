@@ -1,0 +1,4 @@
+# app_connect_id = 21
+# connect_stmt_id = 20
+# tags_tx = file20-srv
+# tag_rx = file20-cl

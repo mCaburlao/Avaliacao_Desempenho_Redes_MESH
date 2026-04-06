@@ -31,14 +31,16 @@ EXPERIMENTS = BASE / "experiments"
 # Experimentos definidos: (label, out_dir, duration_s)
 # (topo_label, exp_subdir, duration_s, num_nodes)
 SUITE = [
-    ("chain-9",     "pilot_100_aodv_olsr",  400,     9),
-    ("grid-25",     "grid_25nodes",          500,    25),
-    ("random-50",   "random_50nodes",        600,    50),
-    ("random-100",  "random_100nodes",       700,   100),
-    ("random-200",  "random_200nodes",       800,   200),
-    ("random-500",  "random_500nodes",       700,   500),
-    ("random-1000", "random_1000nodes",      800,  1000),
-    ("random-2000", "random_2000nodes",      900,  2000),
+    ("grid-25",      "grid_25nodes",          500,    25),
+    ("random-50",    "random_50nodes",        600,    50),
+    ("random-75",    "random_75nodes",        600,    75),
+    ("random-100",   "random_100nodes",       650,   100),
+    ("random-150",   "random_150nodes",       700,   150),
+    ("random-200",   "random_200nodes",       750,   200),
+    ("random-300",   "random_300nodes",       750,   300),
+    ("random-500",   "random_500nodes",       800,   500),
+    ("random-750",   "random_750nodes",       850,   750),
+    ("random-1000",  "random_1000nodes",      900,  1000),
 ]
 
 # Mapa rapido: label → num_nodes (usado no CSV)
@@ -227,7 +229,7 @@ def export_csv(all_results, csv_path):
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
     print("Analise AODV vs OLSR — Suite escalabilidade 9-2000 nos")
-    print("chain-9 | grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000")
+    print("grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000")
 
     all_results = {}
 

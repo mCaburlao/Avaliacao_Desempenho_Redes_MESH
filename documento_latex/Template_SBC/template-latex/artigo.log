@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  5 APR 2026 20:39
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  6 APR 2026 14:27
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -316,33 +316,42 @@ Underfull \hbox (badness 1454) in paragraph at lines 37--38
 [1
 
 {c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}] [2]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 70.
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 98.
+ (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1phv.fd
+File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
+) [3]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 153.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-Underfull \hbox (badness 1275) in paragraph at lines 76--77
-[]\OT1/ptm/m/n/12 Totalizamos $\OT1/cmr/m/n/12 2[] \OMS/cmsy/m/n/12 ^^B \OT1/cmr/m/n/12 2[] \OMS/cmsy/m/n/12 ^^B \OT1/cmr/m/n/12 6[] \OMS/cmsy/m/n/12 ^^B \OT1/cmr/m/n/12 10[] = 240$
+Underfull \hbox (badness 5667) in paragraph at lines 153--158
+\OT1/ptm/m/n/12 co-bre ro-tas sob de-manda via \OT1/ptm/m/it/12 Route Re-quest \OT1/ptm/m/n/12 (RREQ) e \OT1/ptm/m/it/12 Route Re-ply
  []
 
-[3] (./artigo.bbl) [4] (./artigo.aux)
+[4]
+Underfull \hbox (badness 1502) in paragraph at lines 199--201
+[]\OT1/ptm/b/n/12 Hops m[]edios\OT1/ptm/m/n/12 : proxy de overhead de ro-te-a-mento, cal-cu-lado como $[] \OT1/cmr/m/n/12 =
+ []
+
+(./artigo.bbl [5]) [6] (./artigo.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 6551 strings out of 467525
- 108985 string characters out of 5423209
- 539719 words of memory out of 5000000
- 35369 multiletter control sequences out of 15000+600000
- 644786 words of font info for 74 fonts, out of 8000000 for 9000
+ 6625 strings out of 467525
+ 110054 string characters out of 5423209
+ 538773 words of memory out of 5000000
+ 35437 multiletter control sequences out of 15000+600000
+ 647631 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 72i,8n,79p,1075b,359s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on artigo.pdf (4 pages, 111125 bytes).
+ 72i,12n,79p,1075b,432s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on artigo.pdf (6 pages, 187513 bytes).
 PDF statistics:
- 58 PDF objects out of 1000 (max. 8388607)
- 35 compressed objects within 1 object stream
+ 99 PDF objects out of 1000 (max. 8388607)
+ 60 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

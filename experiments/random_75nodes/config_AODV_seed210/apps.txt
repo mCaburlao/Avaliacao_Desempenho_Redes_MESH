@@ -1,0 +1,36 @@
+# 5 STAs — UDP echo + 1 TCP file transfer
+# wiredSTA IPs: 10.4.128.1-5  |  Backhaul: 10.1.1.1
+# STAs escalonadas 10s entre si (evita flood simultaneo de RREQ no AODV)
+
+defaults StartTime=210s
+echo1-cl    10.4.128.1    echo_client
+echo1-srv   10.1.1.1    echo_server
+
+defaults StartTime=220s
+echo2-cl    10.4.128.2    echo_client
+echo2-srv   10.1.1.1    echo_server
+
+defaults StartTime=230s
+echo3-cl    10.4.128.3    echo_client
+echo3-srv   10.1.1.1    echo_server
+
+defaults StartTime=240s
+echo4-cl    10.4.128.4    echo_client
+echo4-srv   10.1.1.1    echo_server
+
+defaults StartTime=250s
+echo5-cl    10.4.128.5    echo_client
+echo5-srv   10.1.1.1    echo_server
+
+# TCP file transfer: backhaul -> STA mais distante (max hops)
+defaults StartTime=260s
+file5-srv   10.1.1.1    file_server
+file5-cl    10.4.128.5    client
+
+# Conexoes
+connect echo1-cl    echo1-srv
+connect echo2-cl    echo2-srv
+connect echo3-cl    echo3-srv
+connect echo4-cl    echo4-srv
+connect echo5-cl    echo5-srv
+connect file5-srv   file5-cl

@@ -1,0 +1,10 @@
+# 5 STAs amostradas de 200 nos mesh (1 a cada ~40 nos)
+
+ns3::ListPositionAllocator
+      5.0     10.0
+    604.4    350.7
+    112.9    610.8
+    390.5    363.7
+    654.5    825.9
+
+# vim:ft=conf

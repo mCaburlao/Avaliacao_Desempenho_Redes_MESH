@@ -1,0 +1,9 @@
+# Configuracao WiFi AP <-> STA (802.11g)
+standard g
+ratecontrol ns3::ArfWifiManager
+
+# Modelo de canal com atenuacao por distancia
+channel delay ns3::ConstantSpeedPropagationDelayModel
+channel add_loss ns3::LogDistancePropagationLossModel
+
+# vim:ft=conf

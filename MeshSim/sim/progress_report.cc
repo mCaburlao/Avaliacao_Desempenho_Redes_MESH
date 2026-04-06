@@ -19,7 +19,7 @@ void ProgressReport::Update(void)
 	double wall_elapsed = walltime.GetElapsedReal() / 1000.0;
 
 	/* Print status line */
-	printf("+++ Sim time elapsed %6.2f   Wall time elapsed %6.2f  "
+	fprintf(stderr, "+++ Sim time elapsed %6.2f   Wall time elapsed %6.2f  "
 	       "(slowdown %5.2fx)\n",
 	       sim_elapsed, wall_elapsed, wall_elapsed/sim_elapsed);
 

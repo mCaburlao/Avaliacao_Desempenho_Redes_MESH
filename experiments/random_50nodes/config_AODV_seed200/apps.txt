@@ -1,113 +1,31 @@
-# 50 STAs — UDP echo + 1 TCP file transfer
-# wiredSTA IPs: 10.1.4.1-50  |  Backhaul: 10.1.1.1
+# 5 STAs — UDP echo + 1 TCP file transfer
+# wiredSTA IPs: 10.4.128.1-5  |  Backhaul: 10.1.1.1
+# STAs escalonadas 10s entre si (evita flood simultaneo de RREQ no AODV)
 
 defaults StartTime=180s
-echo1-cl    10.1.4.1    echo_client
-echo2-cl    10.1.4.2    echo_client
-echo3-cl    10.1.4.3    echo_client
-echo4-cl    10.1.4.4    echo_client
-echo5-cl    10.1.4.5    echo_client
-echo6-cl    10.1.4.6    echo_client
-echo7-cl    10.1.4.7    echo_client
-echo8-cl    10.1.4.8    echo_client
-echo9-cl    10.1.4.9    echo_client
-echo10-cl    10.1.4.10    echo_client
-echo11-cl    10.1.4.11    echo_client
-echo12-cl    10.1.4.12    echo_client
-echo13-cl    10.1.4.13    echo_client
-echo14-cl    10.1.4.14    echo_client
-echo15-cl    10.1.4.15    echo_client
-echo16-cl    10.1.4.16    echo_client
-echo17-cl    10.1.4.17    echo_client
-echo18-cl    10.1.4.18    echo_client
-echo19-cl    10.1.4.19    echo_client
-echo20-cl    10.1.4.20    echo_client
-echo21-cl    10.1.4.21    echo_client
-echo22-cl    10.1.4.22    echo_client
-echo23-cl    10.1.4.23    echo_client
-echo24-cl    10.1.4.24    echo_client
-echo25-cl    10.1.4.25    echo_client
-echo26-cl    10.1.4.26    echo_client
-echo27-cl    10.1.4.27    echo_client
-echo28-cl    10.1.4.28    echo_client
-echo29-cl    10.1.4.29    echo_client
-echo30-cl    10.1.4.30    echo_client
-echo31-cl    10.1.4.31    echo_client
-echo32-cl    10.1.4.32    echo_client
-echo33-cl    10.1.4.33    echo_client
-echo34-cl    10.1.4.34    echo_client
-echo35-cl    10.1.4.35    echo_client
-echo36-cl    10.1.4.36    echo_client
-echo37-cl    10.1.4.37    echo_client
-echo38-cl    10.1.4.38    echo_client
-echo39-cl    10.1.4.39    echo_client
-echo40-cl    10.1.4.40    echo_client
-echo41-cl    10.1.4.41    echo_client
-echo42-cl    10.1.4.42    echo_client
-echo43-cl    10.1.4.43    echo_client
-echo44-cl    10.1.4.44    echo_client
-echo45-cl    10.1.4.45    echo_client
-echo46-cl    10.1.4.46    echo_client
-echo47-cl    10.1.4.47    echo_client
-echo48-cl    10.1.4.48    echo_client
-echo49-cl    10.1.4.49    echo_client
-echo50-cl    10.1.4.50    echo_client
-
+echo1-cl    10.4.128.1    echo_client
 echo1-srv   10.1.1.1    echo_server
+
+defaults StartTime=190s
+echo2-cl    10.4.128.2    echo_client
 echo2-srv   10.1.1.1    echo_server
+
+defaults StartTime=200s
+echo3-cl    10.4.128.3    echo_client
 echo3-srv   10.1.1.1    echo_server
+
+defaults StartTime=210s
+echo4-cl    10.4.128.4    echo_client
 echo4-srv   10.1.1.1    echo_server
+
+defaults StartTime=220s
+echo5-cl    10.4.128.5    echo_client
 echo5-srv   10.1.1.1    echo_server
-echo6-srv   10.1.1.1    echo_server
-echo7-srv   10.1.1.1    echo_server
-echo8-srv   10.1.1.1    echo_server
-echo9-srv   10.1.1.1    echo_server
-echo10-srv   10.1.1.1    echo_server
-echo11-srv   10.1.1.1    echo_server
-echo12-srv   10.1.1.1    echo_server
-echo13-srv   10.1.1.1    echo_server
-echo14-srv   10.1.1.1    echo_server
-echo15-srv   10.1.1.1    echo_server
-echo16-srv   10.1.1.1    echo_server
-echo17-srv   10.1.1.1    echo_server
-echo18-srv   10.1.1.1    echo_server
-echo19-srv   10.1.1.1    echo_server
-echo20-srv   10.1.1.1    echo_server
-echo21-srv   10.1.1.1    echo_server
-echo22-srv   10.1.1.1    echo_server
-echo23-srv   10.1.1.1    echo_server
-echo24-srv   10.1.1.1    echo_server
-echo25-srv   10.1.1.1    echo_server
-echo26-srv   10.1.1.1    echo_server
-echo27-srv   10.1.1.1    echo_server
-echo28-srv   10.1.1.1    echo_server
-echo29-srv   10.1.1.1    echo_server
-echo30-srv   10.1.1.1    echo_server
-echo31-srv   10.1.1.1    echo_server
-echo32-srv   10.1.1.1    echo_server
-echo33-srv   10.1.1.1    echo_server
-echo34-srv   10.1.1.1    echo_server
-echo35-srv   10.1.1.1    echo_server
-echo36-srv   10.1.1.1    echo_server
-echo37-srv   10.1.1.1    echo_server
-echo38-srv   10.1.1.1    echo_server
-echo39-srv   10.1.1.1    echo_server
-echo40-srv   10.1.1.1    echo_server
-echo41-srv   10.1.1.1    echo_server
-echo42-srv   10.1.1.1    echo_server
-echo43-srv   10.1.1.1    echo_server
-echo44-srv   10.1.1.1    echo_server
-echo45-srv   10.1.1.1    echo_server
-echo46-srv   10.1.1.1    echo_server
-echo47-srv   10.1.1.1    echo_server
-echo48-srv   10.1.1.1    echo_server
-echo49-srv   10.1.1.1    echo_server
-echo50-srv   10.1.1.1    echo_server
 
 # TCP file transfer: backhaul -> STA mais distante (max hops)
-defaults StartTime=185s
-file50-srv   10.1.1.1    file_server
-file50-cl    10.1.4.50    client
+defaults StartTime=230s
+file5-srv   10.1.1.1    file_server
+file5-cl    10.4.128.5    client
 
 # Conexoes
 connect echo1-cl    echo1-srv
@@ -115,49 +33,4 @@ connect echo2-cl    echo2-srv
 connect echo3-cl    echo3-srv
 connect echo4-cl    echo4-srv
 connect echo5-cl    echo5-srv
-connect echo6-cl    echo6-srv
-connect echo7-cl    echo7-srv
-connect echo8-cl    echo8-srv
-connect echo9-cl    echo9-srv
-connect echo10-cl    echo10-srv
-connect echo11-cl    echo11-srv
-connect echo12-cl    echo12-srv
-connect echo13-cl    echo13-srv
-connect echo14-cl    echo14-srv
-connect echo15-cl    echo15-srv
-connect echo16-cl    echo16-srv
-connect echo17-cl    echo17-srv
-connect echo18-cl    echo18-srv
-connect echo19-cl    echo19-srv
-connect echo20-cl    echo20-srv
-connect echo21-cl    echo21-srv
-connect echo22-cl    echo22-srv
-connect echo23-cl    echo23-srv
-connect echo24-cl    echo24-srv
-connect echo25-cl    echo25-srv
-connect echo26-cl    echo26-srv
-connect echo27-cl    echo27-srv
-connect echo28-cl    echo28-srv
-connect echo29-cl    echo29-srv
-connect echo30-cl    echo30-srv
-connect echo31-cl    echo31-srv
-connect echo32-cl    echo32-srv
-connect echo33-cl    echo33-srv
-connect echo34-cl    echo34-srv
-connect echo35-cl    echo35-srv
-connect echo36-cl    echo36-srv
-connect echo37-cl    echo37-srv
-connect echo38-cl    echo38-srv
-connect echo39-cl    echo39-srv
-connect echo40-cl    echo40-srv
-connect echo41-cl    echo41-srv
-connect echo42-cl    echo42-srv
-connect echo43-cl    echo43-srv
-connect echo44-cl    echo44-srv
-connect echo45-cl    echo45-srv
-connect echo46-cl    echo46-srv
-connect echo47-cl    echo47-srv
-connect echo48-cl    echo48-srv
-connect echo49-cl    echo49-srv
-connect echo50-cl    echo50-srv
-connect file50-srv   file50-cl
+connect file5-srv   file5-cl

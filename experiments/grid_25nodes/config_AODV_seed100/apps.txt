@@ -1,63 +1,31 @@
-# 25 STAs — UDP echo + 1 TCP file transfer
-# wiredSTA IPs: 10.1.4.1-25  |  Backhaul: 10.1.1.1
+# 5 STAs — UDP echo + 1 TCP file transfer
+# wiredSTA IPs: 10.4.128.1-5  |  Backhaul: 10.1.1.1
+# STAs escalonadas 10s entre si (evita flood simultaneo de RREQ no AODV)
 
 defaults StartTime=120s
-echo1-cl    10.1.4.1    echo_client
-echo2-cl    10.1.4.2    echo_client
-echo3-cl    10.1.4.3    echo_client
-echo4-cl    10.1.4.4    echo_client
-echo5-cl    10.1.4.5    echo_client
-echo6-cl    10.1.4.6    echo_client
-echo7-cl    10.1.4.7    echo_client
-echo8-cl    10.1.4.8    echo_client
-echo9-cl    10.1.4.9    echo_client
-echo10-cl    10.1.4.10    echo_client
-echo11-cl    10.1.4.11    echo_client
-echo12-cl    10.1.4.12    echo_client
-echo13-cl    10.1.4.13    echo_client
-echo14-cl    10.1.4.14    echo_client
-echo15-cl    10.1.4.15    echo_client
-echo16-cl    10.1.4.16    echo_client
-echo17-cl    10.1.4.17    echo_client
-echo18-cl    10.1.4.18    echo_client
-echo19-cl    10.1.4.19    echo_client
-echo20-cl    10.1.4.20    echo_client
-echo21-cl    10.1.4.21    echo_client
-echo22-cl    10.1.4.22    echo_client
-echo23-cl    10.1.4.23    echo_client
-echo24-cl    10.1.4.24    echo_client
-echo25-cl    10.1.4.25    echo_client
-
+echo1-cl    10.4.128.1    echo_client
 echo1-srv   10.1.1.1    echo_server
+
+defaults StartTime=130s
+echo2-cl    10.4.128.2    echo_client
 echo2-srv   10.1.1.1    echo_server
+
+defaults StartTime=140s
+echo3-cl    10.4.128.3    echo_client
 echo3-srv   10.1.1.1    echo_server
+
+defaults StartTime=150s
+echo4-cl    10.4.128.4    echo_client
 echo4-srv   10.1.1.1    echo_server
+
+defaults StartTime=160s
+echo5-cl    10.4.128.5    echo_client
 echo5-srv   10.1.1.1    echo_server
-echo6-srv   10.1.1.1    echo_server
-echo7-srv   10.1.1.1    echo_server
-echo8-srv   10.1.1.1    echo_server
-echo9-srv   10.1.1.1    echo_server
-echo10-srv   10.1.1.1    echo_server
-echo11-srv   10.1.1.1    echo_server
-echo12-srv   10.1.1.1    echo_server
-echo13-srv   10.1.1.1    echo_server
-echo14-srv   10.1.1.1    echo_server
-echo15-srv   10.1.1.1    echo_server
-echo16-srv   10.1.1.1    echo_server
-echo17-srv   10.1.1.1    echo_server
-echo18-srv   10.1.1.1    echo_server
-echo19-srv   10.1.1.1    echo_server
-echo20-srv   10.1.1.1    echo_server
-echo21-srv   10.1.1.1    echo_server
-echo22-srv   10.1.1.1    echo_server
-echo23-srv   10.1.1.1    echo_server
-echo24-srv   10.1.1.1    echo_server
-echo25-srv   10.1.1.1    echo_server
 
 # TCP file transfer: backhaul -> STA mais distante (max hops)
-defaults StartTime=125s
-file25-srv   10.1.1.1    file_server
-file25-cl    10.1.4.25    client
+defaults StartTime=170s
+file5-srv   10.1.1.1    file_server
+file5-cl    10.4.128.5    client
 
 # Conexoes
 connect echo1-cl    echo1-srv
@@ -65,24 +33,4 @@ connect echo2-cl    echo2-srv
 connect echo3-cl    echo3-srv
 connect echo4-cl    echo4-srv
 connect echo5-cl    echo5-srv
-connect echo6-cl    echo6-srv
-connect echo7-cl    echo7-srv
-connect echo8-cl    echo8-srv
-connect echo9-cl    echo9-srv
-connect echo10-cl    echo10-srv
-connect echo11-cl    echo11-srv
-connect echo12-cl    echo12-srv
-connect echo13-cl    echo13-srv
-connect echo14-cl    echo14-srv
-connect echo15-cl    echo15-srv
-connect echo16-cl    echo16-srv
-connect echo17-cl    echo17-srv
-connect echo18-cl    echo18-srv
-connect echo19-cl    echo19-srv
-connect echo20-cl    echo20-srv
-connect echo21-cl    echo21-srv
-connect echo22-cl    echo22-srv
-connect echo23-cl    echo23-srv
-connect echo24-cl    echo24-srv
-connect echo25-cl    echo25-srv
-connect file25-srv   file25-cl
+connect file5-srv   file5-cl

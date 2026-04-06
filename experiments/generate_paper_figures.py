@@ -2,7 +2,8 @@
 """
 generate_paper_figures.py
 
-Gera 3 figuras de publicação (600 dpi, PNG) a partir dos resultados de simulação.
+Gera 7 figuras de publicação (600 dpi, PNG) a partir dos resultados de simulação.
+Todas as figuras incluem Intervalos de Confiança 95% e seguem padrões SBC/IEEE.
 
 Uso:
   python3 generate_paper_figures.py
@@ -10,12 +11,17 @@ Uso:
 Entradas esperadas:
   - experiments/results.csv (saída de analyze_all.py)
 
-Saídas geradas:
-  - fig1-pdr-vs-nodes.png         (PDR % vs # nós)
-  - fig2-latency-vs-nodes.png     (Latência ms vs # nós)
-  - fig3-overhead-vs-nodes.png    (Overhead % vs # nós)
+Saídas geradas (formato: fig<N>-<metrica>-vs-nodes.png em 600 dpi):
+  1. fig1-pdr-vs-nodes.png              (Packet Delivery Ratio %)
+  2. fig2-latency-vs-nodes.png          (Latência média E2E ms)
+  3. fig3-jitter-vs-nodes.png           (Jitter médio ms)
+  4. fig4-packet-loss-vs-nodes.png      (Taxa de Perda %)
+  5. fig5-max-latency-vs-nodes.png      (Latência máxima ms - pior caso)
+  6. fig6-throughput-vs-nodes.png       (Throughput kbps)
+  7. fig7-avg-hops-vs-nodes.png         (Hops médios por pacote)
 
-Todas em 600 dpi, formato para impressão IEEE.
+Todas em 600 dpi, IC95% como bandas sombreadas, padrão publication-ready.
+Reprodutibilidade: seeds, num_nodes, e parâmetros de rede documentados em results.csv.
 """
 
 import pandas as pd
@@ -23,243 +29,234 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 
-# Configuração global: estilo paper
+# ============================================================================
+# CONFIGURAÇÃO GLOBAL: Estilo Paper + Cores/Marcadores Consistentes
+# ============================================================================
 plt.style.use('seaborn-v0_8-darkgrid')
 FIGSIZE = (8, 5)
-DPI = 600  # Print quality
-COLORS = {'AODV': '#1f77b4', 'OLSR': '#ff7f0e'}
+DPI = 600  # Print quality para IEEE/SBC
+COLORS = {'AODV': '#1f77b4', 'OLSR': '#ff7f0e'}  # Blue, Orange
 MARKERS = {'AODV': 'o', 'OLSR': 's'}
 
-BASE = Path("/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH")
-RESULTS_FILE = BASE / "experiments/results.csv"
-OUTPUT_DIR = BASE / "documento_latex/Template_SBC/template-latex"
+# Caminhos (funciona em Windows e Linux)
+BASE = Path(__file__).parent.parent
+RESULTS_FILE = BASE / "experiments" / "results.csv"
+OUTPUT_DIR = BASE / "documento_latex" / "Template_SBC" / "template-latex"
 
 # ============================================================================
-# 1. FIGURA: PDR vs # de Nós
+# DEFINIÇÃO DE MÉTRICAS E CONFIGURAÇÕES DE VISUALIZAÇÃO
+# ============================================================================
+METRICS_CONFIG = {
+    'pdr': {
+        'column': 'pdr',
+        'title': 'Packet Delivery Ratio (PDR) vs Escala de Rede',
+        'ylabel': 'PDR (%)',
+        'filename': 'fig1-pdr-vs-nodes.png',
+        'ylim': (0, 105),
+        'decimals': 1,
+    },
+    'avg_delay_ms': {
+        'column': 'avg_delay_ms',
+        'title': 'Latência Média E2E vs Escala de Rede',
+        'ylabel': 'Latência Média (ms)',
+        'filename': 'fig2-latency-vs-nodes.png',
+        'ylim': None,
+        'decimals': 2,
+    },
+    'avg_jitter_ms': {
+        'column': 'avg_jitter_ms',
+        'title': 'Jitter Médio vs Escala de Rede',
+        'ylabel': 'Jitter (ms)',
+        'filename': 'fig3-jitter-vs-nodes.png',
+        'ylim': None,
+        'decimals': 2,
+    },
+    'loss': {
+        'column': 'loss',
+        'title': 'Taxa de Perda de Pacotes vs Escala de Rede',
+        'ylabel': 'Taxa de Perda (%)',
+        'filename': 'fig4-packet-loss-vs-nodes.png',
+        'ylim': (0, None),
+        'decimals': 1,
+    },
+    'max_delay_ms': {
+        'column': 'max_delay_ms',
+        'title': 'Latência Máxima (Pior Caso) vs Escala de Rede',
+        'ylabel': 'Latência Máxima (ms)',
+        'filename': 'fig5-max-latency-vs-nodes.png',
+        'ylim': None,
+        'decimals': 0,
+    },
+    'throughput_kbps': {
+        'column': 'throughput_kbps',
+        'title': 'Throughput Agregado vs Escala de Rede',
+        'ylabel': 'Throughput (kbps)',
+        'filename': 'fig6-throughput-vs-nodes.png',
+        'ylim': None,
+        'decimals': 1,
+    },
+    'avg_hops': {
+        'column': 'avg_hops',
+        'title': 'Número Médio de Hops vs Escala de Rede',
+        'ylabel': 'Hops Médios',
+        'filename': 'fig7-avg-hops-vs-nodes.png',
+        'ylim': None,
+        'decimals': 2,
+    }
+}
+
+# ============================================================================
+# FUNÇÕES DE VISUALIZAÇÃO GENÉRICAS COM IC95%
 # ============================================================================
 
-def plot_pdr_vs_nodes():
+def plot_metric_vs_nodes(metric_key):
     """
-    Packet Delivery Ratio (%) versus número de nós.
-    Curva para cada protocolo com IC95% como banda sombreada.
+    Plota qualquer métrica vs # de nós com IC95% como banda sombreada.
+    
+    Parâmetros:
+        metric_key (str): chave em METRICS_CONFIG
+    
+    Returns:
+        bool: True se sucesso, False c.c.
+    
+    Metodologia:
+        - Agrupa por (protocol, num_nodes) 
+        - Calcula média e IC95% do erro padrão = 1.96 * SEM
+        - Desenha linha + banda sombreada para cada protocolo
+        - Formato: 600 dpi, publication-ready
     """
-    # Ler dados
+    
     if not RESULTS_FILE.exists():
         print(f"❌ Arquivo não encontrado: {RESULTS_FILE}")
         print("   Execute analyze_all.py primeiro.")
         return False
-
+    
+    config = METRICS_CONFIG[metric_key]
     df = pd.read_csv(RESULTS_FILE)
     
     # Agrupar por protocolo e número de nós
-    grouped = df.groupby(['protocol', 'num_nodes'])['pdr_pct'].agg(['mean', 'std', 'count'])
+    grouped = df.groupby(['protocol', 'num_nodes'])[config['column']].agg(
+        ['mean', 'std', 'count']
+    )
     
     fig, ax = plt.subplots(figsize=FIGSIZE, dpi=DPI)
     
     for protocol in ['AODV', 'OLSR']:
-        data = grouped.loc[protocol]
-        nodes = data.index.values
-        mean_pdr = data['mean'].values
-        std_pdr = data['std'].values
-        count = data['count'].values
+        if protocol not in grouped.index.get_level_values(0):
+            print(f"⚠️  Protocolo {protocol} não encontrado nos dados")
+            continue
         
-        # Intervalo de confiança 95%
-        sem = std_pdr / np.sqrt(count)
+        data = grouped.loc[protocol]
+        nodes = np.sort(data.index.values)
+        
+        # Reordenar dados
+        data = data.loc[nodes]
+        mean_vals = data['mean'].values
+        std_vals = data['std'].values
+        count_vals = data['count'].values
+        
+        # Intervalo de confiança 95% (SEM-based)
+        sem = std_vals / np.sqrt(count_vals)
         ic95 = 1.96 * sem
         
-        # Plot linha + IC como banda
-        ax.plot(nodes, mean_pdr, 
-                marker=MARKERS[protocol], 
-                color=COLORS[protocol],
-                linewidth=2,
-                markersize=8,
-                label=protocol)
-        ax.fill_between(nodes, 
-                        mean_pdr - ic95, 
-                        mean_pdr + ic95,
-                        alpha=0.2,
-                        color=COLORS[protocol])
-    
-    ax.set_xlabel('Número de Nós', fontsize=12, fontweight='bold')
-    ax.set_ylabel('PDR (%)', fontsize=12, fontweight='bold')
-    ax.set_title('Packet Delivery Ratio vs Escala de Rede',
-                fontsize=13, fontweight='bold')
-    ax.legend(fontsize=11, loc='best')
-    ax.grid(True, alpha=0.3)
-    ax.set_ylim([0, 105])
-    
-    fig.tight_layout()
-    
-    output_path = OUTPUT_DIR / "fig1-pdr-vs-nodes.png"
-    plt.savefig(output_path, dpi=DPI, bbox_inches='tight')
-    print(f"✅ Salvo: {output_path}")
-    plt.close()
-    return True
-
-# ============================================================================
-# 2. FIGURA: Latência vs # de Nós
-# ============================================================================
-
-def plot_latency_vs_nodes():
-    """
-    Latência fim-a-fim (ms) versus número de nós.
-    Mostra latência média + jitter como banda de variação.
-    """
-    if not RESULTS_FILE.exists():
-        print(f"❌ Arquivo não encontrado: {RESULTS_FILE}")
-        return False
-
-    df = pd.read_csv(RESULTS_FILE)
-    
-    # Agrupar
-    grouped = df.groupby(['protocol', 'num_nodes']).agg({
-        'latency_ms': ['mean', 'std'],
-        'jitter_ms': 'mean',
-        'num_nodes': 'count'
-    })
-    grouped.columns = ['latency_mean', 'latency_std', 'jitter_mean', 'count']
-    
-    fig, ax = plt.subplots(figsize=FIGSIZE, dpi=DPI)
-    
-    for protocol in ['AODV', 'OLSR']:
-        data = grouped.loc[protocol]
-        nodes = data.index.values
-        lat_mean = data['latency_mean'].values
-        lat_std = data['latency_std'].values
-        count = data['count'].values
-        
-        sem = lat_std / np.sqrt(count)
-        ic95 = 1.96 * sem
-        
-        ax.plot(nodes, lat_mean,
+        # Plot: linha + banda IC
+        ax.plot(nodes, mean_vals,
                 marker=MARKERS[protocol],
                 color=COLORS[protocol],
                 linewidth=2,
                 markersize=8,
-                label=protocol)
+                label=protocol,
+                zorder=3)
         ax.fill_between(nodes,
-                        lat_mean - ic95,
-                        lat_mean + ic95,
+                        mean_vals - ic95,
+                        mean_vals + ic95,
                         alpha=0.2,
-                        color=COLORS[protocol])
+                        color=COLORS[protocol],
+                        zorder=2)
     
+    # Formatação
     ax.set_xlabel('Número de Nós', fontsize=12, fontweight='bold')
-    ax.set_ylabel('Latência E2E (ms)', fontsize=12, fontweight='bold')
-    ax.set_title('Latência Fim-a-Fim vs Escala de Rede',
-                fontsize=13, fontweight='bold')
-    ax.legend(fontsize=11, loc='best')
-    ax.grid(True, alpha=0.3)
+    ax.set_ylabel(config['ylabel'], fontsize=12, fontweight='bold')
+    ax.set_title(config['title'], fontsize=13, fontweight='bold', pad=15)
+    ax.legend(fontsize=11, loc='best', framealpha=0.95)
+    ax.grid(True, alpha=0.3, linestyle='--')
+    
+    if config['ylim']:
+        ax.set_ylim(config['ylim'])
     
     fig.tight_layout()
     
-    output_path = OUTPUT_DIR / "fig2-latency-vs-nodes.png"
-    plt.savefig(output_path, dpi=DPI, bbox_inches='tight')
-    print(f"✅ Salvo: {output_path}")
+    # Salvar
+    output_path = OUTPUT_DIR / config['filename']
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=DPI, bbox_inches='tight', facecolor='white')
+    print(f"✅ Salvo: {config['filename']}")
     plt.close()
+    
     return True
 
 # ============================================================================
-# 3. FIGURA: Overhead vs # de Nós
-# ============================================================================
-
-def plot_overhead_vs_nodes():
-    """
-    Overhead de roteamento (% de bandwidth) versus número de nós.
-    Destaca ponto de crossover entre AODV linear e OLSR quadrático.
-    """
-    if not RESULTS_FILE.exists():
-        print(f"❌ Arquivo não encontrado: {RESULTS_FILE}")
-        return False
-
-    df = pd.read_csv(RESULTS_FILE)
-    
-    grouped = df.groupby(['protocol', 'num_nodes'])['overhead_pct'].agg(['mean', 'std', 'count'])
-    
-    fig, ax = plt.subplots(figsize=FIGSIZE, dpi=DPI)
-    
-    for protocol in ['AODV', 'OLSR']:
-        data = grouped.loc[protocol]
-        nodes = data.index.values
-        overhead_mean = data['mean'].values
-        overhead_std = data['std'].values
-        count = data['count'].values
-        
-        sem = overhead_std / np.sqrt(count)
-        ic95 = 1.96 * sem
-        
-        ax.plot(nodes, overhead_mean,
-                marker=MARKERS[protocol],
-                color=COLORS[protocol],
-                linewidth=2.5,
-                markersize=8,
-                label=f'{protocol} (observado)')
-        ax.fill_between(nodes,
-                        overhead_mean - ic95,
-                        overhead_mean + ic95,
-                        alpha=0.2,
-                        color=COLORS[protocol])
-    
-    # Linha referência: overhead threshold típico (30%)
-    ax.axhline(y=30, color='red', linestyle='--', linewidth=1.5, 
-              label='Threshold Prático (30%)', alpha=0.7)
-    
-    ax.set_xlabel('Número de Nós', fontsize=12, fontweight='bold')
-    ax.set_ylabel('Overhead de Roteamento (%)', fontsize=12, fontweight='bold')
-    ax.set_title('Overhead de Roteamento vs Escala de Rede',
-                fontsize=13, fontweight='bold')
-    ax.legend(fontsize=10, loc='best')
-    ax.grid(True, alpha=0.3)
-    
-    fig.tight_layout()
-    
-    output_path = OUTPUT_DIR / "fig3-overhead-vs-nodes.png"
-    plt.savefig(output_path, dpi=DPI, bbox_inches='tight')
-    print(f"✅ Salvo: {output_path}")
-    plt.close()
-    return True
-
-# ============================================================================
-# MAIN
+# MAIN: Gerar todas as 7 figuras
 # ============================================================================
 
 if __name__ == '__main__':
-    print("=" * 70)
-    print("📊 Gerando Figuras de Publicação (600 dpi, IEEE format)")
-    print("=" * 70)
+    print("=" * 80)
+    print("📊 Gerando 7 Figuras de Publicação (600 DPI, IC95%, Padrão SBC/IEEE)")
+    print("=" * 80)
+    
+    print(f"\n📁 Entrada:  {RESULTS_FILE}")
+    print(f"📁 Saída:    {OUTPUT_DIR}")
+    print()
     
     success = True
+    total_figs = len(METRICS_CONFIG)
+    
     try:
-        print("\n[1/3] Gerando PDR vs Nós...")
-        if not plot_pdr_vs_nodes():
-            success = False
-        
-        print("\n[2/3] Gerando Latência vs Nós...")
-        if not plot_latency_vs_nodes():
-            success = False
-        
-        print("\n[3/3] Gerando Overhead vs Nós...")
-        if not plot_overhead_vs_nodes():
-            success = False
+        for idx, (metric_key, config) in enumerate(METRICS_CONFIG.items(), 1):
+            print(f"[{idx}/{total_figs}] Gerando {config['filename']}...", end=" ")
+            if not plot_metric_vs_nodes(metric_key):
+                success = False
+                print("❌ FALHOU")
+            else:
+                print()
         
     except Exception as e:
         print(f"\n❌ Erro durante geração: {e}")
+        import traceback
+        traceback.print_exc()
         success = False
     
-    print("\n" + "=" * 70)
+    print("\n" + "=" * 80)
     if success:
-        print("✅ Todas as figuras geradas com sucesso!")
-        print(f"\n📁 Localização: {OUTPUT_DIR}")
-        print("\n📝 Próximos passos:")
-        print("   1. Verifique a qualidade das imagens (abra em Visualizador)")
-        print("   2. Insira no LaTeX com:")
-        print("      \\begin{figure}[ht]")
-        print("      \\centering")
-        print("      \\includegraphics[width=0.8\\textwidth]{fig1-pdr-vs-nodes.png}")
-        print("      \\caption{Packet Delivery Ratio...}")
-        print("      \\label{fig:pdr}")
-        print("      \\end{figure}")
+        print("✅ SUCESSO: Todas as 7 figuras geradas!")
+        print()
+        print("📋 Figuras Geradas:")
+        for idx, (metric_key, config) in enumerate(METRICS_CONFIG.items(), 1):
+            print(f"   {idx}. {config['filename']:40s} ({config['ylabel']})")
+        
+        print()
+        print("📝 Próximos passos para inserção em LaTeX:")
+        print("   1. Copie as figuras para o diretório do projeto LaTeX")
+        print("   2. No seu .tex, use:")
+        print()
+        print("   \\begin{figure}[ht]")
+        print("       \\centering")
+        print("       \\includegraphics[width=0.8\\textwidth]{fig1-pdr-vs-nodes.png}")
+        print("       \\caption{Packet Delivery Ratio em função da escala de rede.}")
+        print("       \\label{fig:pdr}")
+        print("   \\end{figure}")
+        print()
+        print("   [Repita para as demais figuras...]")
+        print()
+        print("🔬 Rigor Acadêmico:")
+        print("   ✓ Todas as figuras incluem Intervalo de Confiança 95%")
+        print("   ✓ Resolved em 600 DPI (publication-ready)")
+        print("   ✓ Padrões IEEE/SBC: fontes sans-serif, legendas claras")
+        print("   ✓ Reprodutibilidade: SEM-based IC da variância amostral")
+        print()
     else:
-        print("❌ Geração de figuras falhou. Verifique dados em results.csv")
+        print("❌ FALHA: Verifique dados em results.csv e tente novamente.")
     
-    print("=" * 70)
+    print("=" * 80)
+
 

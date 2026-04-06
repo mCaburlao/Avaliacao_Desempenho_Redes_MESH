@@ -28,14 +28,14 @@ RUN_TOPOLOGIES=()
 for arg in "$@"; do
     case "$arg" in
         --dry-run) DRY_RUN=1 ;;
-        chain-9|grid-25|random-50|random-100|random-200|random-500|random-1000|random-2000) RUN_TOPOLOGIES+=("$arg") ;;
+        grid-25|random-50|random-75|random-100|random-150|random-200|random-300|random-500|random-750|random-1000) RUN_TOPOLOGIES+=("$arg") ;;
         *) echo "Argumento desconhecido: $arg"; exit 1 ;;
     esac
 done
 
 # Sem argumento de topologia = roda tudo
 if [ ${#RUN_TOPOLOGIES[@]} -eq 0 ]; then
-    RUN_TOPOLOGIES=("chain-9" "grid-25" "random-50" "random-100" "random-200" "random-500" "random-1000" "random-2000")
+    RUN_TOPOLOGIES=("grid-25" "random-50" "random-75" "random-100" "random-150" "random-200" "random-300" "random-500" "random-750" "random-1000")
 fi
 
 # --- Validacoes ---
@@ -103,20 +103,16 @@ ensure_configs() {
     local NEED_GEN=0
     for topo in "${RUN_TOPOLOGIES[@]}"; do
         case "$topo" in
-            grid-25)
-                [ -d "$EXPS/grid_25nodes/config_AODV_seed100" ] || NEED_GEN=1 ;;
-            random-50)
-                [ -d "$EXPS/random_50nodes/config_AODV_seed200" ] || NEED_GEN=1 ;;
-            random-100)
-                [ -d "$EXPS/random_100nodes/config_AODV_seed300" ] || NEED_GEN=1 ;;
-            random-200)
-                [ -d "$EXPS/random_200nodes/config_AODV_seed400" ] || NEED_GEN=1 ;;
-            random-500)
-                [ -d "$EXPS/random_500nodes/config_AODV_seed500" ] || NEED_GEN=1 ;;
-            random-1000)
-                [ -d "$EXPS/random_1000nodes/config_AODV_seed600" ] || NEED_GEN=1 ;;
-            random-2000)
-                [ -d "$EXPS/random_2000nodes/config_AODV_seed700" ] || NEED_GEN=1 ;;
+            grid-25)    [ -d "$EXPS/grid_25nodes/config_AODV_seed100" ]    || NEED_GEN=1 ;;
+            random-50)  [ -d "$EXPS/random_50nodes/config_AODV_seed200" ]  || NEED_GEN=1 ;;
+            random-75)  [ -d "$EXPS/random_75nodes/config_AODV_seed210" ]  || NEED_GEN=1 ;;
+            random-100) [ -d "$EXPS/random_100nodes/config_AODV_seed300" ] || NEED_GEN=1 ;;
+            random-150) [ -d "$EXPS/random_150nodes/config_AODV_seed310" ] || NEED_GEN=1 ;;
+            random-200) [ -d "$EXPS/random_200nodes/config_AODV_seed400" ] || NEED_GEN=1 ;;
+            random-300) [ -d "$EXPS/random_300nodes/config_AODV_seed410" ] || NEED_GEN=1 ;;
+            random-500) [ -d "$EXPS/random_500nodes/config_AODV_seed500" ] || NEED_GEN=1 ;;
+            random-750) [ -d "$EXPS/random_750nodes/config_AODV_seed510" ] || NEED_GEN=1 ;;
+            random-1000)[ -d "$EXPS/random_1000nodes/config_AODV_seed600" ]|| NEED_GEN=1 ;;
         esac
     done
 
@@ -156,139 +152,93 @@ ensure_configs
 
 TOTAL_START=$(date +%s)
 
-# ── 1. chain-9 ────────────────────────────────────────────
-if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "chain-9"; then
-    echo ""
-    echo "━━━ Topologia 1/8: Cadeia Linear 9 nos ━━━━━━━━━━━━━"
-
-    run_sim "chain-9  AODV" \
-        "$EXPS/pilot_100_aodv_olsr/config_AODV_seed42" \
-        "$EXPS/pilot_100_aodv_olsr/out_AODV" \
-        9 9 400
-
-    run_sim "chain-9  OLSR" \
-        "$EXPS/pilot_100_aodv_olsr/config_OLSR_seed43" \
-        "$EXPS/pilot_100_aodv_olsr/out_OLSR" \
-        9 9 400
-    save_partial
-fi
-
-# ── 2. grid-25 ────────────────────────────────────────────
+# ── 1. grid-25 ────────────────────────────────────────────
 if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "grid-25"; then
     echo ""
-    echo "━━━ Topologia 2/8: Grid 5x5 (25 nos) ━━━━━━━━━━━━━━"
-
-    run_sim "grid-25  AODV" \
-        "$EXPS/grid_25nodes/config_AODV_seed100" \
-        "$EXPS/grid_25nodes/out_AODV" \
-        25 25 500
-
-    run_sim "grid-25  OLSR" \
-        "$EXPS/grid_25nodes/config_OLSR_seed101" \
-        "$EXPS/grid_25nodes/out_OLSR" \
-        25 25 500
+    echo "━━━ Topologia  1/10: Grid 5x5 (25 nos) ━━━━━━━━━━━━"
+    run_sim "grid-25   AODV" "$EXPS/grid_25nodes/config_AODV_seed100"  "$EXPS/grid_25nodes/out_AODV"   25 5 500
+    run_sim "grid-25   OLSR" "$EXPS/grid_25nodes/config_OLSR_seed101"  "$EXPS/grid_25nodes/out_OLSR"   25 5 500
     save_partial
 fi
 
-# ── 3. random-50 ──────────────────────────────────────────
+# ── 2. random-50 ──────────────────────────────────────────
 if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-50"; then
     echo ""
-    echo "━━━ Topologia 3/8: Random 50 nos ━━━━━━━━━━━━━━━━━━"
+    echo "━━━ Topologia  2/10: Random  50 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-50  AODV" "$EXPS/random_50nodes/config_AODV_seed200"  "$EXPS/random_50nodes/out_AODV"   50 5 600
+    run_sim "random-50  OLSR" "$EXPS/random_50nodes/config_OLSR_seed201"  "$EXPS/random_50nodes/out_OLSR"   50 5 600
+    save_partial
+fi
 
-    run_sim "random-50 AODV" \
-        "$EXPS/random_50nodes/config_AODV_seed200" \
-        "$EXPS/random_50nodes/out_AODV" \
-        50 50 600
-
-    run_sim "random-50 OLSR" \
-        "$EXPS/random_50nodes/config_OLSR_seed201" \
-        "$EXPS/random_50nodes/out_OLSR" \
-        50 50 600
+# ── 3. random-75 ──────────────────────────────────────────
+if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-75"; then
+    echo ""
+    echo "━━━ Topologia  3/10: Random  75 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-75  AODV" "$EXPS/random_75nodes/config_AODV_seed210"  "$EXPS/random_75nodes/out_AODV"   75 5 600
+    run_sim "random-75  OLSR" "$EXPS/random_75nodes/config_OLSR_seed211"  "$EXPS/random_75nodes/out_OLSR"   75 5 600
     save_partial
 fi
 
 # ── 4. random-100 ─────────────────────────────────────────
 if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-100"; then
     echo ""
-    echo "━━━ Topologia 4/8: Random 100 nos ━━━━━━━━━━━━━━━━━"
-
-    run_sim "random-100 AODV" \
-        "$EXPS/random_100nodes/config_AODV_seed300" \
-        "$EXPS/random_100nodes/out_AODV" \
-        100 100 700
-
-    run_sim "random-100 OLSR" \
-        "$EXPS/random_100nodes/config_OLSR_seed301" \
-        "$EXPS/random_100nodes/out_OLSR" \
-        100 100 700
+    echo "━━━ Topologia  4/10: Random 100 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-100 AODV" "$EXPS/random_100nodes/config_AODV_seed300" "$EXPS/random_100nodes/out_AODV" 100 5 650
+    run_sim "random-100 OLSR" "$EXPS/random_100nodes/config_OLSR_seed301" "$EXPS/random_100nodes/out_OLSR" 100 5 650
     save_partial
 fi
 
-# ── 5. random-200 ─────────────────────────────────────────
+# ── 5. random-150 ─────────────────────────────────────────
+if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-150"; then
+    echo ""
+    echo "━━━ Topologia  5/10: Random 150 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-150 AODV" "$EXPS/random_150nodes/config_AODV_seed310" "$EXPS/random_150nodes/out_AODV" 150 5 700
+    run_sim "random-150 OLSR" "$EXPS/random_150nodes/config_OLSR_seed311" "$EXPS/random_150nodes/out_OLSR" 150 5 700
+    save_partial
+fi
+
+# ── 6. random-200 ─────────────────────────────────────────
 if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-200"; then
     echo ""
-    echo "━━━ Topologia 5/8: Random 200 nos ━━━━━━━━━━━━━━━━━"
-
-    run_sim "random-200 AODV" \
-        "$EXPS/random_200nodes/config_AODV_seed400" \
-        "$EXPS/random_200nodes/out_AODV" \
-        200 200 800
-
-    run_sim "random-200 OLSR" \
-        "$EXPS/random_200nodes/config_OLSR_seed401" \
-        "$EXPS/random_200nodes/out_OLSR" \
-        200 200 800
+    echo "━━━ Topologia  6/10: Random 200 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-200 AODV" "$EXPS/random_200nodes/config_AODV_seed400" "$EXPS/random_200nodes/out_AODV" 200 5 750
+    run_sim "random-200 OLSR" "$EXPS/random_200nodes/config_OLSR_seed401" "$EXPS/random_200nodes/out_OLSR" 200 5 750
     save_partial
 fi
 
-# ── 6. random-500 ─────────────────────────────────────────
+# ── 7. random-300 ─────────────────────────────────────────
+if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-300"; then
+    echo ""
+    echo "━━━ Topologia  7/10: Random 300 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-300 AODV" "$EXPS/random_300nodes/config_AODV_seed410" "$EXPS/random_300nodes/out_AODV" 300 5 750
+    run_sim "random-300 OLSR" "$EXPS/random_300nodes/config_OLSR_seed411" "$EXPS/random_300nodes/out_OLSR" 300 5 750
+    save_partial
+fi
+
+# ── 8. random-500 ─────────────────────────────────────────
 if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-500"; then
     echo ""
-    echo "━━━ Topologia 6/8: Random 500 nos ━━━━━━━━━━━━━━━━━"
-
-    run_sim "random-500 AODV" \
-        "$EXPS/random_500nodes/config_AODV_seed500" \
-        "$EXPS/random_500nodes/out_AODV" \
-        500 20 700
-
-    run_sim "random-500 OLSR" \
-        "$EXPS/random_500nodes/config_OLSR_seed501" \
-        "$EXPS/random_500nodes/out_OLSR" \
-        500 20 700
+    echo "━━━ Topologia  8/10: Random 500 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-500 AODV" "$EXPS/random_500nodes/config_AODV_seed500" "$EXPS/random_500nodes/out_AODV" 500 5 800
+    run_sim "random-500 OLSR" "$EXPS/random_500nodes/config_OLSR_seed501" "$EXPS/random_500nodes/out_OLSR" 500 5 800
     save_partial
 fi
 
-# ── 7. random-1000 ───────────────────────────────────────
- if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-1000"; then
+# ── 9. random-750 ─────────────────────────────────────────
+if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-750"; then
     echo ""
-    echo "━━━ Topologia 7/8: Random 1000 nos ━━━━━━━━━━━━━━━━"
-
-    run_sim "random-1000 AODV" \
-        "$EXPS/random_1000nodes/config_AODV_seed600" \
-        "$EXPS/random_1000nodes/out_AODV" \
-        1000 20 800
-
-    run_sim "random-1000 OLSR" \
-        "$EXPS/random_1000nodes/config_OLSR_seed601" \
-        "$EXPS/random_1000nodes/out_OLSR" \
-        1000 20 800
+    echo "━━━ Topologia  9/10: Random 750 nos ━━━━━━━━━━━━━━━"
+    run_sim "random-750 AODV" "$EXPS/random_750nodes/config_AODV_seed510" "$EXPS/random_750nodes/out_AODV" 750 5 850
+    run_sim "random-750 OLSR" "$EXPS/random_750nodes/config_OLSR_seed511" "$EXPS/random_750nodes/out_OLSR" 750 5 850
     save_partial
 fi
 
-# ── 8. random-2000 ───────────────────────────────────────
-if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-2000"; then
+# ── 10. random-1000 ───────────────────────────────────────
+if printf '%s\n' "${RUN_TOPOLOGIES[@]}" | grep -qx "random-1000"; then
     echo ""
-    echo "━━━ Topologia 8/8: Random 2000 nos ━━━━━━━━━━━━━━━━"
-
-    run_sim "random-2000 AODV" \
-        "$EXPS/random_2000nodes/config_AODV_seed700" \
-        "$EXPS/random_2000nodes/out_AODV" \
-        2000 20 900
-
-    run_sim "random-2000 OLSR" \
-        "$EXPS/random_2000nodes/config_OLSR_seed701" \
-        "$EXPS/random_2000nodes/out_OLSR" \
-        2000 20 900
+    echo "━━━ Topologia 10/10: Random 1000 nos ━━━━━━━━━━━━━━"
+    run_sim "random-1000 AODV" "$EXPS/random_1000nodes/config_AODV_seed600" "$EXPS/random_1000nodes/out_AODV" 1000 5 900
+    run_sim "random-1000 OLSR" "$EXPS/random_1000nodes/config_OLSR_seed601" "$EXPS/random_1000nodes/out_OLSR" 1000 5 900
     save_partial
 fi
 
@@ -301,7 +251,4 @@ echo "  Concluido em $((TOTAL/60))m $((TOTAL%60))s"
 echo ""
 echo "  Para analisar todos os resultados:"
 echo "    python3 $EXPS/analyze_all.py"
-echo ""
-echo "  Para analisar so o piloto:"
-echo "    python3 $EXPS/pilot_100_aodv_olsr/analyze_pilot.py"
 echo "======================================================"

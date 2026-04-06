@@ -1,3 +1,0 @@
-# Cadeia linear: 9 nos mesh com 50m de espacamento
-# Cada no so alcanca o vizinho imediato (range ~70m com 802.11g)
-ns3::GridPositionAllocator MinX=0 MinY=0 DeltaX=50 DeltaY=0 GridWidth=9

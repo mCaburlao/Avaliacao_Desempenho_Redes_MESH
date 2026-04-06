@@ -315,15 +315,18 @@ void MeshSim::CreateInterfaces()
 	istackHelper.Install(staNodes);
 	istackHelper.Install(wiredStaNodes);
 
-	// Create the Network interfaces, and assign addresses
+	// Address plan (collision-free at scale, same-subnet reachability preserved):
 	//
-	// Address plan (each group on its own subnet to avoid collisions at scale):
-	//   10.1.1.0/24  — backhaul P2P       (apps.txt uses 10.1.1.1)
-	//   10.2.0.0/16  — mesh backbone      (supports up to 65534 nodes)
-	//   10.3.0.0/16  — AP interfaces      (one per mesh node)
-	//   10.4.0.0/16  — STA wireless       (one per STA)
-	//   10.5.0.0/16  — sta2w bridge       (one per STA)
-	//   10.1.4.0/24  — wiredSta           (apps.txt uses 10.1.4.N, max 254 STAs)
+	//  10.1.1.0/24  backhaulP2P       — apps.txt server address: 10.1.1.1
+	//  10.2.0.0/16  mesh backbone     — supports up to 65534 mesh nodes
+	//  10.3.0.0/16  AP + STA (same /16, no overlap)
+	//               AP:  10.3.0.1    … (meshSize entries, max ~32767)
+	//               STA: 10.3.128.1  … (staSize  entries, max ~32767)
+	//               AP and STA are in the same /16 -> direct L3 reachability
+	//  10.4.0.0/16  sta2w + wiredSta (same /16, no overlap)
+	//               sta2w:    10.4.0.1   … (staSize entries)
+	//               wiredSta: 10.4.128.1 … (staSize entries, apps.txt uses these)
+	//               Both in the same /16 -> direct L3 reachability
 	Ipv4AddressHelper addrHelper;
 	addrHelper.SetBase("10.1.1.0", "255.255.255.0");
 	backhaulP2pInterfaces = addrHelper.Assign(backhaulP2pDevices);
@@ -331,16 +334,21 @@ void MeshSim::CreateInterfaces()
 	addrHelper.SetBase("10.2.0.0", "255.255.0.0");
 	meshInterfaces = addrHelper.Assign(meshDevices);
 
+	// AP:  10.3.0.1, 10.3.0.2, …
 	addrHelper.SetBase("10.3.0.0", "255.255.0.0");
 	apInterfaces = addrHelper.Assign(apDevices);
 
-	addrHelper.SetBase("10.4.0.0", "255.255.0.0");
+	// STA: 10.3.128.1, 10.3.128.2, … (same /16 as AP -> direct reachability)
+	addrHelper.SetBase("10.3.0.0", "255.255.0.0", "0.0.128.1");
 	staInterfaces = addrHelper.Assign(staDevices);
 
-	addrHelper.SetBase("10.5.0.0", "255.255.0.0");
+	// sta2w: 10.4.0.1, 10.4.0.2, …
+	addrHelper.SetBase("10.4.0.0", "255.255.0.0");
 	sta2wInterfaces = addrHelper.Assign(sta2wDevices);
 
-	addrHelper.SetBase("10.1.4.0", "255.255.255.0");
+	// wiredSta: 10.4.128.1, 10.4.128.2, … (same /16 as sta2w -> direct reachability)
+	// apps.txt must reference these addresses (10.4.128.N)
+	addrHelper.SetBase("10.4.0.0", "255.255.0.0", "0.0.128.1");
 	wiredStaInterfaces = addrHelper.Assign(wiredStaDevices);
 
 	// Configure static routing

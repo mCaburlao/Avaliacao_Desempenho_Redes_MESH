@@ -60,62 +60,156 @@ Nossas análises complementam este corpo de trabalho fornecendo:
 
 \subsection{Ambiente de Simulação}
 
-Utilizamos MeshSim, um simulador de redes mesh construído sobre o framework NS-3. O simulador deste trabalho está disponível em repositório público \cite{meshsim_github}, permitindo reprodução completa dos experimentos. A escolha de MeshSim baseou-se na: (i) maturidade e acurácia do NS-3; (ii) suporte nativo a AODV e OLSR; (iii) disponibilidade de módulos Wi-Fi IEEE 802.11g; (iv) capacidade de reprodução determinística por meio de sementes aleatórias.
+Utilizamos MeshSim, um simulador de redes mesh construído sobre o framework NS-3
+(versão de desenvolvimento, \textit{commit} de abril de 2026)
+\cite{meshsim_github}.
+O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas em modo
+\textit{Release} (CMake), garantindo desempenho determinístico e reprodutível.
 
-\subsection{Design Experimental}
+A escolha de MeshSim sobre alternativas como OPNET ou OMNeT++ justifica-se por:
+(i)~maturidade e validação empírica extensiva do núcleo NS-3;
+(ii)~suporte nativo e independente a AODV e OLSR sem modificações de código;
+(iii)~modelos de canal Wi-Fi com atenuação por distância calibráveis (Yans + LogDistance);
+(iv)~reprodução determinística garantida por sementes aleatórias explícitas;
+(v)~integração nativa com FlowMonitor para coleta de métricas por fluxo.
 
-Nosso design experimental segue uma abordagem fatorial estruturada:
+\subsection{Topologia e Escalonamento de Rede}
 
-\begin{itemize}
-  \item \textbf{Fator 1 --- Protocolo:} AODV (reativo) e OLSR (proativo)
-  \item \textbf{Fator 2 --- Topologia:} Grid (cinco por cinco, determinístico), Aleatória (Poisson)
-  \item \textbf{Fator 3 --- Escala:} cem, trezentos, quinhentos, oitocentos, mil e mil e quinhentos nós
-  \item \textbf{Fator 4 --- Réplicas:} Mínimo dez rodadas por configuração com sementes distintas
-\end{itemize}
+Adotamos topologia aleatória com distribuição uniforme de nós, exceto pela
+topologia base de 25 nós que segue grade regular $5 \times 5$ com espaçamento
+de 50\,m entre nós adjacentes.
+Para todas as topologias aleatórias, a densidade de nós é mantida constante em
+$\rho = 2{,}84 \times 10^{-4}$\,nós/m$^2$, derivada da topologia de referência
+(50 nós em $420 \times 420$\,m).
+A área de cada topologia é calculada como:
+\begin{equation}
+  A = \sqrt{\frac{N}{\rho}} \times \sqrt{\frac{N}{\rho}} \quad \text{(metros)}
+\end{equation}
 
-Totalizamos $2 \text{ protocolos} \times 2 \text{ topologias} \times 6 \text{ escalas} \times 10 \text{ réplicas} = 240$ simulações.
+Investigamos dez pontos de escala cobrindo a faixa de 25 a 1000 nós,
+conforme Tabela~\ref{tab:topologias}.
+A densidade constante garante que variações de desempenho reflitam o efeito
+da escala (diâmetro da rede, número de saltos) e não variações de cobertura.
 
-\subsection{Métricas de Avaliação}
+\begin{table}[h]
+\centering
+\caption{Parâmetros das topologias simuladas. Todas as topologias aleatórias
+         utilizam distância mínima entre nós de 28\,m e alcance de transmissão
+         de 115\,m (IEEE 802.11g, modelo LogDistance).}
+\label{tab:topologias}
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Topologia} & \textbf{Nós} & \textbf{Área (m)} & \textbf{Aquecimento (s)} & \textbf{Duração (s)} \\
+\hline
+grid-25      &   25 & $200 \times 200$   & 120 & 500 \\
+random-50    &   50 & $420 \times 420$   & 180 & 600 \\
+random-75    &   75 & $514 \times 514$   & 210 & 600 \\
+random-100   &  100 & $600 \times 600$   & 240 & 650 \\
+random-150   &  150 & $727 \times 727$   & 270 & 700 \\
+random-200   &  200 & $840 \times 840$   & 300 & 750 \\
+random-300   &  300 & $1028 \times 1028$ & 330 & 750 \\
+random-500   &  500 & $1330 \times 1330$ & 360 & 800 \\
+random-750   &  750 & $1626 \times 1626$ & 390 & 850 \\
+random-1000  & 1000 & $1880 \times 1880$ & 420 & 900 \\
+\hline
+\end{tabular}
+\end{table}
 
-Coletam-se cinco métricas principais via FlowMonitor e trace-app (módulos nativos NS-3):
+\subsection{Arquitetura do Simulador}
+
+A arquitetura do MeshSim modela cinco camadas de nós distintas:
 
 \begin{enumerate}
-  \item \textbf{PDR (Packet Delivery Ratio):} Percentual de pacotes dados entregues com sucesso
-  \item \textbf{Latência E2E:} Delay fim-a-fim médio em millisegundos
-  \item \textbf{Overhead (\%):} Percentual de banda consumida por pacotes de controle de roteamento
-  \item \textbf{Convergência:} Tempo em segundos até rede alcançar estado estável pós-falha
-  \item \textbf{CPU (\%):} Utilização de processador durante simulação
+  \item \textbf{Nós Mesh:} formam o \textit{backbone} sem fio com padrão IEEE 802.11g
+        (canal Yans, controle de taxa ARF, protocolo Dot11s).
+        Endereçados em $10.2.0.0/16$ (até 65534 nós).
+  \item \textbf{Access Points (AP):} cada nó mesh atua simultaneamente como AP
+        para STAs associadas (SSID \texttt{ns-3-ssid}).
+        Endereçados em $10.3.0.1, 10.3.0.2, \ldots$
+  \item \textbf{STAs sem fio:} cinco dispositivos cliente por experimento,
+        associados ao AP do nó mesh mais próximo.
+        Endereçados em $10.3.128.1, \ldots$ (mesmo /16 que APs para reachability L3 direta).
+  \item \textbf{STAs cabeadas (wiredSta):} nós de aplicação conectados às STAs sem fio
+        via enlace Ethernet 10\,Gbps, $0$\,ms de atraso.
+        São os pontos de injeção e destino do tráfego de dados.
+        Endereçados em $10.4.128.1, \ldots$
+  \item \textbf{Backhaul:} nó servidor conectado ao nó mesh de origem via
+        enlace ponto-a-ponto 1\,Gbps, $1$\,ms.
+        Endereço fixo $10.1.1.1$ (destino de todos os fluxos de echo).
 \end{enumerate}
 
-\subsection{Configurações de Simulação}
+O modelo de canal do backbone mesh utiliza propagação de espaço livre
+(\texttt{ns3::ConstantSpeedPropagationDelayModel}) na camada de atraso,
+sem modelo de perda adicional.
+O canal AP--STA adiciona atenuação por distância via
+\texttt{ns3::LogDistancePropagationLossModel} com expoente padrão $n=3{,}0$,
+resultando em alcance efetivo de aproximadamente 115\,m a 54\,Mbps.
 
-Configuram-se os experimentos conforme:
+\subsection{Configuração dos Protocolos de Roteamento}
+
+Ambos os protocolos são instalados com parâmetros padrão do NS-3:
+
 \begin{itemize}
-  \item Duração: quatrocentos segundos de simulação
-  \item Aquecimento: noventa segundos antes de início de tráfego
-  \item Área: $1000~\text{m} \times 1000~\text{m}$
-  \item Padrão Wi-Fi: IEEE 802.11g, cinquenta e quatro Mbps
-  \item Potência TX: vinte dBm, Ganho RX: zero dBm
-  \item Tráfego: UDP CBR, mil pacotes por segundo, node-zero para node-N (caminho maior)
+  \item \textbf{AODV} (\textit{Ad hoc On-Demand Distance Vector}):
+        protocolo reativo que descobre rotas sob demanda via \textit{Route
+        Request} (RREQ) e \textit{Route Reply} (RREP).
+        Parâmetros: \texttt{HelloInterval=1s}, \texttt{ActiveRouteTimeout=3s},
+        \texttt{PathDiscoveryTime=3.5s}, \texttt{RreqRetries=2}.
+  \item \textbf{OLSR} (\textit{Optimized Link State Routing}):
+        protocolo proativo que distribui estado de enlace por toda a rede
+        periodicamente.
+        Parâmetros: \texttt{HelloInterval=2s}, \texttt{TcInterval=5s},
+        \texttt{MidInterval=5s}.
 \end{itemize}
 
-\subsection{Análise Estatística}
+O tempo de aquecimento (\textit{warm-up}) de cada topologia é dimensionado para
+garantir convergência completa antes do início das medições.
+Para OLSR, o critério é $T_{warmup} \geq D_{hops} \times T_{TC}$, onde
+$D_{hops}$ é o diâmetro estimado da rede e $T_{TC} = 5$\,s.
+Para redes de 1000 nós ($D_{hops} \approx 12$ saltos), o aquecimento de 420\,s
+garante pelo menos 84 rodadas de \textit{Topology Control} pelo diâmetro completo.
 
-Para cada métrica e configuração calculam-se:
+\subsection{Padrão de Tráfego}
+
+Cada experimento instância cinco fluxos UDP de eco independentes, um por wiredSta.
+Os fluxos são iniciados de forma escalonada, com intervalo de 10\,s entre cada
+início ($T_{start,i} = T_{warmup} + (i-1) \times 10$\,s), evitando o caso
+patológico de $N$ descobertas de rota simultâneas no AODV.
+Adicionalmente, um fluxo TCP de transferência de arquivo é iniciado após o
+último fluxo echo, do servidor backhaul ($10.1.1.1$) para a wiredSta mais distante.
+
+Cada cliente UDP envia pacotes de 128 bytes a 1\,pacote/s durante toda a janela
+de medição, totalizando cerca de $T_{meas} = T_{duration} - T_{start,5}$
+pacotes por fluxo.
+O servidor de eco responde ao remetente com o mesmo payload, de forma que o
+FlowMonitor captura métricas nos dois sentidos (upload e echo de retorno).
+
+\subsection{Métricas Coletadas}
+
+As métricas são extraídas via FlowMonitor (arquivo \texttt{flowdata.xml})
+e arquivos de trace de aplicação (\texttt{trace-app-rx-*.txt}):
+
 \begin{itemize}
-  \item Média e desvio padrão amostral
-  \item Intervalo de confiança 95\% (IC 95\%)
-  \item Teste Mann-Whitney U para comparação (dados possivelmente não-gaussianos)
-  \item Effect sizes (Cohen's d) para detectar diferenças práticas
+  \item \textbf{PDR} (\%): $\text{PDR} = 100 \times \frac{\sum rx_i}{\sum tx_i}$,
+        ponderado por todos os fluxos;
+  \item \textbf{Latência E2E} (ms): média ponderada de
+        $\overline{d}_i = \text{delaySum}_i / rx_i$;
+  \item \textbf{Jitter} (ms): variação média do atraso entre pacotes consecutivos;
+  \item \textbf{Taxa de Perda} (\%): complementar ao PDR;
+  \item \textbf{Hops médios}: proxy de overhead de roteamento,
+        calculado como $\overline{h} = \text{timesForwarded} / rx$.
 \end{itemize}
 
-A reprodutibilidade garante-se por meio de:
-\begin{itemize}
-  \item Sementes aleatórias fixadas (METADATA.yaml documentado para cada run)
-  \item Versão NS-3 e MeshSim registradas
-  \item Configuração de simulação em YAML reproduzível
-  \item Scripts de análise em Python disponibilizados
-\end{itemize}
+\subsection{Reprodutibilidade}
+
+Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e
+documentadas: para o ponto de escala $k$, a semente AODV é $100k$ e OLSR é
+$100k+1$ (ex: AODV-seed200, OLSR-seed201 para random-50).
+As posições dos nós nas topologias aleatórias são geradas deterministicamente
+a partir dessas sementes, garantindo que a topologia física seja idêntica entre
+protocolos para o mesmo ponto de escala.
+Todos os scripts de geração de configuração e análise estão disponíveis no
+repositório \cite{meshsim_github}.
 
 \section{Resultados e Discussão}
 
