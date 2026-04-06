@@ -29,11 +29,20 @@ BASE = Path("/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_
 EXPERIMENTS = BASE / "experiments"
 
 # Experimentos definidos: (label, out_dir, duration_s)
+# (topo_label, exp_subdir, duration_s, num_nodes)
 SUITE = [
-    ("chain-9",   "pilot_100_aodv_olsr", 400),
-    ("grid-25",   "grid_25nodes",        500),
-    ("random-50", "random_50nodes",      600),
+    ("chain-9",     "pilot_100_aodv_olsr",  400,     9),
+    ("grid-25",     "grid_25nodes",          500,    25),
+    ("random-50",   "random_50nodes",        600,    50),
+    ("random-100",  "random_100nodes",       700,   100),
+    ("random-200",  "random_200nodes",       800,   200),
+    ("random-500",  "random_500nodes",       700,   500),
+    ("random-1000", "random_1000nodes",      800,  1000),
+    ("random-2000", "random_2000nodes",      900,  2000),
 ]
+
+# Mapa rapido: label → num_nodes (usado no CSV)
+TOPO_NODES = {label: n for label, _, _, n in SUITE}
 
 PROTOCOLS = ["AODV", "OLSR"]
 
@@ -193,7 +202,7 @@ def export_csv(all_results, csv_path):
         for proto, m in results.items():
             if m is None:
                 continue
-            row = {"topology": topo, "protocol": proto}
+            row = {"topology": topo, "num_nodes": TOPO_NODES.get(topo, 0), "protocol": proto}
             row.update({k: m[k] for k, _, _ in METRIC_LABELS})
             row["tx"] = m["tx"]
             row["rx"] = m["rx"]
@@ -203,7 +212,7 @@ def export_csv(all_results, csv_path):
     if not rows:
         return
 
-    fields = (["topology", "protocol"]
+    fields = (["topology", "num_nodes", "protocol"]
               + [k for k, _, _ in METRIC_LABELS]
               + ["tx", "rx", "lost"])
     with open(csv_path, "w", newline="") as f:
@@ -217,12 +226,12 @@ def export_csv(all_results, csv_path):
 # Main
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    print("Analise AODV vs OLSR — Suite 3 topologias")
-    print("chain-9  |  grid-25  |  random-50")
+    print("Analise AODV vs OLSR — Suite escalabilidade 9-2000 nos")
+    print("chain-9 | grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000")
 
     all_results = {}
 
-    for topo_label, exp_subdir, _duration in SUITE:
+    for topo_label, exp_subdir, _duration, _num_nodes in SUITE:
         exp_path = EXPERIMENTS / exp_subdir
         results  = {}
         for proto in PROTOCOLS:

@@ -1,0 +1,336 @@
+Analise AODV vs OLSR — Suite escalabilidade 9-2000 nos
+chain-9 | grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: chain-9
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                82.5%       78.2%
+  Latencia media E2E (ms)               103.73       80.75
+  Jitter medio (ms)                     106.42       61.58
+  Taxa de perda (%)                      17.5%       21.4%
+  Latencia max, pior caso (ms)         1960.14     2370.64
+  Throughput (kbps)                       37.3        25.9
+  Hops medios por pacote                  2.96        2.98
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 3086 / 2545 / 540
+  OLSR TX/RX/Lost: 3596 / 2811 / 770
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: grid-25
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                51.8%       34.5%
+  Latencia media E2E (ms)               145.60      186.54
+  Jitter medio (ms)                     131.67      180.79
+  Taxa de perda (%)                      48.4%       65.5%
+  Latencia max, pior caso (ms)         4751.00     3838.65
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  0.98        2.82
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 6337 / 3280 / 3068
+  OLSR TX/RX/Lost: 2436 / 841 / 1595
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-50
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                 4.1%      100.0%
+  Latencia media E2E (ms)                 2.58        9.42
+  Jitter medio (ms)                       1.49        7.87
+  Taxa de perda (%)                     105.6%        0.0%
+  Latencia max, pior caso (ms)          266.21     2022.82
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  1.92        2.67
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5116 / 210 / 5400
+  OLSR TX/RX/Lost: 600 / 600 / 0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-200
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-500
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-1000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-2000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+  CSV salvo em: experiments/results.csv
+
+Analise AODV vs OLSR — Suite escalabilidade 9-2000 nos
+chain-9 | grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: chain-9
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                82.5%       78.2%
+  Latencia media E2E (ms)               103.73       80.75
+  Jitter medio (ms)                     106.42       61.58
+  Taxa de perda (%)                      17.5%       21.4%
+  Latencia max, pior caso (ms)         1960.14     2370.64
+  Throughput (kbps)                       37.3        25.9
+  Hops medios por pacote                  2.96        2.98
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 3086 / 2545 / 540
+  OLSR TX/RX/Lost: 3596 / 2811 / 770
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: grid-25
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                51.8%       34.5%
+  Latencia media E2E (ms)               145.60      186.54
+  Jitter medio (ms)                     131.67      180.79
+  Taxa de perda (%)                      48.4%       65.5%
+  Latencia max, pior caso (ms)         4751.00     3838.65
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  0.98        2.82
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 6337 / 3280 / 3068
+  OLSR TX/RX/Lost: 2436 / 841 / 1595
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-50
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                 4.1%      100.0%
+  Latencia media E2E (ms)                 2.58        9.42
+  Jitter medio (ms)                       1.49        7.87
+  Taxa de perda (%)                     105.6%        0.0%
+  Latencia max, pior caso (ms)          266.21     2022.82
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  1.92        2.67
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5116 / 210 / 5400
+  OLSR TX/RX/Lost: 600 / 600 / 0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-200
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-500
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-1000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-2000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+  CSV salvo em: experiments/results.csv
+
+Analise AODV vs OLSR — Suite escalabilidade 9-2000 nos
+chain-9 | grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: chain-9
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                82.5%       78.2%
+  Latencia media E2E (ms)               103.73       80.75
+  Jitter medio (ms)                     106.42       61.58
+  Taxa de perda (%)                      17.5%       21.4%
+  Latencia max, pior caso (ms)         1960.14     2370.64
+  Throughput (kbps)                       37.3        25.9
+  Hops medios por pacote                  2.96        2.98
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 3086 / 2545 / 540
+  OLSR TX/RX/Lost: 3596 / 2811 / 770
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: grid-25
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                51.8%       34.5%
+  Latencia media E2E (ms)               145.60      186.54
+  Jitter medio (ms)                     131.67      180.79
+  Taxa de perda (%)                      48.4%       65.5%
+  Latencia max, pior caso (ms)         4751.00     3838.65
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  0.98        2.82
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 6337 / 3280 / 3068
+  OLSR TX/RX/Lost: 2436 / 841 / 1595
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-50
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                 4.1%      100.0%
+  Latencia media E2E (ms)                 2.58        9.42
+  Jitter medio (ms)                       1.49        7.87
+  Taxa de perda (%)                     105.6%        0.0%
+  Latencia max, pior caso (ms)          266.21     2022.82
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  1.92        2.67
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5116 / 210 / 5400
+  OLSR TX/RX/Lost: 600 / 600 / 0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-200
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-500
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-1000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-2000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+  CSV salvo em: experiments/results.csv
+
+Analise AODV vs OLSR — Suite escalabilidade 9-2000 nos
+chain-9 | grid-25 | r-50 | r-100 | r-200 | r-500 | r-1000 | r-2000
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: chain-9
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                82.5%       78.2%
+  Latencia media E2E (ms)               103.73       80.75
+  Jitter medio (ms)                     106.42       61.58
+  Taxa de perda (%)                      17.5%       21.4%
+  Latencia max, pior caso (ms)         1960.14     2370.64
+  Throughput (kbps)                       37.3        25.9
+  Hops medios por pacote                  2.96        2.98
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 3086 / 2545 / 540
+  OLSR TX/RX/Lost: 3596 / 2811 / 770
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: grid-25
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                51.8%       34.5%
+  Latencia media E2E (ms)               145.60      186.54
+  Jitter medio (ms)                     131.67      180.79
+  Taxa de perda (%)                      48.4%       65.5%
+  Latencia max, pior caso (ms)         4751.00     3838.65
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  0.98        2.82
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 6337 / 3280 / 3068
+  OLSR TX/RX/Lost: 2436 / 841 / 1595
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-50
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                 4.1%      100.0%
+  Latencia media E2E (ms)                 2.58        9.42
+  Jitter medio (ms)                       1.49        7.87
+  Taxa de perda (%)                     105.6%        0.0%
+  Latencia max, pior caso (ms)          266.21     2022.82
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  1.92        2.67
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5116 / 210 / 5400
+  OLSR TX/RX/Lost: 600 / 600 / 0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                 2.1%      100.0%
+  Latencia media E2E (ms)                 2.63        1.32
+  Jitter medio (ms)                       1.52        0.10
+  Taxa de perda (%)                     107.8%        0.0%
+  Latencia max, pior caso (ms)          272.07       10.47
+  Throughput (kbps)                        0.0         0.0
+  Hops medios por pacote                  1.92        2.00
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 10116 / 210 / 10900
+  OLSR TX/RX/Lost: 200 / 200 / 0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-200
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-500
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-1000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-2000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+  CSV salvo em: experiments/results.csv
+

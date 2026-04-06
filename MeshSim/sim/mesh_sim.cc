@@ -316,22 +316,31 @@ void MeshSim::CreateInterfaces()
 	istackHelper.Install(wiredStaNodes);
 
 	// Create the Network interfaces, and assign addresses
+	//
+	// Address plan (each group on its own subnet to avoid collisions at scale):
+	//   10.1.1.0/24  — backhaul P2P       (apps.txt uses 10.1.1.1)
+	//   10.2.0.0/16  — mesh backbone      (supports up to 65534 nodes)
+	//   10.3.0.0/16  — AP interfaces      (one per mesh node)
+	//   10.4.0.0/16  — STA wireless       (one per STA)
+	//   10.5.0.0/16  — sta2w bridge       (one per STA)
+	//   10.1.4.0/24  — wiredSta           (apps.txt uses 10.1.4.N, max 254 STAs)
 	Ipv4AddressHelper addrHelper;
 	addrHelper.SetBase("10.1.1.0", "255.255.255.0");
 	backhaulP2pInterfaces = addrHelper.Assign(backhaulP2pDevices);
 
-	addrHelper.SetBase("10.1.2.0", "255.255.255.0");
+	addrHelper.SetBase("10.2.0.0", "255.255.0.0");
 	meshInterfaces = addrHelper.Assign(meshDevices);
 
-	addrHelper.SetBase("10.1.3.0", "255.255.255.0");
+	addrHelper.SetBase("10.3.0.0", "255.255.0.0");
 	apInterfaces = addrHelper.Assign(apDevices);
-	addrHelper.SetBase("10.1.3.0", "255.255.255.0", "0.0.0.101");
+
+	addrHelper.SetBase("10.4.0.0", "255.255.0.0");
 	staInterfaces = addrHelper.Assign(staDevices);
 
-	addrHelper.SetBase("10.1.4.0", "255.255.255.0", "0.0.0.101");
+	addrHelper.SetBase("10.5.0.0", "255.255.0.0");
 	sta2wInterfaces = addrHelper.Assign(sta2wDevices);
 
-	addrHelper.SetBase("10.1.4.0", "255.255.255.0", "0.0.0.1");
+	addrHelper.SetBase("10.1.4.0", "255.255.255.0");
 	wiredStaInterfaces = addrHelper.Assign(wiredStaDevices);
 
 	// Configure static routing

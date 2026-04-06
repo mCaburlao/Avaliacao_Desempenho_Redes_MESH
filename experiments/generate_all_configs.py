@@ -169,6 +169,23 @@ def list_sta_mobility(positions, offset_x=5, offset_y=10):
     return "\n".join(lines) + "\n"
 
 
+def list_sta_mobility_sampled(positions, n_stas, offset_x=5, offset_y=10):
+    """Seleciona n_stas posicoes uniformemente distribuidas da lista de nos mesh.
+    Usado quando meshSize >> staSize para evitar overflow de /24 (max 254 STAs)."""
+    n_mesh = len(positions)
+    step   = max(1, n_mesh // n_stas)
+    selected = [positions[i * step] for i in range(n_stas)]
+    lines = [
+        f"# {n_stas} STAs amostradas de {n_mesh} nos mesh (1 a cada ~{step} nos)",
+        "",
+        "ns3::ListPositionAllocator",
+    ]
+    for x, y in selected:
+        lines.append(f"  {x + offset_x:7.1f}  {y + offset_y:7.1f}")
+    lines.append("\n# vim:ft=conf")
+    return "\n".join(lines) + "\n"
+
+
 # ---------------------------------------------------------------------------
 # Utilitario: escrever um diretorio de config
 # ---------------------------------------------------------------------------
@@ -192,7 +209,7 @@ if __name__ == "__main__":
     print("=" * 58)
 
     # ---- 1. Grid 5x5 (25 nos) ----------------------------------------
-    print("\n[1/2] Grid 5x5 — 25 nos, spacing 50m, duration 500s")
+    print("\n[1/7] Grid 5x5 — 25 nos, spacing 50m, duration 500s")
     WARMUP_25 = 120    # OLSR converge ~70-80s em 25 nos (diam ~8 hops)
     TCP_25    = 125
     exp = EXPERIMENTS / "grid_25nodes"
@@ -204,7 +221,7 @@ if __name__ == "__main__":
     write_config(exp / "config_OLSR_seed101", mm, sm, ap, routing_txt("olsr"))
 
     # ---- 2. Random 50 nos --------------------------------------------
-    print("\n[2/2] Random 50 nos, area 420x420m, duration 600s")
+    print("\n[2/7] Random 50 nos, area 420x420m, duration 600s")
     WARMUP_50 = 180    # OLSR: mais nos, mais tempo de convergencia
     TCP_50    = 185
     TX_RANGE  = 115    # alcance de transmissao estimado (logdist 802.11g)
@@ -225,6 +242,123 @@ if __name__ == "__main__":
         write_config(
             exp / f"config_{label}_seed{seed}",
             mm_r, sm_r, ap50, routing_txt(proto)
+        )
+
+    # ---- 3. Random 100 nos (mesma densidade que random-50)  ------------------
+    # densidade = 50/420^2 = 0.000284 nos/m^2 -> A_100 = 100/0.000284 ~352k m^2 -> 600m
+    print("\n[3/7] Random 100 nos, area 600x600m, duration 700s")
+    WARMUP_100 = 240   # OLSR: diametro ~5 hops + buffer conservador
+    TCP_100    = 245
+    exp = EXPERIMENTS / "random_100nodes"
+    ap100 = apps_txt(100, warmup_s=WARMUP_100, tcp_warmup_s=TCP_100)
+
+    for proto, seed in [("aodv", 300), ("olsr", 301)]:
+        pos = _gen_positions(100, area=600, seed=seed, min_dist=28)
+        ok, n_ok = check_connectivity(pos, tx_range=TX_RANGE)
+        status = "CONECTADO" if ok else f"PARCIAL ({n_ok}/100)"
+        print(f"    seed={seed}: {status}")
+        if not ok:
+            print(f"    AVISO: topologia nao conectada! Verifique TX_RANGE ({TX_RANGE}m).")
+        mm_r = list_mesh_mobility(pos, f"seed={seed}")
+        sm_r = list_sta_mobility(pos)
+        label = proto.upper()
+        write_config(
+            exp / f"config_{label}_seed{seed}",
+            mm_r, sm_r, ap100, routing_txt(proto)
+        )
+
+    # ---- 4. Random 200 nos (mesma densidade, area 840x840m) -------------------
+    # A_200 = 200/0.000284 ~704k m^2 -> 840m
+    print("\n[4/7] Random 200 nos, area 840x840m, duration 800s")
+    WARMUP_200 = 300   # OLSR: diametro ~6 hops, mais tempo para TC flood completo
+    TCP_200    = 305
+    exp = EXPERIMENTS / "random_200nodes"
+    ap200 = apps_txt(200, warmup_s=WARMUP_200, tcp_warmup_s=TCP_200)
+
+    for proto, seed in [("aodv", 400), ("olsr", 401)]:
+        pos = _gen_positions(200, area=840, seed=seed, min_dist=28)
+        ok, n_ok = check_connectivity(pos, tx_range=TX_RANGE)
+        status = "CONECTADO" if ok else f"PARCIAL ({n_ok}/200)"
+        print(f"    seed={seed}: {status}")
+        if not ok:
+            print(f"    AVISO: topologia nao conectada! Verifique TX_RANGE ({TX_RANGE}m).")
+        mm_r = list_mesh_mobility(pos, f"seed={seed}")
+        sm_r = list_sta_mobility(pos)
+        label = proto.upper()
+        write_config(
+            exp / f"config_{label}_seed{seed}",
+            mm_r, sm_r, ap200, routing_txt(proto)
+        )
+
+    # ---- 5. Random 500 nos (mesma densidade, area 1330x1330m) ----------------
+    # A_500 = 500/0.000284 ~1.76M m^2 -> 1328m -> 1330m
+    # STAs fixos em 20 para evitar overflow IPv4 /24 (max 254)
+    print("\n[5/7] Random 500 nos, area 1330x1330m, duration 700s")
+    WARMUP_500 = 360   # OLSR: diametro ~7 hops, +buffer para convergencia total
+    TCP_500    = 365
+    N_STA_LG   = 20    # STAs para todas as topologias grandes (500, 1000, 2000)
+    exp = EXPERIMENTS / "random_500nodes"
+    ap_lg = apps_txt(N_STA_LG, warmup_s=WARMUP_500, tcp_warmup_s=TCP_500)
+
+    for proto, seed in [("aodv", 500), ("olsr", 501)]:
+        pos = _gen_positions(500, area=1330, seed=seed, min_dist=28)
+        ok, n_ok = check_connectivity(pos, tx_range=TX_RANGE)
+        status = "CONECTADO" if ok else f"PARCIAL ({n_ok}/500)"
+        print(f"    seed={seed}: {status}")
+        if not ok:
+            print(f"    AVISO: topologia nao conectada! Verifique TX_RANGE ({TX_RANGE}m).")
+        mm_r = list_mesh_mobility(pos, f"seed={seed}")
+        sm_r = list_sta_mobility_sampled(pos, N_STA_LG)
+        label = proto.upper()
+        write_config(
+            exp / f"config_{label}_seed{seed}",
+            mm_r, sm_r, ap_lg, routing_txt(proto)
+        )
+
+    # ---- 6. Random 1000 nos (mesma densidade, area 1880x1880m) ----------------
+    # A_1000 = 1000/0.000284 ~3.53M m^2 -> 1878m -> 1880m
+    print("\n[6/7] Random 1000 nos, area 1880x1880m, duration 800s")
+    WARMUP_1000 = 420  # OLSR: diametro ~8 hops
+    TCP_1000    = 425
+    exp = EXPERIMENTS / "random_1000nodes"
+    ap1000 = apps_txt(N_STA_LG, warmup_s=WARMUP_1000, tcp_warmup_s=TCP_1000)
+
+    for proto, seed in [("aodv", 600), ("olsr", 601)]:
+        pos = _gen_positions(1000, area=1880, seed=seed, min_dist=28)
+        ok, n_ok = check_connectivity(pos, tx_range=TX_RANGE)
+        status = "CONECTADO" if ok else f"PARCIAL ({n_ok}/1000)"
+        print(f"    seed={seed}: {status}")
+        if not ok:
+            print(f"    AVISO: topologia nao conectada! Verifique TX_RANGE ({TX_RANGE}m).")
+        mm_r = list_mesh_mobility(pos, f"seed={seed}")
+        sm_r = list_sta_mobility_sampled(pos, N_STA_LG)
+        label = proto.upper()
+        write_config(
+            exp / f"config_{label}_seed{seed}",
+            mm_r, sm_r, ap1000, routing_txt(proto)
+        )
+
+    # ---- 7. Random 2000 nos (mesma densidade, area 2660x2660m) ----------------
+    # A_2000 = 2000/0.000284 ~7.05M m^2 -> 2656m -> 2660m
+    print("\n[7/7] Random 2000 nos, area 2660x2660m, duration 900s")
+    WARMUP_2000 = 480  # OLSR: diametro ~9 hops
+    TCP_2000    = 485
+    exp = EXPERIMENTS / "random_2000nodes"
+    ap2000 = apps_txt(N_STA_LG, warmup_s=WARMUP_2000, tcp_warmup_s=TCP_2000)
+
+    for proto, seed in [("aodv", 700), ("olsr", 701)]:
+        pos = _gen_positions(2000, area=2660, seed=seed, min_dist=28)
+        ok, n_ok = check_connectivity(pos, tx_range=TX_RANGE)
+        status = "CONECTADO" if ok else f"PARCIAL ({n_ok}/2000)"
+        print(f"    seed={seed}: {status}")
+        if not ok:
+            print(f"    AVISO: topologia nao conectada! Verifique TX_RANGE ({TX_RANGE}m).")
+        mm_r = list_mesh_mobility(pos, f"seed={seed}")
+        sm_r = list_sta_mobility_sampled(pos, N_STA_LG)
+        label = proto.upper()
+        write_config(
+            exp / f"config_{label}_seed{seed}",
+            mm_r, sm_r, ap2000, routing_txt(proto)
         )
 
     print("\nConcluido. Execute ./run_all_experiments.sh para rodar tudo.")
