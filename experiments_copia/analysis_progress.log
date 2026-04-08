@@ -199,3 +199,107 @@ Somente flows STA->backhaul UDP (forward) contados
 
   CSV salvo em: experiments_copia/results.csv
 
+Analise AODV vs OLSR — Suite escalabilidade
+PDR normalizado: 5 STAs x 100 pkts = 500 pkts esperados
+Somente flows STA->backhaul UDP (forward) contados
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: grid-25
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                46.0%       56.8%
+  Latencia media E2E (ms)                90.82       57.78
+  Jitter medio (ms)                      14.68       28.78
+  Taxa de perda (%)                      49.5%       39.0%
+  Latencia max, pior caso (ms)         2620.10     4349.58
+  Throughput (kbps)                        9.4        11.1
+  Hops medios por pacote                  0.02        0.00
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 2400 / 1105 / 1189
+  OLSR TX/RX/Lost: 2287 / 1300 / 892
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-50
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                20.0%      100.0%
+  Latencia media E2E (ms)                 1.40        1.29
+  Jitter medio (ms)                       0.50        0.28
+  Taxa de perda (%)                      80.0%        0.0%
+  Latencia max, pior caso (ms)           28.45       15.29
+  Throughput (kbps)                        6.8         6.8
+  Hops medios por pacote                  0.00        0.00
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5000 / 1000 / 4000
+  OLSR TX/RX/Lost: 1000 / 1000 / 0
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-75
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                60.3%       77.1%
+  Latencia media E2E (ms)                17.48       10.29
+  Jitter medio (ms)                       5.24        4.61
+  Taxa de perda (%)                      39.7%       22.9%
+  Latencia max, pior caso (ms)         1181.33     1194.27
+  Throughput (kbps)                       17.2        16.2
+  Hops medios por pacote                  0.00        0.00
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5000 / 3015 / 1985
+  OLSR TX/RX/Lost: 3698 / 2852 / 846
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-100
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Metrica                                 AODV        OLSR
+  --------------------------------  ----------  ----------
+  PDR (%)                                59.8%       98.2%
+  Latencia media E2E (ms)                 5.31        2.48
+  Jitter medio (ms)                       1.45        1.05
+  Taxa de perda (%)                      40.2%        1.8%
+  Latencia max, pior caso (ms)          870.08      219.26
+  Throughput (kbps)                       15.3        15.1
+  Hops medios por pacote                  0.01        0.00
+  --------------------------------  ----------  ----------
+  AODV TX/RX/Lost: 5000 / 2990 / 2010
+  OLSR TX/RX/Lost: 3000 / 2945 / 55
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-150
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-200
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-300
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-500
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-750
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Topologia: random-1000
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  (sem resultados — rode run_all_experiments.sh primeiro)
+
+  CSV salvo em: experiments_copia/results.csv
+

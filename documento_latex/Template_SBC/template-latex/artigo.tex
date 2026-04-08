@@ -7,15 +7,18 @@
 \usepackage{multirow}
 \usepackage{amsmath}
 
+
 \sloppy
 
 \title{Análise Comparativa de Protocolos de Roteamento AODV vs OLSR em Redes MESH Escaláveis: Investigação do Ponto de Transição para Cenários de cidades inteligentes}
 
-\author{Aluno UFABC\inst{1}, Prof. Orientador\inst{1}}
+\author{Gabriela Cavalcanti, Gabriel Fogaca, Jacqueline Coelho, Joao Pedro, Marcela Ceschim, Matheus Lima, Miguel Piva, Rafael de Souza}
+
+\author{Gabriela, Gabriel, Jacqueline, Joao Pedro, Marcela, Matheus, Miguel, Rafael}
 
 \address{Centro de Engenharia, Modelagem e Ciências Sociais Aplicadas (CECS)\\
   Universidade Federal do ABC (UFABC) -- Santo André -- SP -- Brazil
-  \email{aluno@ufabc.edu.br, orientador@ufabc.edu.br}
+  \email{\{....., jacqueline.marinho \}  aluno@ufabc.edu.br}
 }
 
 \begin{document}
@@ -23,7 +26,7 @@
 \maketitle
 
 \begin{abstract}
-  cidades inteligentes and Internet of Things applications increasingly rely on wireless mesh networks for distributed communication. The choice between reactive (e.g., AODV) and proactive (e.g., OLSR) routing protocols significantly impacts network performance at different scales. This paper presents a comprehensive comparative analysis of AODV and OLSR in mesh networks ranging from 100 to 1500 nodes through simulation-based experiments using MeshSim (NS-3). We evaluate five key metrics: packet delivery ratio (PDR), end-to-end latency, routing overhead, convergence time, and CPU utilization. Our results reveal the scalability characteristics and identify critical transition points where one protocol becomes more suitable than the other. The findings provide practical recommendations for network designers deploying mesh networks in smart city applications.
+  Cidades inteligentes and Internet of Things applications increasingly rely on wireless mesh networks for distributed communication. The choice between reactive (e.g., AODV) and proactive (e.g., OLSR) routing protocols significantly impacts network performance at different scales. This paper presents a comprehensive comparative analysis of AODV and OLSR in mesh networks ranging from 100 to 1500 nodes through simulation-based experiments using MeshSim (NS-3). We evaluate five key metrics: packet delivery ratio (PDR), end-to-end latency, routing overhead, convergence time, and CPU utilization. Our results reveal the scalability characteristics and identify critical transition points where one protocol becomes more suitable than the other. The findings provide practical recommendations for network designers deploying mesh networks in smart city applications.
 \end{abstract}
 
 \begin{resumo}
@@ -32,13 +35,11 @@
 
 \section{Introdução}
 
-Redes mesh sem fio multi-hop (Multi-hop Wireless Mesh Networks) tornaram-se fundamentais em cenários de IoT e cidades inteligentes, onde dispositivos comunicam-se de forma autônoma sem infra-estrutura centralizada. Essas redes apresentam relevância especial em ambientes em que a instalação de cabeamento tradicional é impraticável, como em monitoramento ambiental distribuído, iluminação inteligente urbana e sistemas de rastreamento de ativos \cite{wireless_akyildiz_2005,wireless_sichitiu_2004}.
+Redes mesh, ou Wireless Mesh Networks (WMNs), são um tipo de rede sem fio em que os dispositivos, chamados de nós, atuam como transmissores e roteadores de dados. Nessas redes, os nós, que são compostos por roteadores de malha e clientes de malha, cooperam entre si para encaminhar informações, permitindo que os dados alcancem seus destinos mesmo quando não há conexão direta entre os dispositivos. Essa arquitetura descentralizada possibilita que a rede se organize e se configure automaticamente, estabelecendo conexões dinâmicas entre os nós. 
 
-O roteamento em redes mesh é crítico pois determina latência, consumo energético, confiabilidade e escalabilidade da rede. Os protocolos de roteamento em redes mesh classificam-se em três categorias principais: proativos, reativos e híbridos \cite{wireless_benyamina_2012}. Cada paradigma apresenta trade-offs distintos em termos de overhead de controle, latência de descoberta de rotas e adaptabilidade a mudanças topológicas.
+Devido a essas características, as redes mesh tornam-se adequadas para aplicações em cidades inteligentes, nas quais há grande quantidade de dispositivos distribuídos, como sensores, câmeras e sistemas de iluminação pública, que necessitam de comunicação eficiente, confiável e escalável. Nesse contexto, a escolha do protocolo de roteamento é um fator crítico para o desempenho da rede. Contudo, falta investigação empírica rigorosa em escala contemporânea sobre como estes protocolos se comportam quando redes crescem de centenas para milhares de nós. Recomendações atuais em literatura baseiam-se frequentemente em benchmarks desatualizados ou estudos teóricos sem validação experimental robusta. Este cenário deixa engenheiros de cidades inteligentes sem dados confiáveis para tomar decisões arquiteturais fundamentadas.
 
-Contudo, falta investigação empírica rigorosa em escala contemporânea sobre como estes protocolos se comportam quando redes crescem de centenas para milhares de nós. Recomendações atuais em literatura baseiam-se frequentemente em benchmarks desatualizados ou estudos teóricos sem validação experimental robusta. Este cenário deixa engenheiros de cidades inteligentes sem dados confiáveis para tomar decisões arquiteturais fundamentadas.
-
-O presente trabalho endereça esta lacuna por meio de uma análise comparativa controlada de AODV (reativo) e OLSR (proativo) em escalas que refletem aplicações reais de cidades inteligentes. Utiliza-se simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas.
+O presente trabalho endereça esta lacuna por meio de uma análise comparativa controlada de dois protocolos de roteamento em escalas que refletem aplicações reais de cidades inteligentes. Dentro da arquitetura de Redes mesh, os protocolos de roteamento classificam-se em três categorias principais: proativos, reativos e híbridos \cite{wireless_benyamina_2012}. Destacam-se dois protocolos de roteamento: o AODV, classificado como reativo por estabelecer rotas sob demanda, e o OLSR, classificado como proativo por manter rotas atualizadas continuamente. Desta forma, o objetivo deste artigo é fornecer uma comparação entre os dois protocolos de roteamento supracitados, aplicados ao contexto de cidades inteligentes. Utiliza-se simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas. 
 
 O restante deste artigo está organizado como segue. A Seção~\ref{sec:research_problem} apresenta o problema de pesquisa, contextualizando a escolha de protocolos e formulando as questões de investigação. A Seção~\ref{sec:related} revisa a literatura relevante sobre redes mesh e protocolos de roteamento. A Seção~\ref{sec:methodology} detalha a metodologia de simulação, incluindo configuração de topologia, parâmetros dos protocolos e métricas coletadas. A Seção~\ref{sec:results} apresenta os resultados e discussão. Finalmente, a Seção~\ref{sec:conclusion} conclui o artigo e sugere direções para trabalhos futuros.
 
@@ -72,7 +73,7 @@ A questão central deste trabalho é: \textit{Em qual faixa de escalabilidade (n
 
 O presente trabalho estuda roteamento sob condições de topologia aleatória uniforme, mantendo densidade de nós constante à medida que o número total de nós varia de 25 a 1000. Deste modo, isola-se o efeito da escala per se separando-o dos efeitos de densidade topológica. O desempenho é quantificado através de conjunto de cinco métricas: taxa de entrega de pacotes (PDR), latência fim-a-fim, jitter, throughput e número médio de saltos por pacote.
 
-A hipótese de trabalho é que existe regime de escala em que AODV supera OLSR significativamente em overhead de roteamento e latência, enquanto OLSR preserva taxa de entrega superior em redes pequenas onde o overhead proativo é tolerável. Espera-se identificar transição entre estes regimes com precisão estatística ≥95\%, permitindo recomendação prática para engenheiros que selecionam protocolo em função de escala esperada da rede.
+A hipótese de trabalho é que existe regime de escala em que AODV supera OLSR significativamente em overhead de roteamento e latência, enquanto OLSR preserva taxa de entrega superior em redes pequenas onde o overhead proativo é tolerável. Espera-se identificar transição entre estes regimes com precisão estatística $\ge$ 95\%, permitindo recomendação prática para engenheiros que selecionam protocolo em função de escala esperada da rede.
 
 \section{Revisão de Literatura}\label{sec:related}
 
@@ -221,7 +222,16 @@ Todos os scripts de geração de configuração, execução de simulação e an�
 
 
 
+
 \bibliographystyle{sbc}
 \bibliography{Mesh}
+
+% AKYILDIZ, Ian F.; WANG, Xudong; WANG, Weilin. Wireless mesh networks: a survey. Computer Networks, v. 47, n. 4, p. 445–487, 2005. Disponível em: https://www.sciencedirect.com/science/article/pii/S1389128604003457. Acesso em: 7 abr. 2026.
+
+% MOHAPATRA, S.; KANUNGO, P. Performance analysis of AODV, DSR, OLSR and DSDV Routing Protocols using NS2 Simulator. Procedia Engineering, v.30, p.69–76, 2012. Disponível em: https://www.sciencedirect.com/science/article/pii/S1877705812008454. Acesso em: 7 abr. 2026.
+
+% WU, Quanyu; SUN, Jian; HU, Mingying; LIU, Xiaojie; PAN, Lingjiao; WANG, Baoliang. Research on intelligent lighting Bluetooth Mesh networking control based on AODV. Energy and Buildings, v.323, art.114838, 15 nov. 2024. Disponível em: https://www.sciencedirect.com/science/article/pii/S037877882400954X. Acesso em: 7 abr. 2026.
+
+% KIM, Seongkwan; LEE, Okhwan; CHOI, Sunghyun; LEE, Sung Ju. Comparative analysis of link quality metrics and routing protocols for optimal route construction in wireless mesh networks. Ad Hoc Networks, v.9, n.7, p.1343–1358, set. 2011. Disponível em: https://www.sciencedirect.com/science/article/pii/S1570870511000746.  Acesso em: 7 abr. 2026. 
 
 \end{document}
