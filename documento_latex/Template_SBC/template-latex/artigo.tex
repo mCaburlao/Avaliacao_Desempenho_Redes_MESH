@@ -163,16 +163,8 @@ Desta forma, para calcular a taxa de entrega de pacotes (PDR), utilizou-se $\sum
 
 Onde $N_{\text{STA}} = 5$ é o número de STAs por experimento e $P = 100$ é o número de pacotes enviados por cada fluxo de medição. Esse denominador é idêntico para AODV e OLSR, tornando o PDR diretamente comparável entre protocolos.
 
-Complementar ao PDR, a taxa de perda de pacotes é definida como:
-\begin{equation}
-  \text{Loss} = 100 \times \frac{N_{\text{STA}} \times P - \displaystyle\sum_{i} rx_i}
-                                 {N_{\text{STA}} \times P}
-  \label{eq:loss}
-\end{equation}
-
-\paragraph{Latência fim-a-fim (E2E).}
 %Para cada fluxo $i$, o FlowMonitor acumula a soma dos atrasos individuais (\texttt{delaySum\textsubscript{i}}) em nanossegundos.
-Além disso, mediu-se a latência média ponderada pelo número de pacotes recebidos por fluxo, para refletir o impacto real sobre os dados efetivamente entregues:
+Além disso, mediu-se a latência média ponderada pelo número de pacotes recebidos por fluxo, para refletir o impacto real sobre os dados efetivamente entregues \cite{turlykozhayeva2024evaluating}. O cálculo é realizado conforme a Equação~\ref{eq:delay}, onde $rx_i$ é o número de pacotes recebidos no fluxo $i$ e $\texttt{delaySum}_i$ é a soma dos atrasos individuais em nanosegundos. O resultado é convertido para milissegundos para facilitar a interpretação.
 \begin{equation}
   \bar{d} = \frac{\displaystyle\sum_{i} \frac{\texttt{delaySum}_i}{rx_i} \cdot rx_i}
                  {\displaystyle\sum_{i} rx_i}
@@ -180,19 +172,14 @@ Além disso, mediu-se a latência média ponderada pelo número de pacotes receb
                   {\displaystyle\sum_{i} rx_i}
   \label{eq:delay}
 \end{equation}
-O resultado é convertido de nanosegundos para milissegundos. Esta formulação equivale à métrica de \textit{time delay} de \cite{turlykozhayeva2024evaluating}: $\text{delay}_i = |EndTime_i - StartTime_i|$.
 
-\paragraph{Jitter.}
-O NS-3 calcula o \texttt{jitterSum} de acordo com a definição RFC~3550:
+Outra métrica utilizada foi o jitter, calculado pelo NS-3 de acordo com a definição RFC~3550, que quantifica a variação de atraso entre pacotes consecutivos. Na Equação~\ref{eq:jitter}, $S_i$ e $D_i$ são os instantes de envio e recepção do pacote $i$. A média ponderada por fluxo é calculada de forma análoga à latência (Equação~\ref{eq:delay}).
 \begin{equation}
   Jitter = \bigl|(D_{i+1} - D_i) - (S_{i+1} - S_i)\bigr|
   \label{eq:jitter}
 \end{equation}
-Onde $S_i$ e $D_i$ são os instantes de envio e recepção do pacote $i$.A média ponderada por fluxo é calculada de forma análoga à latência (Equação~\ref{eq:delay}).
 
-\paragraph{Throughput.}
-O throughput agrega os bytes UDP efetivamente recebidos em todos os fluxos
-de medição (wiredSta$\to$backhaul), dividido pela janela de medição~$W$:
+O throughput agrega os bytes UDP efetivamente recebidos em todos os fluxos de medição (wiredSta$\to$backhaul), dividido pela janela de medição~$W$:
 \begin{equation}
   \text{Throughput} = \frac{8 \times \displaystyle\sum_{i} \texttt{rxBytes}_i}
                            {W} \quad [\text{kbps}]
@@ -200,15 +187,6 @@ de medição (wiredSta$\to$backhaul), dividido pela janela de medição~$W$:
 \end{equation}
 onde $W = T_{\text{duration}} - T_{\text{warmup}}$ é a duração efetiva da
 janela de medição (Tabela~\ref{tab:topologias}). O denominador exclui o período de aquecimento, que seria inflado para OLSR e deflado para AODV, garantindo comparação na mesma base temporal.
-
-\paragraph{Hops médios.}
-O número médio de saltos por pacote é calculado como:
-\begin{equation}
-  \bar{h} = \frac{\displaystyle\sum_{i} \texttt{timesForwarded}_i}
-                 {\displaystyle\sum_{i} rx_i}
-  \label{eq:hops}
-\end{equation}
-Este indicador quantifica o overhead de roteamento: valores elevados indicam caminhos subótimos ou retransmissões excessivas causadas pelo protocolo.
 
 Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e documentadas, seguindo esquema determinístico: para o ponto de escala $k$, a semente AODV é fixada em $100k$ e a semente OLSR em $100k+1$. Este esquema garante que as posições dos nós nas topologias aleatórias sejam geradas deterministicamente a partir dessas sementes, assegurando que a topologia física seja idêntica entre protocolos para um mesmo ponto de escala.
 
