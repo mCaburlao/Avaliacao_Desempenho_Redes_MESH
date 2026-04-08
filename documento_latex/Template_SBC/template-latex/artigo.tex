@@ -7,15 +7,18 @@
 \usepackage{multirow}
 \usepackage{amsmath}
 
+
 \sloppy
 
 \title{Análise Comparativa de Protocolos de Roteamento AODV vs OLSR em Redes MESH Escaláveis: Investigação do Ponto de Transição para Cenários de Smart Cities}
 
-\author{Aluno UFABC\inst{1}, Prof. Orientador\inst{1}}
+\author{Gabriela Cavalcanti, Gabriel Fogaca, Jacqueline Coelho, Joao Pedro, Marcela Ceschim, Matheus Lima, Miguel Piva, Rafael de Souza}
+
+\author{Gabriela, Gabriel, Jacqueline, Joao Pedro, Marcela, Matheus, Miguel, Rafael}
 
 \address{Centro de Engenharia, Modelagem e Ciências Sociais Aplicadas (CECS)\\
   Universidade Federal do ABC (UFABC) -- Santo André -- SP -- Brazil
-  \email{aluno@ufabc.edu.br, orientador@ufabc.edu.br}
+  \email{\{....., jacqueline.marinho \}  aluno@ufabc.edu.br}
 }
 
 \begin{document}
@@ -25,6 +28,164 @@
 \begin{abstract}
   Smart cities and Internet of Things applications increasingly rely on wireless mesh networks for distributed communication. The choice between reactive (e.g., AODV) and proactive (e.g., OLSR) routing protocols significantly impacts network performance at different scales. This paper presents a comprehensive comparative analysis of AODV and OLSR in mesh networks ranging from 100 to 1500 nodes through simulation-based experiments using MeshSim (NS-3). We evaluate five key metrics: packet delivery ratio (PDR), end-to-end latency, routing overhead, convergence time, and CPU utilization. Our results reveal the scalability characteristics and identify critical transition points where one protocol becomes more suitable than the other. The findings provide practical recommendations for network designers deploying mesh networks in smart city applications.
 \end{abstract}
+
+\begin{resumo}
+  Cidades inteligentes e aplicações de Internet das Coisas dependem cada vez mais de redes mesh sem fio para comunicação distribuída. A escolha entre protocolos de roteamento reativos (ex: AODV) e proativos (ex: OLSR) impacta significativamente o desempenho em diferentes escalas de rede. Este artigo apresenta uma análise comparativa abrangente de AODV e OLSR em redes mesh variando de 100 até 1500 nós através de experimentos baseados em simulação usando MeshSim (NS-3). Avaliamos cinco métricas principais: taxa de entrega de pacotes (PDR), latência fim-a-fim, overhead de roteamento, tempo de convergência e utilização de CPU. Nossos resultados revelam as características de escalabilidade e identificam pontos críticos de transição onde um protocolo é mais adequado que o outro. Os achados fornecem recomendações práticas para engenheiros implantando redes mesh em aplicações de cidades inteligentes.
+\end{resumo}
+
+\section{Introdução}
+
+
+Redes mesh, ou Wireless Mesh Networks (WMNs), são um tipo de rede sem fio em que os dispositivos, chamados de nós, atuam como transmissores e roteadores de dados. Nessas redes, os nós, que são compostos por roteadores de malha e clientes de malha, cooperam entre si para encaminhar informações, permitindo que os dados alcancem seus destinos mesmo quando não há conexão direta entre os dispositivos. Essa arquitetura descentralizada possibilita que a rede se organize e se configure automaticamente, estabelecendo conexões dinâmicas entre os nós. 
+
+Devido a essas características, as redes mesh tornam-se adequadas para aplicações em cidades inteligentes (smart cities), nas quais há grande quantidade de dispositivos distribuídos, como sensores, câmeras e sistemas de iluminação pública, que necessitam de comunicação eficiente, confiável e escalável. Nesse contexto, a escolha do protocolo de roteamento é um fator crítico para o desempenho da rede.
+
+Dentro da arquitetura de Redes mesh, destacam-se dois protocolos de roteamento: o AODV, classificado como reativo por estabelecer rotas sob demanda, e o OLSR, classificado como proativo por manter rotas atualizadas continuamente.
+O exposto é a motivação para este artigo, cujo objetivo é fornecer uma comparação entre os dois protocolos de roteamento citados anteriormente aplicados ao contexto de cidades inteligentes (ou smart cities). 
+
+
+O restante deste artigo está organizado da seguinte forma: a 
+Seção 2 apresenta trabalhos relacionados; a Seção 3 descreve a metodologia adotada para a simulação; a Seção 4 apresenta e discute os resultados obtidos; e a Seção 5 apresenta as conclusões e sugestões de trabalhos futuros.  
+
+
+
+\section{Trabalhos Relacionados}
+
+O estudo de redes mesh sem fio e protocolos de roteamento é uma área madura em pesquisa. \cite{wireless_akyildiz_2005} e \cite{wireless_sichitiu_2004} estabeleceram os fundamentos conceituais de redes mesh, discutindo arquitetura, caracterização de falhas, e desafios de escalabilidade. Posteriormente, \cite{wireless_benyamina_2012} apresentou um survey abrangente sobre design de redes mesh, consolidando conhecimento sobre diferentes paradigmas de roteamento.
+
+No contexto de avaliação de desempenho específica, \cite{mesh_passos_2005} conduziram medições práticas de performance em redes mesh, fornecendo baseline histórico importante. Trabalhos mais recentes focam em aplicações específicas: \cite{research_lee_2024} investigaram sistemas de comunicação mesh para detecção de fogo e gás perigoso, enquanto \cite{performance_khalifeh_2018} compararam redes DigiMesh e ZigBee visando avaliar trade-offs entre diferentes implementações.
+
+Aplicações emergentes em cidades inteligentes motivam novas investigações. \cite{optimizing_ruete_2024} exploraram otimizações de redes mesh baseadas em ZigBee e DigiMesh para rotas de evacuação iluminadas em cenários de simulação de desastres, demonstrando a relevância contemporânea de redes mesh.
+
+Nossas análises complementam este corpo de trabalho por meio de quatro contribuições principais. Primeiro, realiza-se uma avaliação controlada em escala de cem a mil e quinhentos nós com rigor estatístico garantido por simulação determinística. Segundo, apresenta-se comparação direta entre AODV e OLSR sob condições padronizadas, evitando os confundidores típicos de estudos anteriores. Terceiro, identificam-se pontos críticos de transição entre protocolos, permitindo que engenheiros tomem decisões informadas sobre qual protocolo adotar em cada regime de escala. Finalmente, oferece-se matriz de recomendação prática para engenheiros que implantam redes mesh em cenários reais de cidades inteligentes.
+
+\section{Metodologia}
+
+\subsection{Ambiente de Simulação}
+
+Utilizamos MeshSim, um simulador de redes mesh construído sobre o framework NS-3
+(versão de desenvolvimento, \textit{commit} de abril de 2026)
+\cite{meshsim_github}.
+O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas em modo
+\textit{Release} (CMake), garantindo desempenho determinístico e reprodutível.
+
+A escolha de MeshSim sobre alternativas como OPNET ou OMNeT++ justifica-se por cinco fatores interrelacionados. O framework NS-3, que constitui o núcleo do MeshSim, oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa. O suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação. Os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância (Yans e LogDistance), permitindo modelagem realista do ambiente de propagação. A reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados. Finalmente, a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
+
+\subsection{Topologia e Escalonamento de Rede}
+
+Adota-se topologia aleatória com distribuição uniforme de nós, exceto pela
+topologia base de 25 nós que segue grade regular $5 \times 5$ com espaçamento
+de 50\,m entre nós adjacentes.
+Para todas as topologias aleatórias, a densidade de nós é mantida constante em
+$\rho = 2{,}84 \times 10^{-4}$\,nós/m$^2$, derivada da topologia de referência
+(50 nós em $420 \times 420$\,m).
+A área de cada topologia é calculada como:
+\begin{equation}
+  A = \sqrt{\frac{N}{\rho}} \times \sqrt{\frac{N}{\rho}} \quad \text{(metros)}
+\end{equation}
+
+Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós,
+conforme Tabela~\ref{tab:topologias}.
+A densidade constante garante que variações de desempenho reflitam o efeito
+da escala (diâmetro da rede, número de saltos) e não variações de cobertura.
+
+\begin{table}[h]
+\centering
+\caption{Parâmetros das topologias simuladas. Todas as topologias aleatórias
+         utilizam distância mínima entre nós de 28\,m e alcance de transmissão
+         de 115\,m (IEEE 802.11g, modelo LogDistance).}
+\label{tab:topologias}
+\begin{tabular}{lrrrr}
+\hline
+\textbf{Topologia} & \textbf{Nós} & \textbf{Área (m)} & \textbf{Aquecimento (s)} & \textbf{Duração (s)} \\
+\hline
+grid-25      &   25 & $200 \times 200$   & 120 & 500 \\
+random-50    &   50 & $420 \times 420$   & 180 & 600 \\
+random-75    &   75 & $514 \times 514$   & 210 & 600 \\
+random-100   &  100 & $600 \times 600$   & 240 & 650 \\
+random-150   &  150 & $727 \times 727$   & 270 & 700 \\
+random-200   &  200 & $840 \times 840$   & 300 & 750 \\
+random-300   &  300 & $1028 \times 1028$ & 330 & 750 \\
+random-500   &  500 & $1330 \times 1330$ & 360 & 800 \\
+random-750   &  750 & $1626 \times 1626$ & 390 & 850 \\
+random-1000  & 1000 & $1880 \times 1880$ & 420 & 900 \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Arquitetura do Simulador}
+
+A arquitetura do MeshSim organiza-se em cinco camadas funcionais de nós, cada uma desempenhando papéis específicos na simulação. A primeira camada compreende os nós mesh, que formam o \textit{backbone} sem fio sob padrão IEEE 802.11g, utilizando canal Yans, controle de taxa ARF e protocolo Dot11s. Estes nós encontram-se endereçados no espaço $10.2.0.0/16$, permitindo até 65534 nós mesh simultâneos.
+
+Cada nó mesh funciona simultaneamente como access point (AP) para dispositivos cliente (STAs) associadas com SSID padrão \texttt{ns-3-ssid}. Os APs recebem endereços na série $10.3.0.1, 10.3.0.2, \ldots$, criando uma camada intermediária de acesso.
+
+A terceira camada consiste em cinco dispositivos cliente sem fio (STAs) por experimento, cada um associado ao AP do nó mesh fisicamente mais próximo. Recebem endereços na faixa $10.3.128.1, \ldots$, mantendo compatibilidade L3 direta com os APs através do mesmo bloco /16.
+
+A quarta camada introduz nós de aplicação (STAs cabeadas ou wiredSta), conectados aos respectivos clientes sem fio por enlace Ethernet de 10\,Gbps com latência nula. Estes nós constituem os pontos efetivos de injeção e destino do tráfego de dados, endereçados em $10.4.128.1, \ldots$
+
+Finalmente, a quinta camada abriga o nó servidor de backhaul, conectado ao nó mesh de origem por enlace ponto-a-ponto de 1\,Gbps e latência de 1\,ms. Recebe endereço fixo $10.1.1.1$ e funciona como destino universal para todos os fluxos de echo.
+
+O modelo de propagação do backbone mesh adota espaço livre (\texttt{ns3::ConstantSpeedPropagationDelayModel}) na camada de atraso, sem modelos de perda adicionais nessa interface. Contrasta-se com o canal AP--STA, que incorpora atenuação por distância através de \texttt{ns3::LogDistancePropagationLossModel} com expoente padrão $n=3{,}0$, produzindo alcance efetivo de aproximadamente 115\,m a taxa de 54\,Mbps.
+
+\subsection{Configuração dos Protocolos de Roteamento}
+
+Ambos os protocolos encontram-se instalados com parâmetros padrão do NS-3. O AODV (\textit{Ad hoc On-Demand Distance Vector}) funciona como protocolo reativo, descobrindo rotas sob demanda através de mensagens de \textit{Route Request} (RREQ) e \textit{Route Reply} (RREP). Sua configuração utiliza \texttt{HelloInterval=1s}, \texttt{ActiveRouteTimeout=3s}, \texttt{PathDiscoveryTime=3.5s} e \texttt{RreqRetries=2}.
+
+O OLSR (\textit{Optimized Link State Routing}), por sua vez, implementa paradigma proativo, distribuindo periodicamente informações de estado de enlace por toda a rede. Configura-se com \texttt{HelloInterval=2s}, \texttt{TcInterval=5s} e \texttt{MidInterval=5s}.
+
+O tempo de aquecimento (\textit{warm-up}) de cada topologia é dimensionado para
+garantir convergência completa antes do início das medições.
+Para OLSR, o critério é $T_{warmup} \geq D_{hops} \times T_{TC}$, onde
+$D_{hops}$ é o diâmetro estimado da rede e $T_{TC} = 5$\,s.
+Para redes de 1000 nós ($D_{hops} \approx 12$ saltos), o aquecimento de 420\,s
+garante pelo menos 84 rodadas de \textit{Topology Control} pelo diâmetro completo.
+
+\subsection{Padrão de Tráfego}
+
+Cada experimento instância cinco fluxos UDP de eco independentes, um por wiredSta.
+Os fluxos são iniciados de forma escalonada, com intervalo de 10\,s entre cada
+início ($T_{start,i} = T_{warmup} + (i-1) \times 10$\,s), evitando o caso
+patológico de $N$ descobertas de rota simultâneas no AODV.
+Adicionalmente, um fluxo TCP de transferência de arquivo é iniciado após o
+último fluxo echo, do servidor backhaul ($10.1.1.1$) para a wiredSta mais distante.
+
+Cada cliente UDP envia pacotes de 128 bytes a 1\,pacote/s durante toda a janela
+de medição, totalizando cerca de $T_{meas} = T_{duration} - T_{start,5}$
+pacotes por fluxo.
+O servidor de eco responde ao remetente com o mesmo payload, de forma que o
+FlowMonitor captura métricas nos dois sentidos (upload e echo de retorno).
+
+\subsection{Métricas Coletadas}
+
+As métricas são extraídas por meio de FlowMonitor (arquivo \texttt{flowdata.xml}) e arquivos de trace de aplicação (\texttt{trace-app-rx-*.txt}), capturando comportamento em granularidade de fluxo.
+
+A taxa de entrega de pacotes (PDR), expressa em percentual, calcula-se como $\text{PDR} = 100 \times \frac{\sum rx_i}{\sum tx_i}$, ponderada por todos os fluxos da simulação. A latência fim-a-fim (E2E) representa a média ponderada dos atrasos individuais, calculada como $\overline{d}_i = \text{delaySum}_i / rx_i$, expressa em milissegundos. O jitter mede a variação média do atraso entre pacotes consecutivos, quantificando a variabilidade temporal. A taxa de perda (é complementar ao PDR, oferecendo perspectiva alternativa sobre confiabilidade de entrega. Finalmente, o número médio de hops funciona como proxy para quantificar o overhead de roteamento, calculado como $\overline{h} = \text{timesForwarded} / rx$.
+
+Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e documentadas, seguindo esquema determinístico: para o ponto de escala $k$, a semente AODV é fixada em $100k$ e a semente OLSR em $100k+1$. Por exemplo, no ponto aleatório de 50 nós, emprega-se AODV-seed200 e OLSR-seed201. Este esquema garante que as posições dos nós nas topologias aleatórias sejam geradas deterministicamente a partir dessas sementes, assegurando que a topologia física seja idêntica entre protocolos para um mesmo ponto de escala.
+
+Todos os scripts de geração de configuração, execução de simulação e análise de resultados encontram-se disponíveis no repositório de código aberto \cite{meshsim_github}, permitindo que qualquer pesquisador reproduza exatamente os experimentos aqui reportados.
+
+\section{Resultados e Discussão}
+
+
+
+\section{Conclusão e Próximos Passos}
+
+
+
+%\bibliographystyle{sbc}
+\bibliography{Template_SBC/template-latex/sbc-template}
+\section{Referencias Bibliográficas}
+
+AKYILDIZ, Ian F.; WANG, Xudong; WANG, Weilin. Wireless mesh networks: a survey. Computer Networks, v. 47, n. 4, p. 445–487, 2005. Disponível em: https://www.sciencedirect.com/science/article/pii/S1389128604003457. Acesso em: 7 abr. 2026.
+
+MOHAPATRA, S.; KANUNGO, P. Performance analysis of AODV, DSR, OLSR and DSDV Routing Protocols using NS2 Simulator. Procedia Engineering, v.30, p.69–76, 2012. Disponível em: https://www.sciencedirect.com/science/article/pii/S1877705812008454. Acesso em: 7 abr. 2026.
+
+WU, Quanyu; SUN, Jian; HU, Mingying; LIU, Xiaojie; PAN, Lingjiao; WANG, Baoliang. Research on intelligent lighting Bluetooth Mesh networking control based on AODV. Energy and Buildings, v.323, art.114838, 15 nov. 2024. Disponível em: https://www.sciencedirect.com/science/article/pii/S037877882400954X. Acesso em: 7 abr. 2026.
+
+KIM, Seongkwan; LEE, Okhwan; CHOI, Sunghyun; LEE, Sung Ju. Comparative analysis of link quality metrics and routing protocols for optimal route construction in wireless mesh networks. Ad Hoc Networks, v.9, n.7, p.1343–1358, set. 2011. Disponível em: https://www.sciencedirect.com/science/article/pii/S1570870511000746.  Acesso em: 7 abr. 2026. 
+
+\end{document}\end{abstract}
 
 \begin{resumo}
   Cidades inteligentes e aplicações de Internet das Coisas dependem cada vez mais de redes mesh sem fio para comunicação distribuída. A escolha entre protocolos de roteamento reativos (ex: AODV) e proativos (ex: OLSR) impacta significativamente o desempenho em diferentes escalas de rede. Este artigo apresenta uma análise comparativa abrangente de AODV e OLSR em redes mesh variando de 100 até 1500 nós através de experimentos baseados em simulação usando MeshSim (NS-3). Avaliamos cinco métricas principais: taxa de entrega de pacotes (PDR), latência fim-a-fim, overhead de roteamento, tempo de convergência e utilização de CPU. Nossos resultados revelam as características de escalabilidade e identificam pontos críticos de transição onde um protocolo é mais adequado que o outro. Os achados fornecem recomendações práticas para engenheiros implantando redes mesh em aplicações de cidades inteligentes.
