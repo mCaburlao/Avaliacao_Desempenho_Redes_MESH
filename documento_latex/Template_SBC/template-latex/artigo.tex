@@ -192,8 +192,88 @@ Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e d
 
 Todos os scripts de geração de configuração, execução de simulação e análise de resultados encontram-se disponíveis no repositório de código aberto \cite{caburlao_github}, permitindo que qualquer pesquisador reproduza exatamente os experimentos aqui reportados.
 
-\section{Resultados e Discussão}
+\section{Resultados e Discussão}\label{sec:results}
 
+Nesta seção apresentamos os resultados experimentais da comparação entre AODV e OLSR em redes mesh escaláveis. Os dados foram coletados mediante simulações determinísticas com sementes explícitas documentadas, garantindo reprodutibilidade total. Todos os resultados incluem intervalos de confiança de 95\% representados como bandas sombreadas nos gráficos.
+
+\subsection{Taxa de Entrega de Pacotes (PDR)}
+
+A Figura~\ref{fig:pdr} apresenta a Taxa de Entrega de Pacotes (PDR) em função da escala da rede. Observam-se dois comportamentos distintos:
+
+\begin{itemize}
+  \item \textbf{AODV:} Demonstra PDR inicial de 88\% em redes pequenas (25 nós), decaindo rapidamente para aproximadamente 40\% em 50 nós e estabilizando-se em torno de 15\% em redes acima de 200 nós.
+  
+  \item \textbf{OLSR:} Exibe PDR inicial mais conservador (61\% em 25 nós), porém com degradação mais gradual, mantendo 33\% em 50 nós e convergindo a aproximadamente 23\% em redes maiores.
+\end{itemize}
+
+A divergência pronunciada entre protocolos em pequena escala sugere que o mecanismo de descoberta de rota sob demanda do AODV é eficiente em topologias com conectividade alta e diâmetro reduzido. Entretanto, conforme a rede cresce, a sobreprovisão de pacotes pendentes aguardando conclusão de RREQ resulta em perda acentuada. O OLSR, mantendo tabelas atualizadas continuamente, apresenta comportamento mais previsível e estável, ainda que em degradação contínua.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{fig1-pdr-vs-nodes.png}
+\caption{
+Taxa de Entrega de Pacotes (PDR) em função da escala da rede.
+}
+\label{fig:pdr}
+\end{figure}
+
+\subsection{Latência Média Fim-a-Fim}
+
+A Figura~\ref{fig:latency} exibe a evolução de latência média fim-a-fim com a escala de rede. Contrario aos padrões de PDR, a latência demonstra crescimento consistente para ambos os protocolos:
+
+\begin{itemize}
+  \item \textbf{AODV:} Latência de aproximadamente 130\,ms em redes de 25 nós, escalando para aproximadamente 2400\,ms em 1000 nós.
+  
+  \item \textbf{OLSR:} Latência inicial de 150\,ms, atingindo 2700\,ms em 1000 nós.
+\end{itemize}
+
+O crescimento aproximadamente logarítmico reflete o aumento do diâmetro topológico conforme o número de nós cresce. Até aproximadamente 500 nós, AODV apresenta latência 5-15\% inferior a OLSR, presumivelmente devido à ausência de overhead de propagação de TC. Porém, acima de 500 nós, o efeito de congestionamento de cache de RREQ no AODV reduz a eficiência relativa, e OLSR passa a apresentar vantagem marginal.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{fig2-latency-vs-nodes.png}
+\caption{
+Latência Média E2E (fim-a-fim) versus escala de rede.
+}
+\label{fig:latency}
+\end{figure}
+
+\subsection{Throughput Agregado}
+
+A Figura~\ref{fig:throughput} mostra o throughput agregado total capturado pelos fluxos de medição. Observa-se comportamento dramático:
+
+\begin{itemize}
+  \item \textbf{AODV:} Throughput pico de 1.8\,kbps em 25 nós, decaindo exponencialmente para 0.1\,kbps acima de 100 nós.
+  
+  \item \textbf{OLSR:} Throughput inicial de 1.25\,kbps, degradando para patamares próximos a 0 kbps em redes maiores, permanecendo consistentemente inferior a 0.1\,kbps.
+\end{itemize}
+
+O colapso de throughput correlaciona-se diretamente com o decaimento de PDR: quando taxa de entrega cai abaixo de 30\%, o throughput agregado esgota-se. Este comportamento é esperado em redes sem densidade crescente compensatória. Para aplicações exigindo throughput mínimo de 0.5\,kbps (ex: monitoramento distribuído de sensores), ambos os protocolos são viáveis apenas até aproximadamente 50 nós.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.8\textwidth]{fig6-throughput-vs-nodes.png}
+\caption{
+Throughput Agregado (kbps) em função da escala de rede. 
+}
+\label{fig:throughput}
+\end{figure}
+
+\subsection{Síntese Comparativa e Recomendações Arquiteturais}
+
+A análise integrada das três métricas permite formular recomendações práticas para engenheiros projetando redes mesh em ambientes de cidades inteligentes:
+
+\paragraph{Regime 1: Redes Pequenas (25-100 nós).}
+AODV apresenta superioridade em PDR inicial e latência, sugerindo adequação para redes urbanas concentradas (ex: iluminação inteligente de um bairro). Contudo, degradação de PDR acima de 50 nós questiona sustentabilidade em longo prazo.
+
+\paragraph{Regime 2: Redes Médias (100-500 nós).}
+OLSR exibe maior estabilidade e previsibilidade. PDR ligeiramente superior (20-30\% vs 18-25\%) e latência comparável sugerem preferência por OLSR. Apropriado para sensoriamento ambiental metropolitano.
+
+\paragraph{Regime 3: Redes Grandes (500+ nós).}
+Ambos os protocolos apresentam desempenho crítico (PDR $\approx$ 15-23\%, latência $> 2000$ ms). Neste regime, estratégias de decomposição hierárquica (clustering) ou adição de backhaul dedicado tornam-se necessárias.
+
+\paragraph{Recomendação Geral.}
+Para aplicações em cidades inteligentes exigindo confiabilidade superior a 80\% e latência inferior a 500 ms, limitar topologia a máximo 50-75 nós por rede, ou considerar arquitetura hierárquica com múltiplas redes coordenadas.
 
 
 \section{Conclusão e Próximos Passos}
