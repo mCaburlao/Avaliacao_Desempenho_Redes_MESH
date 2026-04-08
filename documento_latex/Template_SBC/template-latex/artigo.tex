@@ -91,18 +91,13 @@ Nossas análises complementam este corpo de trabalho por meio de quatro contribu
 
 Utilizamos MeshSim \cite{lorinder_github}, um simulador de redes mesh de código aberto construído sobre o framework NS-3, adaptado e estendido para os experimentos deste trabalho. O código e os scripts de configuração e análise encontram-se disponíveis em repositório público \cite{caburlao_github}. O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas em modo \textit{Release} (CMake, versão de desenvolvimento de abril de 2026), garantindo desempenho determinístico e reprodutível.
 
-A escolha de MeshSim sobre alternativas como OPNET ou OMNeT++ justifica-se por cinco fatores interrelacionados. O framework NS-3, que constitui o núcleo do MeshSim, oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa. O suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação. Os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância (Yans e LogDistance), permitindo modelagem realista do ambiente de propagação. A reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados. Finalmente, a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
+A escolha de MeshSim sobre alternativas, como OPNET ou OMNeT++, justifica-se por cinco fatores interrelacionados. O framework NS-3, que constitui o núcleo do MeshSim, oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa. O suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação. Os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância, permitindo modelagem realista do ambiente de propagação. A reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados. Finalmente, a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
 
 \subsection{Topologia e Escalonamento de Rede}
 
-Adota-se topologia aleatória com distribuição uniforme de nós, exceto pela topologia base de 25 nós que segue grade regular $5 \times 5$ com espaçamento de 50\,m entre nós adjacentes. Para todas as topologias aleatórias, a densidade de nós é mantida constante em $\rho = 2{,}84 \times 10^{-4}$\,nós/m$^2$, derivada da topologia de referência (50 nós em $420 \times 420$\,m).
+Adota-se topologia aleatória com distribuição uniforme de nós. Para todas as topologias, a densidade de nós é mantida constante com 50 nós a cada $420 \times 420$\,m, assim como em trabalhos semelhantes da literatura \cite{turlykozhayeva2024evaluating}. Além disso, utilizou-se distância mínima entre nós de 28\,m e alcance de transmissão de 115\,m (IEEE 802.11g, modelo LogDistance).
 
-A área de cada topologia é calculada como:
-\begin{equation}
-  A = \sqrt{\frac{N}{\rho}} \times \sqrt{\frac{N}{\rho}} \quad \text{(metros)}
-\end{equation}
-
-Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós, conforme Tabela~\ref{tab:topologias}. Todas as topologias aleatórias utilizam distância mínima entre nós de 28\,m e alcance de transmissão de 115\,m (IEEE 802.11g, modelo LogDistance). A densidade constante garante que variações de desempenho reflitam o efeito da escala (diâmetro da rede, número de saltos) e não variações de cobertura. A arquitetura do MeshSim organiza-se em cinco camadas funcionais de nós, cada uma desempenhando papéis específicos na simulação. A primeira camada compreende os nós mesh, que formam o \textit{backbone} sem fio sob padrão IEEE 802.11g, utilizando canal Yans, controle de taxa ARF e protocolo Dot11s. 
+Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós, conforme Tabela~\ref{tab:topologias}. A densidade constante garante que variações de desempenho reflitam o efeito da escala e não variações de cobertura. O tempo de aquecimento é dimensionado para garantir convergência completa dos protocolos antes do início das medições, seguindo critérios distintos para cada protocolo. Esses critérios garantem que as métricas reportadas reflitam o comportamento em regime estacionário de ambos os protocolos sobre o mesmo conjunto de fluxos. Cada topologia é gerada de forma determinística a partir de sementes explícitas, garantindo que a mesma topologia física seja utilizada para ambos os protocolos em cada ponto de escala, eliminando vieses de comparação.
 
 \begin{table}[h]
 \centering
@@ -128,67 +123,13 @@ random-1000  & 1000 & $1880 \times 1880$ & 420 & 540 \\
 
 \subsection{Configuração dos Protocolos de Roteamento}
 
-Ambos os protocolos encontram-se instalados com parâmetros padrão do NS-3.
+Ambos os protocolos, AODV e OLSR, encontram-se instalados com parâmetros padrão do NS-3. Para o protocolo AODV, utilizaram-se os seguintes parâmetros: \texttt{HelloInterval=1s}, \texttt{ActiveRouteTimeout=3s}, \texttt{PathDiscoveryTime=3.5s} e \texttt{RreqRetries=2}. Estes valores controlam a frequência de mensagens de vizinhança, o timeout para rotas ativas, o tempo máximo para descoberta de rota e o número de tentativas de descoberta, respectivamente.
 
-Para o protocolo AODV, utilizaram-se os seguintes parâmetros: \texttt{HelloInterval=1s}, \texttt{ActiveRouteTimeout=3s}, \texttt{PathDiscoveryTime=3.5s} e \texttt{RreqRetries=2}. Estes valores seguem a especificação RFC~3561, adaptados para o contexto de redes estáticas sem mobilidade, garantindo que o timeout de rota não invalide comunicações em andamento.
-
-Para o protocolo OLSR, a configuração utiliza: \texttt{HelloInterval=2s}, \texttt{TcInterval=5s} e \texttt{MidInterval=5s}. Estes parâmetros controlam a frequência de diffusão de mensagens Hello (para descoberta de vizinhança), mensagens TC (para disseminação de topologia), e mensagens MID (para declaração de endereços múltiplos). A escolha de intervalos segue a especificação RFC~3626, favorecendo estabilidade sobre frequência de atualização em redes estáticas.
-
-O tempo de aquecimento (\textit{warm-up}) de cada topologia é dimensionado para garantir convergência completa antes do início das medições, segundo critérios distintos para cada protocolo. Para o OLSR, aplica-se o critério $T_{warmup} \geq D_{hops} \times T_{TC}$, onde $D_{hops}$ é o diâmetro estimado da rede e $T_{TC} = 5$\,s o intervalo de Topology Control. Para redes de 1000 nós ($D_{hops} \approx 12$ saltos), o aquecimento de 420\,s garante pelo menos 84 rodadas de TC propagadas pelo diâmetro completo, assegurando que todas as tabelas de roteamento estarão convergidas.
-
-Para o AODV, o período de aquecimento é utilizado em conjunto com os \textit{probe flows} descritos na Seção~\ref{subsec:traffic}: fluxos de eco curtos enviados nos 30\,s anteriores ao início das medições forçam a descoberta de rota para todos os destinos. Como o \texttt{ActiveRouteTimeout} é de 3\,s e os probes terminam 1\,s antes das medições, as rotas permanecem válidas no cache quando os fluxos de medição iniciam, garantindo que as métricas reflitam comportamento em regime permanente.
-
-\subsection{Padrão de Tráfego}
-\label{subsec:traffic}
-
-Antes do início das medições, cada experimento executa uma fase de \textit{probe} com duração de 30\,s ($T_{warmup} - 30$\,s a $T_{warmup} - 1$\,s). Nessa fase, cinco fluxos UDP de eco de baixa taxa são enviados de cada wiredSta ao servidor backhaul, forçando o AODV a completar a descoberta de rotas para todos os destinos antes que os fluxos de medição comecem. Os fluxos de probe são excluídos da análise por dois critérios combinados: (i) filtro de instante de início --- apenas fluxos com $\texttt{timeFirstTxPacket} \geq T_{warmup}$ são considerados; e (ii) filtro direcional via \texttt{Ipv4FlowClassifier} --- somente fluxos no sentido wiredSta$\to$backhaul UDP são contabilizados, excluindo os \textit{echo replies} (backhaul$\to$wiredSta) e o fluxo TCP de transferência de arquivo. Esses critérios garantem que as métricas reportadas reflitam o comportamento em regime permanente (\textit{steady-state}) de ambos os protocolos sobre exatamente o mesmo conjunto de fluxos.
-
-Cada experimento instância cinco fluxos UDP de eco independentes de medição, um por wiredSta. Os fluxos são iniciados de forma escalonada, com intervalo de 5\,s entre cada início ($T_{start,i} = T_{warmup} + (i-1) \times 5$\,s), evitando o caso patológico de $N$ descobertas de rota simultâneas. Adicionalmente, um fluxo TCP de transferência de arquivo é iniciado após o último fluxo echo, do servidor backhaul ($10.1.1.1$) para a wiredSta mais distante.
-
-Cada cliente UDP envia 100 pacotes de 128 bytes a 2\,pacotes/s (\texttt{Interval=0.5s}), cobrindo uma janela de medição de 50\,s por fluxo. A duração total de cada simulação é fixada em $T_{warmup} + 105$\,s, contemplando 25\,s de escalonamento, 50\,s de medição e 30\,s de buffer para conclusão do fluxo TCP. O servidor de eco responde ao remetente com o mesmo payload, de forma que o FlowMonitor captura métricas nos dois sentidos (upload e echo de retorno).
+Já para o protocolo OLSR, a configuração utiliza: \texttt{HelloInterval=2s}, \texttt{TcInterval=5s} e \texttt{MidInterval=5s}. Estes parâmetros controlam a frequência de diffusão de mensagens para descoberta de vizinhança, mensagens para disseminação de topologia, e mensagens para declaração de endereços múltiplos. A escolha desses parâmetros segue a especificação RFC~3561, garantindo que o comportamento do protocolo seja consistente com implementações reais e estudos anteriores.
 
 \subsection{Métricas Coletadas}
 
-As métricas são extraídas exclusivamente do FlowMonitor, em granularidade de fluxo. Apenas os fluxos UDP no sentido wiredSta para backhaul são incluídos no cálculo, conforme critérios descritos na Seção~\ref{subsec:traffic}.
-
-\paragraph{Taxa de entrega de pacotes (PDR).}
-O FlowMonitor registra \texttt{txPackets} somente para fluxos efetivamente enfileirados na camada IP. Protocolos proativos como OLSR, ao não possuírem rota para um destino inalcançável, impedem o enfileiramento e resultam em \texttt{txPackets}$=0$ para esse fluxo --- que é descartado pelo FlowMonitor.Protocolos reativos como AODV, por sua vez, enfileiram o pacote enquanto aguardam a conclusão do RREQ, contabilizando \texttt{txPackets} mesmo para destinos que eventualmente se revelam inalcançáveis.
-
-Desta forma, para calcular a taxa de entrega de pacotes (PDR), utilizou-se $\sum tx_i$ como denominador tornaria a comparação assimétrica. Adota-se, portanto, um denominador fixo igual ao total de pacotes esperados:
-\begin{equation}
-  \text{PDR} = 100 \times \frac{\displaystyle\sum_{i=1}^{N_{\text{STA}}} rx_i}
-                                {N_{\text{STA}} \times P}
-  \label{eq:pdr}
-\end{equation}
-
-Onde $N_{\text{STA}} = 5$ é o número de STAs por experimento e $P = 100$ é o número de pacotes enviados por cada fluxo de medição. Esse denominador é idêntico para AODV e OLSR, tornando o PDR diretamente comparável entre protocolos.
-
-%Para cada fluxo $i$, o FlowMonitor acumula a soma dos atrasos individuais (\texttt{delaySum\textsubscript{i}}) em nanossegundos.
-Além disso, mediu-se a latência média ponderada pelo número de pacotes recebidos por fluxo, para refletir o impacto real sobre os dados efetivamente entregues \cite{turlykozhayeva2024evaluating}. O cálculo é realizado conforme a Equação~\ref{eq:delay}, onde $rx_i$ é o número de pacotes recebidos no fluxo $i$ e $\texttt{delaySum}_i$ é a soma dos atrasos individuais em nanosegundos. O resultado é convertido para milissegundos para facilitar a interpretação.
-\begin{equation}
-  \bar{d} = \frac{\displaystyle\sum_{i} \frac{\texttt{delaySum}_i}{rx_i} \cdot rx_i}
-                 {\displaystyle\sum_{i} rx_i}
-           = \frac{\displaystyle\sum_{i} \texttt{delaySum}_i}
-                  {\displaystyle\sum_{i} rx_i}
-  \label{eq:delay}
-\end{equation}
-
-Outra métrica utilizada foi o jitter, calculado pelo NS-3 de acordo com a definição RFC~3550, que quantifica a variação de atraso entre pacotes consecutivos. Na Equação~\ref{eq:jitter}, $S_i$ e $D_i$ são os instantes de envio e recepção do pacote $i$. A média ponderada por fluxo é calculada de forma análoga à latência (Equação~\ref{eq:delay}).
-\begin{equation}
-  Jitter = \bigl|(D_{i+1} - D_i) - (S_{i+1} - S_i)\bigr|
-  \label{eq:jitter}
-\end{equation}
-
-O throughput agrega os bytes UDP efetivamente recebidos em todos os fluxos de medição (wiredSta$\to$backhaul), dividido pela janela de medição~$W$:
-\begin{equation}
-  \text{Throughput} = \frac{8 \times \displaystyle\sum_{i} \texttt{rxBytes}_i}
-                           {W} \quad [\text{kbps}]
-  \label{eq:throughput}
-\end{equation}
-onde $W = T_{\text{duration}} - T_{\text{warmup}}$ é a duração efetiva da
-janela de medição (Tabela~\ref{tab:topologias}). O denominador exclui o período de aquecimento, que seria inflado para OLSR e deflado para AODV, garantindo comparação na mesma base temporal.
-
-Cada par de simulações (AODV, OLSR) utiliza sementes aleatórias distintas e documentadas, seguindo esquema determinístico: para o ponto de escala $k$, a semente AODV é fixada em $100k$ e a semente OLSR em $100k+1$. Este esquema garante que as posições dos nós nas topologias aleatórias sejam geradas deterministicamente a partir dessas sementes, assegurando que a topologia física seja idêntica entre protocolos para um mesmo ponto de escala.
+As métricas são extraídas exclusivamente do FlowMonitor, em granularidade de fluxo. Apenas os fluxos UDP no sentido wiredSta para backhaul são incluídos no cálculo. As métricas coletadas incluem a taxa de entrega de pacotes (PDR), latência média fim-a-fim e throughput. O PDR é calculado como a porcentagem de pacotes recebidos em relação ao total de pacotes esperados, utilizando um denominador fixo para garantir comparação direta entre protocolos. A latência média é ponderada pelo número de pacotes recebidos para refletir o impacto real sobre os dados efetivamente entregues. O throughput agregado é calculado com base nos bytes UDP efetivamente recebidos, excluindo o período de aquecimento para garantir comparação na mesma base temporal.
 
 Todos os scripts de geração de configuração, execução de simulação e análise de resultados encontram-se disponíveis no repositório de código aberto \cite{caburlao_github}, permitindo que qualquer pesquisador reproduza exatamente os experimentos aqui reportados.
 
@@ -259,32 +200,20 @@ Throughput Agregado (kbps) em função da escala de rede.
 \label{fig:throughput}
 \end{figure}
 
-\subsection{Síntese Comparativa e Recomendações Arquiteturais}
+\section{Conclusão e Próximos Passos}\label{sec:conclusion}
 
-A análise integrada das três métricas permite formular recomendações práticas para engenheiros projetando redes mesh em ambientes de cidades inteligentes:
+A análise comparativa aqui apresentada abordou a questão central de identificar pontos críticos de transição entre os protocolos de roteamento AODV e OLSR para redes mesh em contexto de cidades inteligentes. Os experimentos de simulação com controle rigoroso revelaram padrões de degradação diferenciados: AODV exibe superioridade em PDR e latência em redes pequenas, refletindo eficiência do mecanismo sob demanda em topologias densas; OLSR apresenta maior estabilidade em redes médias com PDR entre 20--30\%; ambos os protocolos degradam criticamente acima de 500 nós, sinalizando limite fundamental para arquitetura mesh monocolor.
 
-\paragraph{Regime 1: Redes Pequenas (25-100 nós).}
-AODV apresenta superioridade em PDR inicial e latência, sugerindo adequação para redes urbanas concentradas (ex: iluminação inteligente de um bairro). Contudo, degradação de PDR acima de 50 nós questiona sustentabilidade em longo prazo.
+Para aplicações em cidades inteligentes exigindo confiabilidade superior a 80\% e latência inferior a 500 ms, recomenda-se limitar cada rede mesh autônoma a no máximo 75 nós, ou adotar arquitetura hierárquica com múltiplas redes coordenadas através de backhaul dedicado. Em redes pequenas, AODV é aceitável se latência inicial for crítica. Já em redes médias, OLSR é preferível pela estabilidade.
 
-\paragraph{Regime 2: Redes Médias (100-500 nós).}
-OLSR exibe maior estabilidade e previsibilidade. PDR ligeiramente superior (20-30\% vs 18-25\%) e latência comparável sugerem preferência por OLSR. Apropriado para sensoriamento ambiental metropolitano.
-
-\paragraph{Regime 3: Redes Grandes (500+ nós).}
-Ambos os protocolos apresentam desempenho crítico (PDR $\approx$ 15-23\%, latência $> 2000$ ms). Neste regime, estratégias de decomposição hierárquica (clustering) ou adição de backhaul dedicado tornam-se necessárias.
-
-\paragraph{Recomendação Geral.}
-Para aplicações em cidades inteligentes exigindo confiabilidade superior a 80\% e latência inferior a 500 ms, limitar topologia a máximo 50-75 nós por rede, ou considerar arquitetura hierárquica com múltiplas redes coordenadas.
-
-
-\section{Conclusão e Próximos Passos}
-
-
-
+Perspectivas futuras incluem: (i) investigação de protocolos híbridos (ZRP, SHARP) oferecendo melhor trade-off; (ii) simulação com topologias municipais realistas e densidade não-uniforme; (iii) extensão para cenários com mobilidade e dinâmica de nós; (iv) análise de clustering automático e adaptativo; (v) avaliação de consumo energético em baterias. Estas extensões solidificarão a base empírica para seleção de protocolo em contextos urbanos reais.
 
 \bibliographystyle{sbc}
 \bibliography{Mesh}
 
-% AKYILDIZ, Ian F.; WANG, Xudong; WANG, Weilin. Wireless mesh networks: a survey. Computer Networks, v. 47, n. 4, p. 445–487, 2005. Disponível em: https://www.sciencedirect.com/science/article/pii/S1389128604003457. Acesso em: 7 abr. 2026.
+% OBSERVAÇÂO: Referências devem ser adicionadas ao arquivo Mesh.bib, seguindo o formato BibTeX. A extensão "Google Scholar" pode ser utilizada para gerar as entradas BibTeX a partir dos cites do artigo. Dentro do Google Acadêmico, basta clicar no ícone de aspas abaixo do resultado da pesquisa e selecionar "BibTeX" para obter a referência formatada.
+
+% Já adicionei as refs abaixo ao arquivo Mesh.bib, se quiserem usar
 
 % MOHAPATRA, S.; KANUNGO, P. Performance analysis of AODV, DSR, OLSR and DSDV Routing Protocols using NS2 Simulator. Procedia Engineering, v.30, p.69–76, 2012. Disponível em: https://www.sciencedirect.com/science/article/pii/S1877705812008454. Acesso em: 7 abr. 2026.
 
