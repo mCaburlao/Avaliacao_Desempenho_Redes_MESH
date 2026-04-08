@@ -34,19 +34,20 @@ BASE = Path("/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_
 EXPERIMENTS = BASE / "experiments"
 
 # Experimentos definidos: (topo_label, exp_subdir, duration_s, num_nodes, warmup_s)
-# warmup_s: instante de inicio dos fluxos de medicao; flows antes disso sao probes
-# duration_s = warmup_s + 105  (25s stagger+tcp + 50s medicao + 30s buffer)
+# warmup_s: instante de inicio dos fluxos de medicao contínuos
+# duration_s = warmup_s + measurement_duration_s (transmissão até fim da simulação)
+# measurement_duration_s ajustado por topologia para captar variabilidade real
 SUITE = [
-    ("grid-25",      "grid_25nodes",          240,    25,  120),
-    ("random-50",    "random_50nodes",        300,    50,  180),
-    ("random-75",    "random_75nodes",        330,    75,  210),
-    ("random-100",   "random_100nodes",       360,   100,  240),
-    ("random-150",   "random_150nodes",       390,   150,  270),
-    ("random-200",   "random_200nodes",       420,   200,  300),
-    ("random-300",   "random_300nodes",       450,   300,  330),
-    ("random-500",   "random_500nodes",       480,   500,  360),
-    ("random-750",   "random_750nodes",       510,   750,  390),
-    ("random-1000",  "random_1000nodes",      540,  1000,  420),
+    ("grid-25",      "grid_25nodes",          240,    25,  120),   # warmup=120, meas=120
+    ("random-50",    "random_50nodes",        330,    50,  180),   # warmup=180, meas=150
+    ("random-75",    "random_75nodes",        390,    75,  210),   # warmup=210, meas=180
+    ("random-100",   "random_100nodes",       440,   100,  240),   # warmup=240, meas=200
+    ("random-150",   "random_150nodes",       490,   150,  270),   # warmup=270, meas=220
+    ("random-200",   "random_200nodes",       540,   200,  300),   # warmup=300, meas=240
+    ("random-300",   "random_300nodes",       600,   300,  330),   # warmup=330, meas=270
+    ("random-500",   "random_500nodes",       660,   500,  360),   # warmup=360, meas=300
+    ("random-750",   "random_750nodes",       720,   750,  390),   # warmup=390, meas=330
+    ("random-1000",  "random_1000nodes",      780,  1000,  420),   # warmup=420, meas=360
 ]
 
 # Mapa rapido: label → num_nodes (usado no CSV)
@@ -56,7 +57,7 @@ PROTOCOLS = ["AODV", "OLSR"]
 
 # Parametros da suite de medicao — devem coincidir com generate_all_configs.py
 N_STAS       = 5    # FIXED_N_STAS: STAs por topologia
-PKTS_PER_STA = 100  # MaxPackets no echo_client de cada STA
+PKTS_PER_STA = 100  # DEPRECATED: era MaxPackets. Agora transmissão contínua até StopTime
 STA_SUBNET   = "10.4.128."   # Prefixo IP das STAs
 BACKHAUL_IP  = "10.1.1.1"   # IP do backhaul (no 0 mesh)
 
@@ -157,11 +158,14 @@ def compute_metrics(out_dir, warmup_s=0, duration_s=0):
     """Retorna dict de metricas para um diretorio de saida, ou None se vazio.
 
     Apenas flows STA->backhaul UDP (forward) sao contados.
-    PDR e perda sao normalizados contra N_STAS * PKTS_PER_STA para que
-    AODV e OLSR sejam comparaveis (OLSR nao enfileira para destinos
-    inalcancaveis, resultando em tx=0 que o FlowMonitor exclui).
-    Throughput e calculado a partir de rxBytes do FlowMonitor dividido
-    pela janela de medicao (duration_s - warmup_s)."""
+    PDR e perda calculados a partir dos dados reais do FlowMonitor:
+    - rx/tx (PDR observado) reflete a entregabilidade real da topologia
+    - loss = tx - rx (pacotes perdidos efetivos)
+    
+    Com transmissão CONTÍNUA, rx_bytes varia naturalmente com conectividade,
+    capturando diferenças reais de throughput entre topologias.
+    
+    Throughput calculado: (rx_bytes * 8) / measurement_time / 1000 kbps."""
     fmon = out_dir / "flowdata.xml"
     classifier = parse_flowclassifier(fmon)
     flows = parse_flowmonitor(fmon, min_start_ns=warmup_s * 1e9, classifier=classifier)
@@ -172,28 +176,26 @@ def compute_metrics(out_dir, warmup_s=0, duration_s=0):
 
     rx_total    = sum(f["rx"]       for f in flows)
     rx_bytes    = sum(f["rx_bytes"] for f in flows)
-    # tx contado pelo FlowMonitor pode diferir entre protocolos (OLSR omite
-    # flows onde nao ha rota); usa denominador fixo para comparacao justa.
-    expected    = N_STAS * PKTS_PER_STA
-    lost_norm   = expected - rx_total
+    tx_total    = sum(f["tx"]       for f in flows)
+    lost_total  = sum(f["lost"]     for f in flows)
     rx_counts   = [f["rx"] for f in flows]
+
+    # PDR real: pacotes recebidos / pacotes transmitidos
+    pdr_actual = (rx_total / tx_total * 100) if tx_total > 0 else 0.0
+    loss_rate  = (lost_total / tx_total * 100) if tx_total > 0 else 0.0
 
     measurement_s = max(duration_s - warmup_s, 1)
     throughput_kbps = rx_bytes * 8 / measurement_s / 1000
 
-    # tx/rx/lost no CSV refletem os valores brutos do FlowMonitor (forward flows)
-    tx_raw   = sum(f["tx"]   for f in flows)
-    lost_raw = sum(f["lost"] for f in flows)
-
     return {
-        "pdr":             rx_total / expected * 100,
-        "loss":            lost_norm / expected * 100,
+        "pdr":             pdr_actual,
+        "loss":            loss_rate,
         "avg_delay_ms":    _weighted_mean([f["avg_delay_ms"]  for f in flows], rx_counts),
         "avg_jitter_ms":   _weighted_mean([f["avg_jitter_ms"] for f in flows], rx_counts),
         "max_delay_ms":    max(f["max_delay_ms"] for f in flows),
         "throughput_kbps": throughput_kbps,
         "avg_hops":        _weighted_mean([f["avg_hops"]      for f in flows], rx_counts),
-        "tx": tx_raw, "rx": rx_total, "lost": lost_raw,
+        "tx": tx_total, "rx": rx_total, "lost": lost_total,
     }
 
 

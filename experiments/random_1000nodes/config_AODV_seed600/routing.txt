@@ -1,2 +1,1 @@
-# Roteamento reativo: descobre rotas sob demanda
 proto aodv

@@ -155,10 +155,10 @@ bool MeshSim::Run()
 
 bool MeshSim::CreateChannels()
 {
-	// MaxRange pre-filter: TX_RANGE=115m, use 2.5x margin (288m) so edge-case
+	// MaxRange pre-filter: TX_RANGE=1000m, use 2.5x margin (2500m) so edge-case
 	// links near the boundary are never silently dropped by the filter.
 	// This eliminates ~97% of ScheduleWithContext calls at 500+ nodes.
-	const double CHANNEL_MAX_RANGE = 288.0;
+	const double CHANNEL_MAX_RANGE = 2500.0;  // Aumentado de 288m para 2500m
 
 	// Setup meshPhy helper
 	meshPhy = ns3::YansWifiPhyHelper();
@@ -378,6 +378,22 @@ void MeshSim::CreateInterfaces()
 	addInterfacesToMap(&addr2netdev, staInterfaces);
 	addInterfacesToMap(&addr2netdev, sta2wInterfaces);
 	addInterfacesToMap(&addr2netdev, wiredStaInterfaces);
+
+	// DEBUG: Log all IP addresses in the map
+	fprintf(stderr, "\n=== IP Address Map (addr2netdev) Debug ===\n");
+	fprintf(stderr, "Total IPs mapped: %zu\n", addr2netdev.size());
+	fprintf(stderr, "Looking for wiredSta IPs (10.4.128.N):\n");
+	for (int i = 1; i <= 5; ++i) {
+		uint32_t wired_sta_ip = (10 << 24) | (4 << 16) | (128 << 8) | i;
+		char ip_str[16];
+		sprintf(ip_str, "%d.%d.%d.%d", (wired_sta_ip >> 24) & 0xff,
+		        (wired_sta_ip >> 16) & 0xff, (wired_sta_ip >> 8) & 0xff,
+		        wired_sta_ip & 0xff);
+		auto it = addr2netdev.find(wired_sta_ip);
+		fprintf(stderr, "  10.4.128.%d: %s\n", i,
+		        (it != addr2netdev.end()) ? "✅ FOUND" : "❌ MISSING");
+	}
+	fprintf(stderr, "=== End Debug ===\n\n");
 
 	Ipv4StaticRoutingHelper sr_helper;
 	for(auto& a: routing.tables) {

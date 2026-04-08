@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  6 APR 2026 20:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  7 APR 2026 22:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -208,10 +208,7 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 ) (c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count305
-) (./artigo.aux
-Package babel Info: 'brazil' activates 'portuges' shorthands.
-(babel)             Reported on input line 8.
-)
+) (./artigo.aux)
 \openout1 = `artigo.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
@@ -305,49 +302,166 @@ Package grfext Info: Graphics extension search list:
  (c:/texlive/2026/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
+Package babel Info: 'brazil' activates 'portuges' shorthands.
+(babel)             Reported on input line 21.
 LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 23.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
+
+LaTeX Warning: Citation `wireless_akyildiz_2005' on page 1 undefined on input line 35.
+
+
+LaTeX Warning: Citation `wireless_sichitiu_2004' on page 1 undefined on input line 35.
+
+
+LaTeX Warning: Citation `wireless_benyamina_2012' on page 1 undefined on input line 37.
+
+
 Underfull \hbox (badness 1454) in paragraph at lines 37--38
 []\OT1/ptm/m/n/12 O ro-te-a-mento em re-des mesh []e cr[]^^Ptico pois de-ter-mina lat[]encia, con-sumo
  []
 
-
-Underfull \hbox (badness 3568) in paragraph at lines 37--38
-\OT1/ptm/m/n/12 energ[]etico, con-fi-a-bi-li-dade e es-ca-la-bi-li-dade da rede. Os pro-to-co-los de ro-te-a-
- []
-
 [1
 
-{c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}] [2]
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 81.
- (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1phv.fd
+{c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}]
+
+LaTeX Warning: Reference `sec:research_problem' on page 2 undefined on input line 43.
+
+
+LaTeX Warning: Reference `sec:related' on page 2 undefined on input line 43.
+
+
+LaTeX Warning: Reference `sec:methodology' on page 2 undefined on input line 43.
+
+
+LaTeX Warning: Reference `sec:results' on page 2 undefined on input line 43.
+
+
+LaTeX Warning: Reference `sec:conclusion' on page 2 undefined on input line 43.
+
+[2] [3]
+
+d:/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH/documento_latex/Template_SBC/template-latex/artigo.tex:75: LaTeX Error: Unicode character ≥ (U+2265)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.75 ...tes regimes com precisão estatística ≥
+                                                  95\%, permitindo recomenda...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+LaTeX Warning: Citation `wireless_akyildiz_2005' on page 4 undefined on input line 79.
+
+
+LaTeX Warning: Citation `wireless_sichitiu_2004' on page 4 undefined on input line 79.
+
+
+LaTeX Warning: Citation `wireless_benyamina_2012' on page 4 undefined on input line 79.
+
+
+LaTeX Warning: Citation `mesh_passos_2005' on page 4 undefined on input line 81.
+
+
+LaTeX Warning: Citation `research_lee_2024' on page 4 undefined on input line 81.
+
+
+LaTeX Warning: Citation `performance_khalifeh_2018' on page 4 undefined on input line 81.
+
+
+LaTeX Warning: Citation `optimizing_ruete_2024' on page 4 undefined on input line 83.
+
+
+LaTeX Warning: Citation `lorinder_github' on page 4 undefined on input line 91.
+
+
+LaTeX Warning: Citation `caburlao_github' on page 4 undefined on input line 91.
+
+[4]
+
+LaTeX Warning: Reference `tab:topologias' on page 5 undefined on input line 104.
+
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 108.
+(c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
-) [3] [4]
-Underfull \hbox (badness 10000) in paragraph at lines 123--124
+)
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 132--133
+[]\OT1/ptm/m/n/12 Para o pro-to-colo AODV, utilizaram-se os se-guin-tes
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 132--133
+\OT1/ptm/m/n/12 par[]ametros: \OT1/pcr/m/n/12 HelloInterval=1s\OT1/ptm/m/n/12 , \OT1/pcr/m/n/12 ActiveRouteTimeout=3s\OT1/ptm/m/n/12 ,
+ []
+
+
+Underfull \hbox (badness 3302) in paragraph at lines 132--133
+\OT1/pcr/m/n/12 PathDiscoveryTime=3.5s \OT1/ptm/m/n/12 e \OT1/pcr/m/n/12 RreqRetries=2\OT1/ptm/m/n/12 . Es-tes va-lo-res se-guem a
+ []
+
+[5]
+Underfull \hbox (badness 2707) in paragraph at lines 134--135
+[]\OT1/ptm/m/n/12 Para o pro-to-colo OLSR, a configura[][]ao uti-liza: \OT1/pcr/m/n/12 HelloInterval=2s\OT1/ptm/m/n/12 ,
+ []
+
+
+LaTeX Warning: Reference `subsec:traffic' on page 6 undefined on input line 138.
+
+[6]
+Underfull \hbox (badness 10000) in paragraph at lines 147--148
 []\OT1/ptm/m/n/12 Cada cli-ente UDP en-via 100 pa-co-tes de 128 by-tes a 2pacotes/s
  []
 
-[5] [6] (./artigo.bbl [7]) [8] (./artigo.aux)
+
+LaTeX Warning: Reference `subsec:traffic' on page 7 undefined on input line 151.
+
+[7]
+
+LaTeX Warning: Citation `turlykozhayeva2024evaluating' on page 8 undefined on input line 182.
+
+
+LaTeX Warning: Reference `eq:delay' on page 8 undefined on input line 190.
+
+
+LaTeX Warning: Reference `tab:topologias' on page 8 undefined on input line 201.
+
+
+LaTeX Warning: Citation `caburlao_github' on page 8 undefined on input line 214.
+
+(./artigo.bbl) [8] [9] (./artigo.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
  ) 
 Here is how much of TeX's memory you used:
- 6610 strings out of 467525
- 109748 string characters out of 5423209
- 541135 words of memory out of 5000000
- 35424 multiletter control sequences out of 15000+600000
+ 6604 strings out of 467525
+ 109537 string characters out of 5423209
+ 540667 words of memory out of 5000000
+ 35418 multiletter control sequences out of 15000+600000
  649905 words of font info for 81 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 72i,12n,79p,1370b,432s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,12n,79p,1153b,432s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on artigo.pdf (8 pages, 181072 bytes).
+Output written on artigo.pdf (9 pages, 183082 bytes).
 PDF statistics:
- 97 PDF objects out of 1000 (max. 8388607)
- 60 compressed objects within 1 object stream
+ 100 PDF objects out of 1000 (max. 8388607)
+ 62 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

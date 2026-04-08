@@ -1,3 +1,26 @@
-# Grid 5x5: 25 nos mesh, 50m de espacamento
-# No 0 = backhaul (canto inferior esquerdo)
-ns3::GridPositionAllocator MinX=0 MinY=0 DeltaX=50 DeltaY=50 GridWidth=5
+ns3::ListPositionAllocator
+      0.0      0.0
+     50.0      0.0
+    100.0      0.0
+    150.0      0.0
+    200.0      0.0
+      0.0     50.0
+     50.0     50.0
+    100.0     50.0
+    150.0     50.0
+    200.0     50.0
+      0.0    100.0
+     50.0    100.0
+    100.0    100.0
+    150.0    100.0
+    200.0    100.0
+      0.0    150.0
+     50.0    150.0
+    100.0    150.0
+    150.0    150.0
+    200.0    150.0
+      0.0    200.0
+     50.0    200.0
+    100.0    200.0
+    150.0    200.0
+    200.0    200.0

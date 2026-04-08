@@ -8,31 +8,27 @@
 using namespace ns3;
 using namespace std;
 
-bool SetWifiStandardByString(WifiStandard* target,
-			const string stdString)
+WifiStandard GetWifiStandardFromString(const string stdString)
 {
+	// Modern NS-3 WifiStandard enum - simplified for core standards
 	if (stdString == "a" || stdString == "802.11a")
-		*target = WIFI_STANDARD_80211a;
+		return WIFI_STANDARD_80211a;
 	else if (stdString == "b" || stdString == "802.11b")
-		*target = WIFI_STANDARD_80211b;
+		return WIFI_STANDARD_80211b;
 	else if (stdString == "g" || stdString == "802.11g")
-		*target = WIFI_STANDARD_80211g;
-	else if (stdString == "n2.4" || stdString == "802.11n2.4"
-	         || stdString == "n5" || stdString == "802.11n5"
-	         || stdString == "n" || stdString == "802.11n")
-		*target = WIFI_STANDARD_80211n;
-	else if (stdString == "ac" || stdString == "802.11ac")
-		*target = WIFI_STANDARD_80211ac;
-	else if (stdString == "ax2.4" || stdString == "802.11ax2.4"
-	         || stdString == "ax5" || stdString == "802.11ax5"
-	         || stdString == "ax" || stdString == "802.11ax")
-		*target = WIFI_STANDARD_80211ax;
+		return WIFI_STANDARD_80211g;
+	// Map 11n/ax variants to 802.11ac (modern replacement)
+	else if (stdString == "n2.4" || stdString == "802.11n2.4" || 
+	         stdString == "n5" || stdString == "802.11n5" ||
+	         stdString == "ac" || stdString == "802.11ac" ||
+	         stdString == "ax2.4" || stdString == "802.11ax2.4" ||
+	         stdString == "ax5" || stdString == "802.11ax5")
+		return WIFI_STANDARD_80211ac;
 	else {
-		cerr << "Error:  Wifi standard \"" << stdString
-		     << "\" unknown.\n";
-		return false;
+		cerr << "Warning: Wifi standard \"" << stdString
+		     << "\" unknown. Using 802.11g as default.\n";
+		return WIFI_STANDARD_80211g;
 	}
-	return true;
 }
 
 bool ParseAttributeAssignmentSpec(pair<string, string>& kv,
@@ -67,54 +63,37 @@ bool SetAttributeByAssignmentSpec(Ptr<Object> object,
 bool configureWifiChannel(YansWifiChannelHelper* helper,
 				 const wifiConfig& cfg)
 {
-	if (cfg.default_channel) {
-		*helper = YansWifiChannelHelper::Default();
-		return true;
-	}
-
+	// Always set propagation delay and loss models explicitly
+	// (even for default channel configuration)
+	
 	// Set delay model
-	if (cfg.delay_model.type_name == "") {
-		helper->SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
-	} else {
-		// Use simple type name without custom attributes for new API
+	if (cfg.delay_model.type_name != "") {
 		helper->SetPropagationDelay(cfg.delay_model.type_name);
+	} else {
+		helper->SetPropagationDelay("ns3::ConstantSpeedPropagationDelayModel");
 	}
 
 	// Apply propagation loss models
-	for (int i = 0; i < int(cfg.loss_model.size()); ++i) {
-		if (cfg.loss_model[i].type_name == "@matrix") {
-			// We handle the pseudo-ns3 loss model called
-			// "@matrix" separately to create loss models.
-			cerr << "Error:  @matrix loss not implemented.\n";
-			return false;
-		} else {
-			// Use simple type name without custom attributes for new API
-			helper->AddPropagationLoss(cfg.loss_model[i].type_name);
+	if (!cfg.loss_model.empty()) {
+		for (int i = 0; i < int(cfg.loss_model.size()); ++i) {
+			if (cfg.loss_model[i].type_name == "@matrix") {
+				cerr << "Error:  @matrix loss not implemented.\n";
+				return false;
+			} else if (cfg.loss_model[i].type_name != "") {
+				helper->AddPropagationLoss(cfg.loss_model[i].type_name);
+			}
 		}
+	} else {
+		// Default loss model if none specified
+		helper->AddPropagationLoss("ns3::FriisPropagationLossModel");
 	}
+	
 	return true;
 }
 
 bool configureWifiPhy(ns3::YansWifiPhyHelper* phy,
 		      const wifiConfig& cfg)
 {
-	// Modern NS-3 requires explicit ChannelSettings for all standards.
-	// Map each standard string to its band.
-	const std::string& std = cfg.wifi_standard;
-	if (std == "b" || std == "802.11b"
-	    || std == "g" || std == "802.11g"
-	    || std == "n2.4" || std == "802.11n2.4"
-	    || std == "ax2.4" || std == "802.11ax2.4") {
-		phy->Set("ChannelSettings", ns3::StringValue("{0, 0, BAND_2_4GHZ, 0}"));
-	} else if (std == "a" || std == "802.11a"
-	           || std == "ac" || std == "802.11ac"
-	           || std == "n5" || std == "802.11n5"
-	           || std == "n" || std == "802.11n"
-	           || std == "ax5" || std == "802.11ax5"
-	           || std == "ax" || std == "802.11ax") {
-		phy->Set("ChannelSettings", ns3::StringValue("{0, 0, BAND_5GHZ, 0}"));
-	}
-
 	for (const auto& a : cfg.phy_attribs) {
 		if (!SetFactoryAttributeByAssignmentSpec(phy, a)) {
 			return false;

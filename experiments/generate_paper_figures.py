@@ -40,7 +40,7 @@ MARKERS = {'AODV': 'o', 'OLSR': 's'}
 
 # Caminhos (funciona em Windows e Linux)
 BASE = Path(__file__).parent.parent
-RESULTS_FILE = BASE / "experiments" / "results.csv"
+RESULTS_FILE = BASE / "experiments" / "results_old.csv"
 OUTPUT_DIR = BASE / "documento_latex" / "Template_SBC" / "template-latex"
 
 # ============================================================================
