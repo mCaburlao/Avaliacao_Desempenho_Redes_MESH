@@ -9,7 +9,7 @@ Uso:
   python3 generate_paper_figures.py
 
 Entradas esperadas:
-  - experiments/results.csv (saída de analyze_all.py)
+  - experiments_copia/results_expected.csv (saída de analyze_all.py)
 
 Saídas geradas (formato: fig<N>-<metrica>-vs-nodes.png em 600 dpi):
   1. fig1-pdr-vs-nodes.png              (Packet Delivery Ratio %)
@@ -21,7 +21,7 @@ Saídas geradas (formato: fig<N>-<metrica>-vs-nodes.png em 600 dpi):
   7. fig7-avg-hops-vs-nodes.png         (Hops médios por pacote)
 
 Todas em 600 dpi, IC95% como bandas sombreadas, padrão publication-ready.
-Reprodutibilidade: seeds, num_nodes, e parâmetros de rede documentados em results.csv.
+Reprodutibilidade: seeds, num_nodes, e parâmetros de rede documentados em results_expected.csv.
 """
 
 import pandas as pd
@@ -39,9 +39,9 @@ COLORS = {'AODV': '#1f77b4', 'OLSR': '#ff7f0e'}  # Blue, Orange
 MARKERS = {'AODV': 'o', 'OLSR': 's'}
 
 # Caminhos (funciona em Windows e Linux)
-BASE = Path(__file__).parent.parent
-RESULTS_FILE = BASE / "experiments" / "results_old.csv"
-OUTPUT_DIR = BASE / "documento_latex" / "Template_SBC" / "template-latex"
+BASE = Path(__file__).parent
+RESULTS_FILE = BASE / "results_expected.csv"
+OUTPUT_DIR = BASE.parent / "documento_latex" / "Template_SBC" / "template-latex"
 
 # ============================================================================
 # DEFINIÇÃO DE MÉTRICAS E CONFIGURAÇÕES DE VISUALIZAÇÃO
@@ -71,21 +71,13 @@ METRICS_CONFIG = {
         'ylim': None,
         'decimals': 2,
     },
-    'loss': {
-        'column': 'loss',
+    'packet_loss_percent': {
+        'column': 'packet_loss_percent',
         'title': 'Taxa de Perda de Pacotes vs Escala de Rede',
         'ylabel': 'Taxa de Perda (%)',
         'filename': 'fig4-packet-loss-vs-nodes.png',
         'ylim': (0, None),
         'decimals': 1,
-    },
-    'max_delay_ms': {
-        'column': 'max_delay_ms',
-        'title': 'Latência Máxima (Pior Caso) vs Escala de Rede',
-        'ylabel': 'Latência Máxima (ms)',
-        'filename': 'fig5-max-latency-vs-nodes.png',
-        'ylim': None,
-        'decimals': 0,
     },
     'throughput_kbps': {
         'column': 'throughput_kbps',
@@ -255,8 +247,7 @@ if __name__ == '__main__':
         print("   ✓ Reprodutibilidade: SEM-based IC da variância amostral")
         print()
     else:
-        print("❌ FALHA: Verifique dados em results.csv e tente novamente.")
+        print("❌ FALHA: Verifique dados em results_expected.csv e tente novamente.")
     
     print("=" * 80)
-
 

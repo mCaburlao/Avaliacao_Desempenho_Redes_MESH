@@ -16,7 +16,7 @@ import random
 from pathlib import Path
 
 BASE = Path("/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH")
-EXPERIMENTS = BASE / "experiments"
+EXPERIMENTS = BASE / "experiments_copia"
 
 # ---------------------------------------------------------------------------
 # Conteudo fixo compartilhado entre todas as topologias
@@ -78,7 +78,7 @@ def apps_txt(n_stas, warmup_s, stagger_s=50, stagger_probe_s=15):
     for i in range(1, n_stas + 1):
         t = warmup_s + (i - 1) * stagger_s
         lines.append(f"defaults StartTime={t}s")
-        lines.append(f"echo{i}-cl    10.4.128.{i}    echo_client    Interval=0.5s MaxPackets=100")
+        lines.append(f"echo{i}-cl    10.4.128.{i}    echo_client    Interval=0.05s MaxPackets=1000")
         lines.append(f"echo{i}-srv   10.1.1.1    echo_server")
         lines.append("")
 
@@ -167,6 +167,28 @@ def check_connectivity(positions, tx_range):
     return len(visited) == n, len(visited)
 
 
+def reachable_from_backhaul(positions, tx_range):
+    """Retorna indices dos nos mesh alcancaveis a partir do backhaul (no 0)."""
+    n = len(positions)
+    adj = [[] for _ in range(n)]
+    for i in range(n):
+        for j in range(i + 1, n):
+            if math.hypot(positions[i][0] - positions[j][0],
+                          positions[i][1] - positions[j][1]) <= tx_range:
+                adj[i].append(j)
+                adj[j].append(i)
+
+    visited = {0}
+    queue = [0]
+    while queue:
+        cur = queue.pop()
+        for nb in adj[cur]:
+            if nb not in visited:
+                visited.add(nb)
+                queue.append(nb)
+    return sorted(visited)
+
+
 def list_mesh_mobility(positions, label):
     lines = [
         "ns3::ListPositionAllocator",
@@ -212,39 +234,90 @@ def list_sta_mobility_random(positions, n_stas, seed, offset_x=5, offset_y=10):
     return "\n".join(lines) + "\n"
 
 
-def list_sta_mobility_balanced(positions, n_stas=5, offset_x=5, offset_y=10):
-    """Estratégia MISTA: Seleciona STAs com distribuição balanceada para testar
-    cobertura real em diferentes distâncias do backhaul.
-    
-    Para n_stas=5: 2 pertos + 2 longe + 1 médio
-    Requer: mesh_positions[0] = backhaul na origem (0, 0)
+def list_sta_mobility_random_connected(positions, n_stas, seed, tx_range, offset_x=5, offset_y=10):
+    """Seleciona aleatoriamente STAs apenas entre nos mesh conectados ao backhaul."""
+    rng = random.Random(seed)
+    reachable_indices = reachable_from_backhaul(positions, tx_range)
+    candidates = [positions[i] for i in reachable_indices if i != 0]
+    if len(candidates) < n_stas:
+        raise RuntimeError(
+            f"Apenas {len(candidates)} nos alcancaveis para posicionar {n_stas} STAs; "
+            f"aumente o alcance efetivo ou regenere a topologia."
+        )
+    selected = rng.sample(candidates, n_stas)
+    lines = [
+        "ns3::ListPositionAllocator",
+    ]
+    for x, y in selected:
+        lines.append(f"  {x + offset_x:7.1f}  {y + offset_y:7.1f}")
+    return "\n".join(lines) + "\n"
+
+
+def list_sta_mobility_near_backhaul_connected(positions, n_stas, tx_range, offset_x=5, offset_y=10):
+    """Seleciona os STAs mais proximos do backhaul dentro do componente alcancavel.
+
+    Usado para estabilizar cenarios pequenos e aleatorios, onde a escolha puramente
+    aleatoria pode posicionar STAs em regioes que atrasam demais a convergencia do AODV.
     """
-    # Calcular distância de cada nó mesh até o backhaul
-    distances = []
+    reachable_indices = reachable_from_backhaul(positions, tx_range)
+    candidates = [i for i in reachable_indices if i != 0]
+    if len(candidates) < n_stas:
+        raise RuntimeError(
+            f"Apenas {len(candidates)} nos alcancaveis para posicionar {n_stas} STAs; "
+            f"aumente o alcance efetivo ou regenere a topologia."
+        )
+
+    backhaul_x, backhaul_y = positions[0]
+    ranked = sorted(
+        candidates,
+        key=lambda index: math.hypot(
+            positions[index][0] - backhaul_x,
+            positions[index][1] - backhaul_y,
+        ),
+    )
+    selected = [positions[index] for index in ranked[:n_stas]]
+
+    lines = [
+        "ns3::ListPositionAllocator",
+    ]
+    for x, y in selected:
+        lines.append(f"  {x + offset_x:7.1f}  {y + offset_y:7.1f}")
+    return "\n".join(lines) + "\n"
+
+
+def list_sta_mobility_near_backhaul_direct(positions, n_stas, tx_range, offset_x=5, offset_y=10):
+    """Seleciona APENAS STAs diretamente alcançáveis (1-hop) e PRÓXIMAS ao backhaul.
+    
+    Diferença crítica vs list_sta_mobility_random_connected():
+    - random_connected: BFS multihop (nó alcançável via qualquer rota)
+    - near_backhaul_direct: DIRETO a < tx_range DO backhaul (1-hop garantido)
+    
+    Garante que STAs estejam definitivamente em alcance direto e perto do backhaul.
+    """
+    backhaul_x, backhaul_y = positions[0]
+    
+    # Selecionar APENAS nós dentro de tx_range direto do backhaul
+    near_indices = []
     for i, (x, y) in enumerate(positions):
-        dist = math.hypot(x - positions[0][0], y - positions[0][1])
-        distances.append((dist, i))
+        if i == 0:  # Skip backhaul itself
+            continue
+        dist = math.hypot(x - backhaul_x, y - backhaul_y)
+        if dist <= tx_range:
+            near_indices.append(i)
     
-    # Ordenar por distância
-    distances.sort()
+    if len(near_indices) < n_stas:
+        raise RuntimeError(
+            f"Apenas {len(near_indices)} nos dentro de {tx_range}m direto do backhaul; "
+            f"preciso de {n_stas} STAs. Reduza EFFECTIVE_RANGE ou aumente area."
+        )
     
-    selected_indices = []
-    if n_stas == 5:
-        # 2 mais próximos (distância pequena)
-        selected_indices.extend([idx for _, idx in distances[:2]])
-        # 2 mais distantes (periferias)
-        selected_indices.extend([idx for _, idx in distances[-2:]])
-        # 1 no meio (mediano)
-        mid_idx = len(distances) // 2
-        selected_indices.append(distances[mid_idx][1])
-    else:
-        # Fallback: seleção uniforme por quantis
-        for i in range(n_stas):
-            quantile = i / n_stas
-            idx = min(int(len(distances) * quantile), len(distances) - 1)
-            selected_indices.append(distances[idx][1])
-    
-    selected_positions = [positions[idx] for idx in selected_indices[:n_stas]]
+    # Ordenar por distância e selecionar os MAIS PRÓXIMOS
+    ranked = sorted(
+        near_indices,
+        key=lambda i: math.hypot(positions[i][0] - backhaul_x, positions[i][1] - backhaul_y)
+    )
+    selected_indices = ranked[:n_stas]
+    selected_positions = [positions[i] for i in selected_indices]
     
     lines = [
         "ns3::ListPositionAllocator",
@@ -252,6 +325,9 @@ def list_sta_mobility_balanced(positions, n_stas=5, offset_x=5, offset_y=10):
     for x, y in selected_positions:
         lines.append(f"  {x + offset_x:7.1f}  {y + offset_y:7.1f}")
     return "\n".join(lines) + "\n"
+
+
+
 
 
 def _grid_positions(n_side, spacing=50):
@@ -301,14 +377,23 @@ if __name__ == "__main__":
     # densidade alvo: 50/420^2 = 0.000284 nos/m^2  -> area = sqrt(N/0.000284)
     # Suite: 10 pontos cobrindo escala logaritmica 25..1000
     #   25, 50, 75, 100, 150, 200, 300, 500, 750, 1000
-    TX_RANGE = 200    # alcance de transmissao para cobrir topologias grandes (era 115, insuficiente)
+    TX_RANGE = 200    # alcance usado no diagnostico topologico macro
+    EFFECTIVE_RANGE = 115  # alcance conservador para escolher STAs realmente roteaveis
 
     # ---- 1. Grid 5x5 (25 nos) ----------------------------------------
     print("\n[ 1/10] Grid 5x5 — 25 nos, spacing 50m, duration 240s")
     WARMUP_25 = 120
     exp = EXPERIMENTS / "grid_25nodes"
-    mm = grid_mesh_mobility(5, spacing=50)
-    sm = list_sta_mobility_random(_grid_positions(5, spacing=50), FIXED_N_STAS, seed=25)
+    
+    # Grid mesh nodes (generator e depois convert to list para STA selection)
+    grid_pos = _grid_positions(5, spacing=50)
+    mm = list_mesh_mobility(grid_pos, "grid-5x5")
+    
+    # MELHORIA: Usar random_connected para garantir que STAs alcançam backhaul
+    ok, n_ok = check_connectivity(grid_pos, tx_range=EFFECTIVE_RANGE)
+    print(f"    Grid 25: {'CONECTADO' if ok else f'PARCIAL ({n_ok}/25)'}")
+    sm = list_sta_mobility_random_connected(grid_pos, FIXED_N_STAS, seed=25, tx_range=EFFECTIVE_RANGE)
+    
     ap = apps_txt(FIXED_N_STAS, warmup_s=WARMUP_25)
     write_config(exp / "config_AODV_seed100", mm, sm, ap, routing_txt("aodv"))
     write_config(exp / "config_OLSR_seed101", mm, sm, ap, routing_txt("olsr"))
@@ -321,7 +406,7 @@ if __name__ == "__main__":
     pos50 = _gen_positions(50, area=420, seed=200, min_dist=28)
     ok, n_ok = check_connectivity(pos50, tx_range=TX_RANGE)
     print(f"    seed=200 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/50)'}")
-    sta50 = list_sta_mobility_random(pos50, FIXED_N_STAS, seed=50)
+    sta50 = list_sta_mobility_near_backhaul_direct(pos50, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 200), ("olsr", 201)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos50, "seed=200-shared"),
@@ -337,7 +422,7 @@ if __name__ == "__main__":
     pos75 = _gen_positions(75, area=514, seed=210, min_dist=28)
     ok, n_ok = check_connectivity(pos75, tx_range=TX_RANGE)
     print(f"    seed=210 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/75)'}")
-    sta75 = list_sta_mobility_random(pos75, FIXED_N_STAS, seed=75)
+    sta75 = list_sta_mobility_near_backhaul_direct(pos75, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 210), ("olsr", 211)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos75, "seed=210-shared"),
@@ -352,7 +437,7 @@ if __name__ == "__main__":
     pos100 = _gen_positions(100, area=600, seed=300, min_dist=28)
     ok, n_ok = check_connectivity(pos100, tx_range=TX_RANGE)
     print(f"    seed=300 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/100)'}")
-    sta100 = list_sta_mobility_random(pos100, FIXED_N_STAS, seed=100)
+    sta100 = list_sta_mobility_near_backhaul_direct(pos100, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 300), ("olsr", 301)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos100, "seed=300-shared"),
@@ -368,7 +453,7 @@ if __name__ == "__main__":
     pos150 = _gen_positions(150, area=727, seed=310, min_dist=28)
     ok, n_ok = check_connectivity(pos150, tx_range=TX_RANGE)
     print(f"    seed=310 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/150)'}")
-    sta150 = list_sta_mobility_random(pos150, FIXED_N_STAS, seed=150)
+    sta150 = list_sta_mobility_near_backhaul_direct(pos150, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 310), ("olsr", 311)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos150, "seed=310-shared"),
@@ -383,7 +468,7 @@ if __name__ == "__main__":
     pos200 = _gen_positions(200, area=840, seed=400, min_dist=28)
     ok, n_ok = check_connectivity(pos200, tx_range=TX_RANGE)
     print(f"    seed=400 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/200)'}")
-    sta200 = list_sta_mobility_random(pos200, FIXED_N_STAS, seed=200)
+    sta200 = list_sta_mobility_near_backhaul_direct(pos200, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 400), ("olsr", 401)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos200, "seed=400-shared"),
@@ -399,7 +484,7 @@ if __name__ == "__main__":
     pos300 = _gen_positions(300, area=1028, seed=410, min_dist=28)
     ok, n_ok = check_connectivity(pos300, tx_range=TX_RANGE)
     print(f"    seed=410 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/300)'}")
-    sta300 = list_sta_mobility_random(pos300, FIXED_N_STAS, seed=300)
+    sta300 = list_sta_mobility_near_backhaul_direct(pos300, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 410), ("olsr", 411)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos300, "seed=410-shared"),
@@ -414,7 +499,7 @@ if __name__ == "__main__":
     pos500 = _gen_positions(500, area=1330, seed=500, min_dist=28)
     ok, n_ok = check_connectivity(pos500, tx_range=TX_RANGE)
     print(f"    seed=500 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/500)'}")
-    sta500 = list_sta_mobility_random(pos500, FIXED_N_STAS, seed=500)
+    sta500 = list_sta_mobility_near_backhaul_direct(pos500, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 500), ("olsr", 501)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos500, "seed=500-shared"),
@@ -430,7 +515,7 @@ if __name__ == "__main__":
     pos750 = _gen_positions(750, area=1626, seed=510, min_dist=28)
     ok, n_ok = check_connectivity(pos750, tx_range=TX_RANGE)
     print(f"    seed=510 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/750)'}")
-    sta750 = list_sta_mobility_random(pos750, FIXED_N_STAS, seed=750)
+    sta750 = list_sta_mobility_near_backhaul_direct(pos750, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 510), ("olsr", 511)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos750, "seed=510-shared"),
@@ -445,7 +530,7 @@ if __name__ == "__main__":
     pos1000 = _gen_positions(1000, area=1880, seed=600, min_dist=28)
     ok, n_ok = check_connectivity(pos1000, tx_range=TX_RANGE)
     print(f"    seed=600 (compartilhado): {'CONECTADO' if ok else f'PARCIAL ({n_ok}/1000)'}")
-    sta1000 = list_sta_mobility_random(pos1000, FIXED_N_STAS, seed=1000)
+    sta1000 = list_sta_mobility_near_backhaul_direct(pos1000, FIXED_N_STAS, tx_range=EFFECTIVE_RANGE)
     for proto, seed in [("aodv", 600), ("olsr", 601)]:
         write_config(exp / f"config_{proto.upper()}_seed{seed}",
                      list_mesh_mobility(pos1000, "seed=600-shared"),

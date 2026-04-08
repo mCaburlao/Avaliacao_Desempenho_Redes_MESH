@@ -31,7 +31,7 @@ from pathlib import Path
 import csv
 
 BASE = Path("/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH")
-EXPERIMENTS = BASE / "experiments"
+EXPERIMENTS = BASE / "experiments_copia"
 
 # Experimentos definidos: (topo_label, exp_subdir, duration_s, num_nodes, warmup_s)
 # warmup_s: instante de inicio dos fluxos de medicao contínuos

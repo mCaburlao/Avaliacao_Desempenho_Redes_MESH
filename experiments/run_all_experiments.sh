@@ -19,7 +19,7 @@ set -euo pipefail
 BASE=/mnt/d/OneDrive/Documentos/UFABC/2026.1/Avaliacao_Desempenho_Redes_MESH
 MESHSIM=$BASE/MeshSim/build/sim/mesh_sim
 NS3_LIB=$BASE/ns-3-dev/build/lib
-EXPS=$BASE/experiments
+EXPS=$BASE/experiments_copia
 
 # --- Parsear argumentos ---
 DRY_RUN=0

@@ -1,4 +1,0 @@
-standard g
-ratecontrol ns3::ArfWifiManager
-channel delay ns3::ConstantSpeedPropagationDelayModel
-channel add_loss ns3::LogDistancePropagationLossModel

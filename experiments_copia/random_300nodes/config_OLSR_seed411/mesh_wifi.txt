@@ -1,2 +1,0 @@
-standard g
-ratecontrol ns3::ArfWifiManager
