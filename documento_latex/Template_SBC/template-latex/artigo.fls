@@ -176,11 +176,11 @@ INPUT ./fig6-throughput-vs-nodes.png
 INPUT ./fig6-throughput-vs-nodes.png
 INPUT ./fig6-throughput-vs-nodes.png
 INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/helvetic/phvbo7t.tfm
+INPUT c:/texlive/2026/texmf-dist/fonts/vf/adobe/helvetic/phvbo7t.vf
+INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/helvetic/phvbo8r.tfm
 INPUT ./artigo.bbl
 INPUT ./artigo.bbl
 INPUT artigo.bbl
-INPUT c:/texlive/2026/texmf-dist/fonts/vf/adobe/helvetic/phvbo7t.vf
-INPUT c:/texlive/2026/texmf-dist/fonts/tfm/adobe/helvetic/phvbo8r.tfm
 INPUT artigo.aux
 INPUT c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
 INPUT c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb
