@@ -1,10 +1,5 @@
 \begin{thebibliography}{}
 
-\bibitem[Akyildiz et~al. 2005]{wireless_akyildiz_2005}
-Akyildiz, I.~F., Wang, X., and Wang, W. (2005).
-\newblock Wireless mesh networks: a survey.
-\newblock {\em Computer Networks}.
-
 \bibitem[Benyamina et~al. 2012]{wireless_benyamina_2012}
 Benyamina, D., Hafid, A., and Gendreau, M. (2012).
 \newblock Wireless mesh networks design -- a survey.
@@ -15,37 +10,29 @@ Caburlão, M.~C. (2026).
 \newblock Arquivo readme para o simulador e dados de entrada.
 \newblock \url{https://github.com/mCaburlao/Avaliacao_Desempenho_Redes_MESH}.
 
-\bibitem[Khalifeh et~al. 2018]{performance_khalifeh_2018}
-Khalifeh, A., Salah, H., Alouneh, S., Al-Assaf, A.~H., and Darabkh, K.~A. (2018).
-\newblock Performance evaluation of digimesh and zigbee wireless mesh networks.
-\newblock {\em 2018 International Conference on Wireless Communications, Signal Processing and Networking (WiSPNET)}.
-
-\bibitem[Lee et~al. 2024]{research_lee_2024}
-Lee, S.-H., Byun, S.-B., Jung, Y.-A., Han, D., Kim, D.-E., and Cho, S.-H. (2024).
-\newblock Research on the design and implementation of a mesh network communication system for fire and hazardous gas detection and response.
-\newblock {\em International Conference on Ubiquitous and Future Networks}.
+\bibitem[Jubair et~al. 2018]{jubair2018}
+Jubair, M.~A. et~al. (2018).
+\newblock Performance evaluation of {AODV} and {OLSR} routing protocols in {MANET} environment.
+\newblock {\em International Journal on Advanced Science, Engineering and Information Technology}, 8(4).
 
 \bibitem[Lorinder 2026]{lorinder_github}
 Lorinder (2026).
 \newblock Meshsim -- mesh network simulator.
 \newblock \url{https://github.com/lorinder/MeshSim}.
 
-\bibitem[Passos et~al. 2005]{mesh_passos_2005}
-Passos, D., Teixeira, D., Muchaluat-Saade, D., Magalhães, L., and Albuquerque, C. (2005).
-\newblock Mesh network performance measurements.
+\bibitem[Neumann et~al. 2015]{neumann2015}
+Neumann, A., Lopez, E., and Navarro, L. (2015).
+\newblock Evaluation of mesh routing protocols for wireless community networks.
+\newblock {\em Computer Networks}, 93:225--242.
 
-\bibitem[Ruete et~al. 2024]{optimizing_ruete_2024}
-Ruete, D., Navarro, A.~C., Flores‐Bahamonde, F., Rogget, M.~R., Henríquez, M. S.~C., Retamal, S.~S., Ramírez, C.~V., and Caselli, N. (2024).
-\newblock Optimizing disaster preparedness: A zigbee and digimesh-based approach for illuminated evacuation routes.
-\newblock {\em Communications in computer and information science}.
-
-\bibitem[Sichitiu 2004]{wireless_sichitiu_2004}
-Sichitiu, M.~L. (2004).
-\newblock Wireless mesh networks : Opportunities and challenges.
+\bibitem[Riaz et~al. 2020]{riaz2020}
+Riaz, S. et~al. (2020).
+\newblock Performance evaluation of routing protocols in energy harvesting {D2D} network.
+\newblock {\em Scalable Computing: Practice and Experience}, 21(4).
 
 \bibitem[Turlykozhayeva et~al. 2024]{turlykozhayeva2024evaluating}
-Turlykozhayeva, D., Akhtanov, S., Baigaliyeva, A., Temesheva, S., Zhexebay, D., Zaidyn, M., Ussipov, N., and Skabylov, A. (2024).
+Turlykozhayeva, D. et~al. (2024).
 \newblock Evaluating routing algorithms across different wireless mesh network topologies using ns-3 simulator.
-\newblock {\em Eurasian Physical Technical Journal}, 21(2 (48)):70--82.
+\newblock {\em Eurasian Physical Technical Journal}, 21(2).
 
 \end{thebibliography}

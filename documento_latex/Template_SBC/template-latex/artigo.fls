@@ -164,12 +164,12 @@ INPUT ./fig1-pdr-vs-nodes.png
 INPUT ./fig1-pdr-vs-nodes.png
 INPUT ./fig1-pdr-vs-nodes.png
 INPUT ./fig1-pdr-vs-nodes.png
-INPUT ./fig2-latency-vs-nodes.png
-INPUT ./fig2-latency-vs-nodes.png
-INPUT ./fig2-latency-vs-nodes.png
-INPUT ./fig2-latency-vs-nodes.png
-INPUT ./fig2-latency-vs-nodes.png
 INPUT c:/texlive/2026/texmf-dist/fonts/vf/adobe/times/ptmr8c.vf
+INPUT ./fig2-latency-vs-nodes.png
+INPUT ./fig2-latency-vs-nodes.png
+INPUT ./fig2-latency-vs-nodes.png
+INPUT ./fig2-latency-vs-nodes.png
+INPUT ./fig2-latency-vs-nodes.png
 INPUT ./fig6-throughput-vs-nodes.png
 INPUT ./fig6-throughput-vs-nodes.png
 INPUT ./fig6-throughput-vs-nodes.png
