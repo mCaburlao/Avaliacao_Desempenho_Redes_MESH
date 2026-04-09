@@ -61,23 +61,25 @@ O \textit{Optimized Link State Routing Protocol} (OLSR), por outro lado, pertenc
 
 A escolha de AODV e OLSR justifica-se por três motivos complementares. Primeiro, ambos os protocolos possuem implementações maduras, validadas industrialmente e disponíveis \textit{nativamente} no framework NS-3 sem necessidade de modificações: isto elimina vieses de implementação que podem comprometer comparação empírica. Segundo, AODV e OLSR representam os dois extremos do espectro de paradigmas de roteamento em redes ad hoc, permitindo que as conclusões do trabalho estendam-se conceitualmente a protocolos híbridos e derivados. Terceiro, a literatura de redes mesh e IoT reporta ambos os protocolos em implantações práticas: AODV em padrões como IEEE~802.11s (Dot11s) modificado, e OLSR em implementações de redes de sensores urbanas; assim, os resultados possuem relevância prática direta.
 
+A hipótese de trabalho é que existe regime de escala em que AODV supera OLSR significativamente em sobrecarga de roteamento e latência, enquanto OLSR preserva taxa de entrega superior em redes pequenas onde a sobrecarga proativa é tolerável. Espera-se identificar transição entre estes regimes com precisão estatística $\ge$ 95\%, permitindo recomendação prática para engenheiros que selecionam protocolo em função de escala esperada da rede.
+
 % \subsection{A Questão do Ponto de Transição}
 
 % A escalabilidade relativa desses dois paradigmas não é linear. O AODV, sendo reativo, beneficia-se de escalabilidade linear no overhead de controle com a conectividade, pois apenas rotas demandadas são estabelecidas. Porém, em redes muito esparsas ou com grande variabilidade topológica, o custo de descoberta repetida de rotas pode deteriorar o desempenho. O OLSR, sendo proativo, mantém complexidade de controle que depende quadraticamente do número de nós em cenários de alta conectividade, uma vez que o número de mensagens de topologia propagadas cresce com a quantidade de nós e enlaces. Existe portanto um \textit{ponto de transição} --- um regime de escala crítico --- a partir do qual um protocolo torna-se mais adequado que o outro em função de seus trade-offs inerentes.
 
 % A questão central deste trabalho é: \textit{Em qual faixa de escalabilidade (número de nós e densidade topológica) o protocolo AODV torna-se mais vantajoso que o OLSR em termos de métrica de desempenho composta (latência, throughput, overhead de controle)?} E inversamente: \textit{Em qual regime o OLSR oferta melhor comportamento?}
 
-\subsection{Escopo, Hipótese e Definições}
+% \subsection{Escopo, Hipótese e Definições}
 
-O presente trabalho estuda roteamento sob condições de topologia aleatória uniforme, mantendo densidade de nós constante à medida que o número total de nós varia de 25 a 1000. Deste modo, isola-se o efeito da escala per se separando-o dos efeitos de densidade topológica. O desempenho é quantificado através de conjunto de cinco métricas: taxa de entrega de pacotes (PDR), latência fim-a-fim, jitter, throughput e número médio de saltos por pacote.
+% O presente trabalho estuda roteamento sob condições de topologia aleatória uniforme, mantendo densidade de nós constante à medida que o número total de nós varia de 25 a 1000. Deste modo, isola-se o efeito da escala per se separando-o dos efeitos de densidade topológica. O desempenho é quantificado através de conjunto de três métricas: taxa de entrega de pacotes (PDR), latência end-to-end (E2E) e \textit{throughput}.
 
-A hipótese de trabalho é que existe regime de escala em que AODV supera OLSR significativamente em sobrecarga de roteamento e latência, enquanto OLSR preserva taxa de entrega superior em redes pequenas onde a sobrecarga proativa é tolerável. Espera-se identificar transição entre estes regimes com precisão estatística $\ge$ 95\%, permitindo recomendação prática para engenheiros que selecionam protocolo em função de escala esperada da rede.
+% A hipótese de trabalho é que existe regime de escala em que AODV supera OLSR significativamente em sobrecarga de roteamento e latência, enquanto OLSR preserva taxa de entrega superior em redes pequenas onde a sobrecarga proativa é tolerável. Espera-se identificar transição entre estes regimes com precisão estatística $\ge$ 95\%, permitindo recomendação prática para engenheiros que selecionam protocolo em função de escala esperada da rede.
 
 \section{Trabalhos Relacionados}\label{sec:related}
 
-O estudo de protocolos de roteamento em redes mesh é uma área consolidada na literatura. \cite{jubair2018} avaliaram e compararam o desempenho dos protocolos de roteamento AODV e OLSR por meio de simulações no Network Simulator 2 (NS-2). O estudo empregou métricas essenciais de desempenho: taxa de entrega de pacotes (\textit{Packet Delivery Ratio} -- PDR), vazão (\textit{throughput}) e latência fim a fim (\textit{End-to-End Delay}), variando o número de nós e a dimensão da área de simulação. Os resultados indicaram que o protocolo AODV supera o OLSR em vários cenários avaliados, apresentando maior entrega de pacotes (de 89,9\% a 99,1\% contra 85\% a 94,5\%) e menor atraso fim a fim. A superioridade se deve à natureza reativa do AODV, que descobre rotas sob demanda e, portanto, gera menos sobrecarga de controle em cenários de tráfego moderado. Entretanto, a análise limita-se a redes MANET com até 70 nós e não investiga o comportamento dos protocolos AODV e OLSR em escalas maiores, como em uma implementação real de redes mesh em um cenário de cidades inteligentes. Além disso, o NS-2 é considerado menos preciso e mais limitado do que seus sucessores, como o NS-3, na modelagem de protocolos de rede.
+O estudo de protocolos de roteamento em redes mesh é uma área consolidada na literatura. \cite{jubair2018} avaliaram e compararam o desempenho dos protocolos de roteamento AODV e OLSR por meio de simulações no Network Simulator 2 (NS-2). O estudo empregou métricas essenciais de desempenho: taxa de entrega de pacotes (\textit{Packet Delivery Ratio} - PDR), vazão (\textit{throughput}) e latência fim a fim (\textit{End-to-End Delay}), variando o número de nós e a dimensão da área de simulação. Os resultados indicaram que o protocolo AODV supera o OLSR em vários cenários avaliados, apresentando maior entrega de pacotes (de 89,9\% a 99,1\% contra 85\% a 94,5\%) e menor atraso fim a fim. A superioridade se deve à natureza reativa do AODV, que descobre rotas sob demanda e, portanto, gera menos sobrecarga de controle em cenários de tráfego moderado. Entretanto, a análise limita-se a redes MANET com até 70 nós e não investiga o comportamento dos protocolos AODV e OLSR em escalas maiores, como em uma implementação real de redes mesh em um cenário de cidades inteligentes. Além disso, o NS-2 é considerado menos preciso e mais limitado do que seus sucessores, como o NS-3, na modelagem de protocolos de rede.
 
-\cite{riaz2020} investigaram o desempenho dos protocolos OLSR e AODV em redes \textit{Device-to-Device} (D2D) em colheita de energia (\textit{Energy Harvesting} -- EH), utilizando o simulador NS-3 integrado a um \textit{framework} realista de irradiância solar. O estudo avaliou três métricas: energia residual, energia consumida e \textit{goodput}, usando redes de 20 a 100 nós. De acordo com os estudos, na presença de colheita de energia, o OLSR apresentou desempenho significativamente superior ao AODV, em todas as métricas: \textit{goodput}, energia residual e consumo energético. Isso se dá pois a sobrecarga proativa de manutenção de tabelas de roteamento é compensado pela presença de energia abundante oriunda da colheita. Porém, com o \textit{framework} de irradiância desligado e, portanto, sem colheita de energia, o AODV demonstrou vantagens em termos de energia consumida em razão de sua natureza reativa, que gera menos sobrecarga de controle. A limitação desse trabalho reside no foco em redes D2D, cujas características de comunicação direta diferem substancialmente das topologias típicas de redes mesh em cenários urbanos.
+\cite{riaz2020} investigaram o desempenho dos protocolos OLSR e AODV em redes \textit{Device-to-Device} (D2D) em colheita de energia (\textit{Energy Harvesting} - EH), utilizando o simulador NS-3 integrado a um \textit{framework} realista de irradiância solar. O estudo avaliou três métricas: energia residual, energia consumida e \textit{goodput}, usando redes de 20 a 100 nós. De acordo com os estudos, na presença de colheita de energia, o OLSR apresentou desempenho significativamente superior ao AODV, em todas as métricas: \textit{goodput}, energia residual e consumo energético. Isso se dá pois a sobrecarga proativa de manutenção de tabelas de roteamento é compensado pela presença de energia abundante oriunda da colheita. Porém, com o \textit{framework} de irradiância desligado e, portanto, sem colheita de energia, o AODV demonstrou vantagens em termos de energia consumida em razão de sua natureza reativa, que gera menos sobrecarga de controle. A limitação desse trabalho reside no foco em redes D2D, cujas características de comunicação direta diferem substancialmente das topologias típicas de redes mesh em cenários urbanos.
 
 Em redes de maior escala, \cite{neumann2015} avaliaram a escalabilidade, o desempenho e a estabilidade de três protocolos proativos (BMX6, OLSR e Babel) no contexto de redes comunitárias sem fio. Com um \textit{framework} de emulação aliado ao \textit{testbed} físico W-ILab.T, os autores mediram a sobrecarga da rede, o tempo de convergência, a estabilidade e o consumo de recursos computacionais (CPU e memória). O estudo concluiu que o Babel é o protocolo mais leve em redes com links estáveis e baixa densidade de nós, mas sofre degradação severa em redes densas e dinâmicas, onde seus mecanismos reativos geram sobrecarga massiva. Nesse cenário, o BMX6 e o OLSR superaram o Babel devido às suas taxas constantes de envio de mensagens de atualização topológica, o que garante maior estabilidade e capacidade de auto-recuperação. Contudo, o OLSR apresentou a maior sobrecarga de controle dentre os três protocolos, sendo o mais sensível ao aumento do número de nós e de enlaces na rede. Ademais, a pesquisa restringiu-se à comparação de protocolos proativos, não confrontando o OLSR com alternativas reativas como o AODV em configurações de grande escala.
 
@@ -87,15 +89,15 @@ Em síntese, os trabalhos convergem ao demonstrar que o desempenho dos protocolo
 
 \subsection{Ambiente de Simulação}
 
-Utilizamos MeshSim \cite{lorinder_github}, um simulador de redes mesh de código aberto construído sobre o framework NS-3, adaptado e estendido para os experimentos deste trabalho. O código e os scripts de configuração e análise encontram-se disponíveis em repositório público \cite{caburlao_github}. O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas em modo \textit{Release} (CMake, versão de desenvolvimento de abril de 2026), garantindo desempenho determinístico e reprodutível.
+Utilizamos MeshSim \cite{lorinder_github}, um simulador de redes mesh de código aberto construído sobre o framework NS-3, adaptado e estendido para os experimentos deste trabalho. O código e os scripts de configuração e análise encontram-se disponíveis em repositório público \cite{caburlao_github}. O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas na versão de desenvolvimento de abril de 2026, garantindo desempenho determinístico e reprodutível.
 
-A escolha de MeshSim sobre alternativas, como OPNET ou OMNeT++, justifica-se por cinco fatores interrelacionados. O framework NS-3, que constitui o núcleo do MeshSim, oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa. O suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação. Os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância, permitindo modelagem realista do ambiente de propagação. A reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados. Finalmente, a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
+A escolha de MeshSim sobre alternativas, como OPNET ou OMNeT++, justifica-se por cinco fatores interrelacionados: (i) o framework NS-3 oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa; (ii) o suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação; (iii) os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância, permitindo modelagem realista do ambiente de propagação; (iv) a reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados; (v) a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
 
 \subsection{Topologia e Escalonamento de Rede}
 
-Adota-se topologia aleatória com distribuição uniforme de nós. Para todas as topologias, a densidade de nós é mantida constante com 50 nós a cada $420 \times 420$\,m, assim como em trabalhos semelhantes da literatura \cite{turlykozhayeva2024evaluating}. Além disso, utilizou-se distância mínima entre nós de 28\,m e alcance de transmissão de 115\,m (IEEE 802.11g, modelo LogDistance).
+O ambiente de simulação é configurado para refletir cenários típicos de cidades inteligentes, com nós representando dispositivos urbanos distribuídos, comunicando-se através de múltiplos saltos sem infraestrutura de backhaul dedicada.  Adota-se topologia aleatória com distribuição uniforme de nós. Para todas as topologias, a densidade de nós é mantida constante com 50 nós a cada $420 \times 420$\,m, assim como em trabalhos semelhantes da literatura \cite{turlykozhayeva2024evaluating}. Além disso, utilizou-se distância mínima entre nós de 28\,m e alcance de transmissão de 115\,m (IEEE 802.11g, modelo LogDistance).
 
-Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós, conforme Tabela~\ref{tab:topologias}. A densidade constante garante que variações de desempenho reflitam o efeito da escala e não variações de cobertura. O tempo de aquecimento é dimensionado para garantir convergência completa dos protocolos antes do início das medições, seguindo critérios distintos para cada protocolo. Esses critérios garantem que as métricas reportadas reflitam o comportamento em regime estacionário de ambos os protocolos sobre o mesmo conjunto de fluxos. Cada topologia é gerada de forma determinística a partir de sementes explícitas, garantindo que a mesma topologia física seja utilizada para ambos os protocolos em cada ponto de escala, eliminando vieses de comparação.
+Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós, conforme Tabela~\ref{tab:topologias}. A densidade constante garante que variações de desempenho reflitam o efeito da escala e não variações de cobertura. O tempo de aquecimento é dimensionado para garantir convergência completa dos protocolos antes do início das medições, seguindo critérios distintos para cada protocolo. Esses critérios garantem que as métricas reportadas reflitam o comportamento em regime estacionário de ambos os protocolos sobre o mesmo conjunto de fluxos. Cada topologia é gerada de forma determinística a partir de sementes aleatórias explícitas, garantindo que a mesma topologia física seja utilizada para ambos os protocolos em cada ponto de escala, eliminando vieses de comparação.
 
 \begin{table}[h]
 \centering
@@ -103,18 +105,18 @@ Investigam-se dez pontos de escala cobrindo a faixa de 25 a 1000 nós, conforme 
 \label{tab:topologias}
 \begin{tabular}{lrrrr}
 \hline
-\textbf{Topologia} & \textbf{Nós} & \textbf{Área (m)} & \textbf{Aquecimento (s)} & \textbf{Duração (s)} \\
+\textbf{Nós} & \textbf{Área (m)} & \textbf{Aquecimento (s)} & \textbf{Duração (s)} \\
 \hline
-grid-25      &   25 & $200 \times 200$   & 120 & 240 \\
-random-50    &   50 & $420 \times 420$   & 180 & 300 \\
-random-75    &   75 & $514 \times 514$   & 210 & 330 \\
-random-100   &  100 & $600 \times 600$   & 240 & 360 \\
-random-150   &  150 & $727 \times 727$   & 270 & 390 \\
-random-200   &  200 & $840 \times 840$   & 300 & 420 \\
-random-300   &  300 & $1028 \times 1028$ & 330 & 450 \\
-random-500   &  500 & $1330 \times 1330$ & 360 & 480 \\
-random-750   &  750 & $1626 \times 1626$ & 390 & 510 \\
-random-1000  & 1000 & $1880 \times 1880$ & 420 & 540 \\
+25 & $200 \times 200$   & 120 & 240 \\
+50 & $420 \times 420$   & 180 & 300 \\
+75 & $514 \times 514$   & 210 & 330 \\
+100 & $600 \times 600$   & 240 & 360 \\
+150 & $727 \times 727$   & 270 & 390 \\
+200 & $840 \times 840$   & 300 & 420 \\
+300 & $1028 \times 1028$ & 330 & 450 \\
+500 & $1330 \times 1330$ & 360 & 480 \\
+750 & $1626 \times 1626$ & 390 & 510 \\
+1000 & $1880 \times 1880$ & 420 & 540 \\
 \hline
 \end{tabular}
 \end{table}
@@ -127,7 +129,7 @@ Já para o protocolo OLSR, a configuração utiliza: \texttt{HelloInterval=2s}, 
 
 \subsection{Métricas Coletadas}
 
-As métricas são extraídas exclusivamente do FlowMonitor, em granularidade de fluxo. Apenas os fluxos UDP no sentido wiredSta para backhaul são incluídos no cálculo. As métricas coletadas incluem a taxa de entrega de pacotes (PDR), latência média fim-a-fim e throughput. O PDR é calculado como a porcentagem de pacotes recebidos em relação ao total de pacotes esperados, utilizando um denominador fixo para garantir comparação direta entre protocolos. A latência média é ponderada pelo número de pacotes recebidos para refletir o impacto real sobre os dados efetivamente entregues. O throughput agregado é calculado com base nos bytes UDP efetivamente recebidos, excluindo o período de aquecimento para garantir comparação na mesma base temporal.
+As métricas são extraídas do FlowMonitor, em granularidade de fluxo. Apenas os fluxos UDP no sentido \textit{wiredSta} para \textit{backhaul} são incluídos no cálculo. As métricas coletadas incluem a taxa de entrega de pacotes (PDR), latência média fim-a-fim e \textit{throughput}. O PDR é calculado como a porcentagem de pacotes recebidos em relação ao total de pacotes esperados, utilizando um denominador fixo para garantir comparação direta entre protocolos. A latência média é ponderada pelo número de pacotes recebidos para refletir o impacto real sobre os dados efetivamente entregues. O \textit{throughput} agregado é calculado com base nos bytes UDP efetivamente recebidos, excluindo o período de aquecimento para garantir comparação na mesma base temporal.
 
 Como citado anteriormente, todos os scripts de geração de configuração, execução de simulação e análise de resultados encontram-se disponíveis no repositório de código aberto \cite{caburlao_github}, permitindo que qualquer pesquisador reproduza exatamente os experimentos aqui reportados.
 
@@ -177,30 +179,30 @@ Latência Média E2E (fim-a-fim) versus escala de rede.
 \label{fig:latency}
 \end{figure}
 
-\subsection{Throughput Agregado}
+\subsection{\textit{Throughput} Agregado}
 
-A Figura~\ref{fig:throughput} mostra o throughput agregado total capturado pelos fluxos de medição. Observa-se comportamento dramático:
+A Figura~\ref{fig:throughput} mostra o \textit{throughput} agregado total capturado pelos fluxos de medição. Observa-se comportamento dramático:
 
 \begin{itemize}
-  \item \textbf{AODV:} Throughput pico de 1.8\,kbps em 25 nós, decaindo exponencialmente para 0.1\,kbps acima de 100 nós.
+  \item \textbf{AODV:} \textit{Throughput} pico de 1.8\,kbps em 25 nós, decaindo exponencialmente para 0.1\,kbps acima de 100 nós.
   
-  \item \textbf{OLSR:} Throughput inicial de 1.25\,kbps, degradando para patamares próximos a 0 kbps em redes maiores, permanecendo consistentemente inferior a 0.1\,kbps.
+  \item \textbf{OLSR:} \textit{Throughput} inicial de 1.25\,kbps, degradando para patamares próximos a 0 kbps em redes maiores, permanecendo consistentemente inferior a 0.1\,kbps.
 \end{itemize}
 
-O colapso de throughput correlaciona-se diretamente com o decaimento de PDR: quando taxa de entrega cai abaixo de 30\%, o throughput agregado esgota-se. Este comportamento é esperado em redes sem densidade crescente compensatória. Para aplicações exigindo throughput mínimo de 0.5\,kbps (ex: monitoramento distribuído de sensores), ambos os protocolos são viáveis apenas até aproximadamente 50 nós.
+O colapso de \textit{throughput} correlaciona-se diretamente com o decaimento de PDR: quando taxa de entrega cai abaixo de 30\%, o \textit{throughput} agregado esgota-se. Este comportamento é esperado em redes sem densidade crescente compensatória. Para aplicações exigindo \textit{throughput} mínimo de 0.5\,kbps (ex: monitoramento distribuído de sensores), ambos os protocolos são viáveis apenas até aproximadamente 50 nós.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{fig6-throughput-vs-nodes.png}
 \caption{
-Throughput Agregado (kbps) em função da escala de rede. 
+\textit{Throughput} agregado (kbps) em função da escala de rede. 
 }
 \label{fig:throughput}
 \end{figure}
 
 \section{Conclusão e Próximos Passos}\label{sec:conclusion}
 
-A análise comparativa aqui apresentada abordou a questão central de identificar pontos críticos de transição entre os protocolos de roteamento AODV e OLSR para redes mesh em contexto de cidades inteligentes. Os experimentos de simulação com controle rigoroso revelaram padrões de degradação diferenciados: AODV exibe superioridade em PDR e latência em redes pequenas, refletindo eficiência do mecanismo sob demanda em topologias densas; OLSR apresenta maior estabilidade em redes médias com PDR entre 20--30\%; ambos os protocolos degradam criticamente acima de 500 nós, sinalizando limite fundamental para arquitetura mesh monocolor.
+A análise comparativa aqui apresentada abordou a questão central de identificar pontos críticos de transição entre os protocolos de roteamento AODV e OLSR para redes mesh em contexto de cidades inteligentes. Os experimentos de simulação com controle rigoroso revelaram padrões de degradação diferenciados: AODV exibe superioridade em PDR e latência em redes pequenas, refletindo eficiência do mecanismo sob demanda em topologias densas; OLSR apresenta maior estabilidade em redes médias com PDR entre 20 e 30\%; ambos os protocolos degradam criticamente acima de 500 nós, sinalizando limite fundamental para arquitetura mesh monocolor.
 
 Para aplicações em cidades inteligentes exigindo confiabilidade superior a 80\% e latência inferior a 500 ms, recomenda-se limitar cada rede mesh autônoma a no máximo 75 nós, ou adotar arquitetura hierárquica com múltiplas redes coordenadas através de backhaul dedicado. Em redes pequenas, AODV é aceitável se latência inicial for crítica. Já em redes médias, OLSR é preferível pela estabilidade.
 
