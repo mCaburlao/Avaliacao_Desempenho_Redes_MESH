@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  8 APR 2026 21:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.20)  9 APR 2026 00:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -202,7 +202,7 @@ LaTeX Info: Redefining \Relbar on input line 970.
 LaTeX Info: Redefining \[ on input line 2950.
 LaTeX Info: Redefining \] on input line 2951.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 26.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 29.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 ) (c:/texlive/2026/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
@@ -210,24 +210,24 @@ File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count305
 ) (./artigo.aux
 Package babel Info: 'brazil' activates 'portuges' shorthands.
-(babel)             Reported on input line 5.
+(babel)             Reported on input line 6.
 )
 \openout1 = `artigo.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 29.
+LaTeX Font Info:    ... okay on input line 29.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -305,65 +305,64 @@ Package grfext Info: Graphics extension search list:
  (c:/texlive/2026/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 28.
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 31.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 28.
+LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 31.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/omspcr.fd
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 28.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 31.
  [1
 
 {c:/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2026/texmf-dist/fonts/enc/dvips/base/8r.enc}] [2] [3] [4] [5]
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 108.
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 111.
  (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 130--131
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
 \OT1/ptm/m/n/12 Ambos os pro-to-co-los, AODV e OLSR, encontram-se ins-ta-la-dos com
  []
 
 
-Underfull \hbox (badness 4072) in paragraph at lines 130--131
+Underfull \hbox (badness 4072) in paragraph at lines 133--134
 \OT1/ptm/m/n/12 par[]ametros padr[]ao do NS-3. Para o pro-to-colo AODV, utilizaram-se os se-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 130--131
+Underfull \hbox (badness 10000) in paragraph at lines 133--134
 \OT1/ptm/m/n/12 guin-tes par[]ametros: \OT1/pcr/m/n/12 HelloInterval=1s\OT1/ptm/m/n/12 , \OT1/pcr/m/n/12 ActiveRouteTimeout=3s\OT1/ptm/m/n/12 ,
  []
 
 
-Underfull \hbox (badness 1320) in paragraph at lines 130--131
+Underfull \hbox (badness 1320) in paragraph at lines 133--134
 \OT1/pcr/m/n/12 PathDiscoveryTime=3.5s \OT1/ptm/m/n/12 e \OT1/pcr/m/n/12 RreqRetries=2\OT1/ptm/m/n/12 . Es-tes va-lo-res con-tro-lam a
  []
 
 [6]
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 149.
- (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
-File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
-)
 <fig1-pdr-vs-nodes.png, id=30, 570.933pt x 354.00255pt>
 File: fig1-pdr-vs-nodes.png Graphic file (type png)
 <use fig1-pdr-vs-nodes.png>
-Package pdftex.def Info: fig1-pdr-vs-nodes.png  used on input line 156.
+Package pdftex.def Info: fig1-pdr-vs-nodes.png  used on input line 153.
 (pdftex.def)             Requested size: 341.43437pt x 211.71175pt.
- [7 <./fig1-pdr-vs-nodes.png>]
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 161.
+ (c:/texlive/2026/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+) [7 <./fig1-pdr-vs-nodes.png>]
 <fig2-latency-vs-nodes.png, id=37, 570.933pt x 354.00255pt>
 File: fig2-latency-vs-nodes.png Graphic file (type png)
 <use fig2-latency-vs-nodes.png>
-Package pdftex.def Info: fig2-latency-vs-nodes.png  used on input line 177.
+Package pdftex.def Info: fig2-latency-vs-nodes.png  used on input line 174.
 (pdftex.def)             Requested size: 341.43437pt x 211.71175pt.
 <fig6-throughput-vs-nodes.png, id=38, 570.933pt x 354.00255pt>
 File: fig6-throughput-vs-nodes.png Graphic file (type png)
 <use fig6-throughput-vs-nodes.png>
-Package pdftex.def Info: fig6-throughput-vs-nodes.png  used on input line 198.
+Package pdftex.def Info: fig6-throughput-vs-nodes.png  used on input line 201.
 (pdftex.def)             Requested size: 341.43437pt x 211.71175pt.
 LaTeX Font Info:    Font shape `OT1/phv/b/it' in size <10> not available
-(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 201.
+(Font)              Font shape `OT1/phv/b/sl' tried instead on input line 204.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -375,15 +374,15 @@ L3 programming layer <2026-01-19>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 6683 strings out of 467525
- 111227 string characters out of 5423209
- 540357 words of memory out of 5000000
- 35490 multiletter control sequences out of 15000+600000
+ 6689 strings out of 467525
+ 111345 string characters out of 5423209
+ 540657 words of memory out of 5000000
+ 35496 multiletter control sequences out of 15000+600000
  648376 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  72i,12n,79p,1384b,434s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2026/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2026/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on artigo.pdf (10 pages, 980156 bytes).
+Output written on artigo.pdf (10 pages, 981645 bytes).
 PDF statistics:
  95 PDF objects out of 1000 (max. 8388607)
  56 compressed objects within 1 object stream

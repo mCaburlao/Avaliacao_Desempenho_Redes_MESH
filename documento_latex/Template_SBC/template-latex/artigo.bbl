@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\bibitem[Akyildiz et~al. 2005]{wireless_akyildiz_2005}
+Akyildiz, I.~F., Wang, X., and Wang, W. (2005).
+\newblock Wireless mesh networks: a survey.
+\newblock {\em Computer Networks}.
+
 \bibitem[Benyamina et~al. 2012]{wireless_benyamina_2012}
 Benyamina, D., Hafid, A., and Gendreau, M. (2012).
 \newblock Wireless mesh networks design -- a survey.
@@ -10,10 +15,25 @@ Caburlão, M.~C. (2026).
 \newblock Arquivo readme para o simulador e dados de entrada.
 \newblock \url{https://github.com/mCaburlao/Avaliacao_Desempenho_Redes_MESH}.
 
+\bibitem[Clausen and Jacquet 2003]{clausen2003optimized}
+Clausen, T. and Jacquet, P. (2003).
+\newblock Optimized link state routing protocol (olsr).
+\newblock Technical report, RFC 3626.
+
 \bibitem[Jubair et~al. 2018]{jubair2018}
 Jubair, M.~A. et~al. (2018).
 \newblock Performance evaluation of {AODV} and {OLSR} routing protocols in {MANET} environment.
 \newblock {\em International Journal on Advanced Science, Engineering and Information Technology}, 8(4).
+
+\bibitem[Kim et~al. 2011]{kim2011comparative}
+Kim, S. et~al. (2011).
+\newblock Comparative analysis of link quality metrics and routing protocols for optimal route construction in wireless mesh networks.
+\newblock {\em Ad Hoc Networks}, 9(7):1343--1358.
+
+\bibitem[Lee et~al. 2024]{research_lee_2024}
+Lee, S.-H. et~al. (2024).
+\newblock Research on the design and implementation of a mesh network communication system for fire and hazardous gas detection and response.
+\newblock {\em International Conference on Ubiquitous and Future Networks}.
 
 \bibitem[Lorinder 2026]{lorinder_github}
 Lorinder (2026).
@@ -24,6 +44,15 @@ Lorinder (2026).
 Neumann, A., Lopez, E., and Navarro, L. (2015).
 \newblock Evaluation of mesh routing protocols for wireless community networks.
 \newblock {\em Computer Networks}, 93:225--242.
+
+\bibitem[Passos et~al. 2005]{mesh_passos_2005}
+Passos, D. et~al. (2005).
+\newblock Mesh network performance measurements.
+
+\bibitem[Perkins et~al. 2003]{perkins2003ad}
+Perkins, C., Belding-Royer, E., and Das, S. (2003).
+\newblock Ad hoc on-demand distance vector (aodv) routing.
+\newblock Technical report, RFC 3561.
 
 \bibitem[Riaz et~al. 2020]{riaz2020}
 Riaz, S. et~al. (2020).

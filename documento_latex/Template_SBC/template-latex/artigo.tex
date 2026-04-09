@@ -12,14 +12,17 @@
 
 \title{Análise Comparativa de Protocolos de Roteamento AODV vs OLSR em Redes MESH Escaláveis: Investigação do Ponto de Transição para Cenários de cidades inteligentes}
 
-\author{Gabriela Cavalcanti, Gabriel Fogaca, Jacqueline Coelho, Joao Pedro,\\ Marcela Ceschim, Matheus Lima, Miguel Piva, Rafael de Souza}
+\author{Gabriela Cavalcanti\inst{1}, Gabriel Fogaca\inst{1}, Jacqueline Coelho\inst{1}, Joao Pedro\inst{1},\\ Marcela Ceschim\inst{2}, Matheus Lima\inst{1}, Miguel Piva\inst{1}, Rafael de Souza\inst{1}}
 
 % \author{Gabriela, Gabriel, Jacqueline, Joao Pedro, Marcela, Matheus, Miguel, Rafael}
 
-\address{Centro de Engenharia, Modelagem e Ciências Sociais Aplicadas (CECS)\\
+\address{Centro de Matemática, Computação e Cognição (CMCC) \\ 
+  Universidade Federal do ABC (UFABC) -- Santo André -- SP -- Brazil
+  \nextinstitute
+  Centro de Engenharia, Modelagem e Ciências Sociais Aplicadas (CECS)\\
   Universidade Federal do ABC (UFABC) -- Santo André -- SP -- Brazil
   \email{\{gabriela.tampelli, g.fogaca, jacqueline.marinho\}  aluno@ufabc.edu.br}
-  \email{\{prado.joao, m.ceschim, ...\}  aluno@ufabc.edu.br}
+  \email{\{prado.joao, m.ceschim, matheus.messias\}  aluno@ufabc.edu.br}
   \email{\{miguel.piva, rafael.coelho\}  aluno@ufabc.edu.br}
 }
 
@@ -37,9 +40,9 @@
 
 \section{Introdução}
 
-Redes mesh, ou Wireless Mesh Networks (WMNs), são um tipo de rede sem fio em que os dispositivos, chamados de nós, atuam como transmissores e roteadores de dados. Nessas redes, os nós, que são compostos por roteadores de malha e clientes de malha, cooperam entre si para encaminhar informações, permitindo que os dados alcancem seus destinos mesmo quando não há conexão direta entre os dispositivos. Essa arquitetura descentralizada possibilita que a rede se organize e se configure automaticamente, estabelecendo conexões dinâmicas entre os nós. 
+Redes mesh, ou Wireless Mesh Networks (WMNs), são um tipo de rede sem fio em que os dispositivos, chamados de nós, atuam como transmissores e roteadores de dados. Nessas redes, os nós, que são compostos por roteadores de malha e clientes de malha, cooperam entre si para encaminhar informações, permitindo que os dados alcancem seus destinos mesmo quando não há conexão direta entre os dispositivos. Essa arquitetura descentralizada possibilita que a rede se organize e se configure automaticamente, estabelecendo conexões dinâmicas entre os nós \cite{mesh_passos_2005}. 
 
-Devido a essas características, as redes mesh tornam-se adequadas para aplicações em cidades inteligentes, nas quais há grande quantidade de dispositivos distribuídos, como sensores, câmeras e sistemas de iluminação pública, que necessitam de comunicação eficiente, confiável e escalável. Nesse contexto, a escolha do protocolo de roteamento é um fator crítico para o desempenho da rede. Contudo, falta investigação empírica rigorosa em escala contemporânea sobre como estes protocolos se comportam quando redes crescem de centenas para milhares de nós. Recomendações atuais em literatura baseiam-se frequentemente em benchmarks desatualizados ou estudos teóricos sem validação experimental robusta. Este cenário deixa engenheiros de cidades inteligentes sem dados confiáveis para tomar decisões arquiteturais fundamentadas.
+Devido a essas características, as redes mesh tornam-se adequadas para aplicações em cidades inteligentes, nas quais há grande quantidade de dispositivos distribuídos, como sensores, câmeras e sistemas de iluminação pública, que necessitam de comunicação eficiente, confiável e escalável. Nesse contexto, a escolha do protocolo de roteamento é um fator crítico para o desempenho da rede. Contudo, falta investigação empírica rigorosa em escala contemporânea sobre como estes protocolos se comportam quando redes crescem de centenas para milhares de nós. Recomendações atuais em literatura baseiam-se frequentemente em benchmarks desatualizados ou estudos teóricos sem validação experimental robusta. Este cenário deixa engenheiros de cidades inteligentes sem dados confiáveis para tomar decisões arquiteturais fundamentadas \cite{wireless_akyildiz_2005}.
 
 O presente trabalho endereça esta lacuna por meio de uma análise comparativa controlada de dois protocolos de roteamento em escalas que refletem aplicações reais de cidades inteligentes. Dentro da arquitetura de Redes mesh, os protocolos de roteamento classificam-se em três categorias principais: proativos, reativos e híbridos \cite{wireless_benyamina_2012}. Destacam-se dois protocolos de roteamento: o AODV, classificado como reativo por estabelecer rotas sob demanda, e o OLSR, classificado como proativo por manter rotas atualizadas continuamente. Desta forma, o objetivo deste artigo é fornecer uma comparação entre os dois protocolos de roteamento supracitados, aplicados ao contexto de cidades inteligentes. Utiliza-se simulação em MeshSim (baseada em NS-3) para garantir reprodutibilidade absoluta e coleta precisa de métricas. 
 
@@ -59,11 +62,11 @@ Uma rede de iluminação inteligente em uma metrópole pode compreender milhares
 
 A literatura de redes sem fio identifica dois protocolos dominantes de roteamento em redes ad hoc e mesh. As duas são detalhadas a seguir, destacando suas características, vantagens e desvantagens em relação à escalabilidade.
 
-O \textit{Ad hoc On-Demand Distance Vector} (AODV) pertence à classe de protocolos \textit{reativos}, ou sob demanda, nos quais as rotas são estabelecidas somente quando há demanda imediata de comunicação. Quando um nó origem deseja enviar dados para um destino, o protocolo inicia um procedimento de descoberta de rota: difunde uma mensagem RREQ (\textit{Route Request}) através da rede. O nó destino, ou um nó intermediário possuindo rota válida, responde com RREP (\textit{Route Reply}). O mecanismo de números de sequência de destino garante roteamento livre de laços. Em redes estáticas ou de baixa mobilidade, o AODV minimiza o tráfego de controle, pois apenas rotas efetivamente utilizadas são estabelecidas. Contudo, a sobrecarga de descoberta de rota inicial pode ser substancial em topologias grandes, e o cache de rotas requer timeout cuidadoso para evitar invalidação prematura.
+O \textit{Ad hoc On-Demand Distance Vector} (AODV) pertence à classe de protocolos \textit{reativos}, ou sob demanda, nos quais as rotas são estabelecidas somente quando há demanda imediata de comunicação. Quando um nó origem deseja enviar dados para um destino, o protocolo inicia um procedimento de descoberta de rota: difunde uma mensagem RREQ (\textit{Route Request}) através da rede. O nó destino, ou um nó intermediário possuindo rota válida, responde com RREP (\textit{Route Reply}). O mecanismo de números de sequência de destino garante roteamento livre de laços. Em redes estáticas ou de baixa mobilidade, o AODV minimiza o tráfego de controle, pois apenas rotas efetivamente utilizadas são estabelecidas. Contudo, a sobrecarga de descoberta de rota inicial pode ser substancial em topologias grandes, e o cache de rotas requer timeout cuidadoso para evitar invalidação prematura \cite{perkins2003ad}.
 
-O \textit{Optimized Link State Routing Protocol} (OLSR), por outro lado, pertence à classe de protocolos \textit{proativos}, ou orientados a tabela, nos quais cada nó mantém tabelas de roteamento continuamente atualizadas mediante troca periódica de mensagens de controle. O mecanismo central é a seleção de \textit{Multipoint Relays} (MPRs): cada nó escolhe subconjunto mínimo de vizinhos de um salto para retransmitir suas mensagens de controle. Assim reduz-se o número de retransmissões necessárias em relação ao \textit{flooding} completo. O OLSR garante rotas de caminho mínimo para \textit{todos} os destinos, independentemente de demanda. Em redes de topologia estável, o protocolo oferece baixa latência de primeira descoberta, pois todas as rotas encontram-se pré-calculadas. Contudo, a sobrecarga de controle periódico cresce com o número de nós, e a propagação de atualizações de topologia consome banda mesmo quando o tráfego de dados é baixo.
+O \textit{Optimized Link State Routing Protocol} (OLSR), por outro lado, pertence à classe de protocolos \textit{proativos}, ou orientados a tabela, nos quais cada nó mantém tabelas de roteamento continuamente atualizadas mediante troca periódica de mensagens de controle. O mecanismo central é a seleção de \textit{Multipoint Relays} (MPRs): cada nó escolhe subconjunto mínimo de vizinhos de um salto para retransmitir suas mensagens de controle. Assim reduz-se o número de retransmissões necessárias em relação ao \textit{flooding} completo. O OLSR garante rotas de caminho mínimo para \textit{todos} os destinos, independentemente de demanda. Em redes de topologia estável, o protocolo oferece baixa latência de primeira descoberta, pois todas as rotas encontram-se pré-calculadas. Contudo, a sobrecarga de controle periódico cresce com o número de nós, e a propagação de atualizações de topologia consome banda mesmo quando o tráfego de dados é baixo \cite{clausen2003optimized}.
 
-A escolha de AODV e OLSR justifica-se por três motivos complementares. Primeiro, ambos os protocolos possuem implementações maduras, validadas industrialmente e disponíveis \textit{nativamente} no framework NS-3 sem necessidade de modificações: isto elimina vieses de implementação que podem comprometer comparação empírica. Segundo, AODV e OLSR representam os dois extremos do espectro de paradigmas de roteamento em redes ad hoc, permitindo que as conclusões do trabalho estendam-se conceitualmente a protocolos híbridos e derivados. Terceiro, a literatura de redes mesh e IoT reporta ambos os protocolos em implantações práticas: AODV em padrões como IEEE~802.11s (Dot11s) modificado, e OLSR em implementações de redes de sensores urbanas; assim, os resultados possuem relevância prática direta.
+A escolha de AODV e OLSR justifica-se por três motivos complementares. Primeiro, ambos os protocolos possuem implementações maduras, validadas industrialmente e disponíveis \textit{nativamente} no framework NS-3 sem necessidade de modificações: isto elimina vieses de implementação que podem comprometer comparação empírica. Segundo, AODV e OLSR representam os dois extremos do espectro de paradigmas de roteamento em redes ad hoc, permitindo que as conclusões do trabalho estendam-se conceitualmente a protocolos híbridos e derivados. Terceiro, a literatura de redes mesh e IoT reporta ambos os protocolos em implantações práticas: AODV em padrões como IEEE~802.11s (Dot11s) modificado, e OLSR em implementações de redes de sensores urbanas; assim, os resultados possuem relevância prática direta \cite{research_lee_2024}.
 
 Na prática, o problema de pesquisa investiga o "ponto de ruptura" de cada protocolo por meio de uma avaliação de desempenho. Em cenários reais de cidades inteligentes, a topologia pode ser altamente adensada, o que exige que as soluções de rede suportem o crescimento sem degradação severa dos indicadores técnicos. A análise foca em como a métrica de atraso fim a fim e a taxa de entrega de pacotes se comportam à medida que a rede expande de dezenas para centenas de nós. A justificativa deste estudo baseia-se na confiabilidade dos serviços urbanos essenciais. Uma falha na escalabilidade da rede mesh, evidenciada por queda de desempenho, pode resultar em atrasos críticos no monitoramento de emergências ou na interrupção dos sistemas de controle de tráfego. Portanto, quantificar a eficiência do AODV frente ao OLSR permite que gestores tomem decisões baseadas em dados técnicos para a implementação de infraestruturas resilientes.
 
@@ -95,7 +98,7 @@ Em síntese, os trabalhos convergem ao demonstrar que o desempenho dos protocolo
 
 Utilizamos MeshSim \cite{lorinder_github}, um simulador de redes mesh de código aberto construído sobre o framework NS-3, adaptado e estendido para os experimentos deste trabalho. O código e os scripts de configuração e análise encontram-se disponíveis em repositório público \cite{caburlao_github}. O ambiente de simulação executa em Linux com bibliotecas NS-3 compiladas na versão de desenvolvimento de abril de 2026, garantindo desempenho determinístico e reprodutível.
 
-A escolha de MeshSim sobre alternativas, como OPNET ou OMNeT++, justifica-se por cinco fatores interrelacionados: (i) o framework NS-3 oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa; (ii) o suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação; (iii) os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância, permitindo modelagem realista do ambiente de propagação; (iv) a reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados; (v) a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados.
+A escolha de MeshSim sobre alternativas, como OPNET ou OMNeT++, justifica-se por cinco fatores interrelacionados: (i) o framework NS-3 oferece maturidade comprovada e validação empírica extensiva na comunidade de pesquisa; (ii) o suporte nativo e independente aos protocolos AODV e OLSR, sem necessidade de modificações de código, elimina vieses de implementação; (iii) os modelos de canal Wi-Fi incorporam mecanismos calibráveis de atenuação por distância, permitindo modelagem realista do ambiente de propagação; (iv) a reprodução determinística é garantida por sementes aleatórias explícitas, assegurando que qualquer pesquisador reproduza exatamente os mesmos resultados; (v) a integração nativa com o FlowMonitor possibilita coleta automatizada de métricas granulares por fluxo de dados \cite{kim2011comparative}.
 
 \subsection{Topologia e Escalonamento de Rede}
 
@@ -145,12 +148,6 @@ Nesta seção apresentamos os resultados experimentais da comparação entre AOD
 
 A Figura~\ref{fig:pdr} apresenta a Taxa de Entrega de Pacotes (PDR) em função da escala da rede. Observam-se dois comportamentos distintos:
 
-\begin{itemize}
-  \item \textbf{AODV:} Demonstra PDR inicial de 88\% em redes pequenas (25 nós), decaindo rapidamente para aproximadamente 40\% em 50 nós e estabilizando-se em torno de 20\% em redes acima de 200 nós.
-  
-  \item \textbf{OLSR:} Exibe PDR inicial mais conservador (61\% em 25 nós), porém com degradação mais gradual, mantendo 38\% em 50 nós e convergindo a aproximadamente 23\% em redes maiores.
-\end{itemize}
-
 \begin{figure}[h]
 \centering
 \includegraphics[width=0.8\textwidth]{fig1-pdr-vs-nodes.png}
@@ -160,17 +157,17 @@ Taxa de Entrega de Pacotes (PDR) em função da escala da rede.
 \label{fig:pdr}
 \end{figure}
 
+\begin{itemize}
+  \item \textbf{AODV:} Demonstra PDR inicial de 88\% em redes pequenas (25 nós), decaindo rapidamente para aproximadamente 40\% em 50 nós e estabilizando-se em torno de 20\% em redes acima de 200 nós.
+  
+  \item \textbf{OLSR:} Exibe PDR inicial mais conservador (61\% em 25 nós), porém com degradação mais gradual, mantendo 38\% em 50 nós e convergindo a aproximadamente 23\% em redes maiores.
+\end{itemize}
+
 A divergência pronunciada entre protocolos em pequena escala sugere que o mecanismo de descoberta de rota sob demanda do AODV é eficiente em topologias com conectividade alta e diâmetro reduzido. Entretanto, conforme a rede cresce, a sobreprovisão de pacotes pendentes aguardando conclusão de RREQ resulta em perda acentuada. O OLSR, mantendo tabelas atualizadas continuamente, apresenta comportamento mais previsível e estável, ainda que em degradação contínua.
 
 \subsection{Latência Média Fim-a-Fim}
 
 A Figura~\ref{fig:latency} exibe a evolução de latência média fim-a-fim com a escala de rede. Contrario aos padrões de PDR, a latência demonstra crescimento consistente para ambos os protocolos:
-
-\begin{itemize}
-  \item \textbf{AODV:} Latência de aproximadamente 130\,ms em redes de 25 nós, escalando para aproximadamente 2400\,ms em 1000 nós.
-  
-  \item \textbf{OLSR:} Latência inicial de 150\,ms, atingindo 2700\,ms em 1000 nós.
-\end{itemize}
 
 \begin{figure}[h]
 \centering
@@ -180,6 +177,12 @@ Latência Média E2E (fim-a-fim) versus escala de rede.
 }
 \label{fig:latency}
 \end{figure}
+
+\begin{itemize}
+  \item \textbf{AODV:} Latência de aproximadamente 130\,ms em redes de 25 nós, escalando para aproximadamente 2400\,ms em 1000 nós.
+  
+  \item \textbf{OLSR:} Latência inicial de 150\,ms, atingindo 2700\,ms em 1000 nós.
+\end{itemize}
 
 O crescimento aproximadamente logarítmico reflete o aumento do diâmetro topológico conforme o número de nós cresce. O protocolo AODV apresenta latência 5-15\% inferior a OLSR, presumivelmente devido à ausência de overhead de propagação de TC. Contudo, como já apresentado na seção anterior, a latência de AODV torna-se irrelevante em redes maiores, pois a maioria dos pacotes não é entregue. Em redes pequenas, a latência de AODV é aceitável para aplicações em tempo real, mas em redes maiores, ambos os protocolos apresentam latências incompatíveis com requisitos de aplicações sensíveis a atrasos.
 
